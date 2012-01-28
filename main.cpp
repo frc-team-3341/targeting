@@ -11,21 +11,11 @@
 using namespace cv;
 using namespace std;
 
-const string PROGRAM="Rectangle Detector";
-const string VERSION="0.3";
-const string BINARY="rectangledetector";
-
 void printUsage() {
-  cout <<"Usage: " <<BINARY << " [input]" <<endl;
-}
-
-void printHeader() {
-  cout <<PROGRAM <<" " <<VERSION <<endl <<endl;
+  cout <<"Usage: ./rectangledetector.bin [input device number/filename]" <<endl;
 }
 
 int main(int argc, char* argv[]) {
-  printHeader(); // Print Header
-
   // Check Arguments
   if (argc!=2) {
     printUsage();
