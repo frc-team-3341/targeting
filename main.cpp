@@ -147,7 +147,7 @@ int main(int argc, char* argv[]) {
     imshow("Corners Green Channel", img_rgb_planes_corners.at(1));
     //imshow("Canny Red Channel", img_rgb_planes_canny.at(2));
  
-    cout <<"FPS: " <<(time(NULL)-startTime)/frameCount <<endl;
+    cout <<"FPS: " <<frameCount/(time(NULL)-startTime) <<endl;
 
     if ((waitKey(10) & 255) == 27)
       break;
