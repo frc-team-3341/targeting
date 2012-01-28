@@ -7,6 +7,7 @@
 #include <vector>
 #include <string>
 #include <cctype>
+#include <ctime>
 
 using namespace cv;
 using namespace std;
@@ -23,6 +24,7 @@ int main(int argc, char* argv[]) {
   }
 
   // Variable Declarations
+  time_t startTime=time(NULL);
   int lowerthresh=220;
   int upperthresh=255;
   VideoCapture cap;
@@ -55,13 +57,13 @@ int main(int argc, char* argv[]) {
   namedWindow("Corners Green Channel", 0);
   //namedWindow("Canny Red Channel", 0);
   
-  while (true) {
+  for (int frameCount=1;; frameCount++) {
     Mat img;
     if (isFile)
       img=imread(argv[1]); // Load Image from File
     else
       cap >>img; // Load Image from Video Capture Device
-    cvtColor(img, img, CV_RGB2HSV); // Convert Image to HSV
+    //cvtColor(img, img, CV_RGB2HSV); // Convert Image to HSV
     Mat img_gray;
     cvtColor(img, img_gray, CV_RGB2GRAY); // Convert Image to Grayscale
     Mat img_gray_thresh;
@@ -119,7 +121,6 @@ int main(int argc, char* argv[]) {
     for (unsigned int i=0; i < img_rgb_planes_canny.size(); i++)
       img_rgb_planes_corners.push_back(img_rgb_planes_canny.at(i).clone());
 
-
     // Write Corners to Output Image
     for (unsigned i=0; i < img_rgb_planes_cornerPoints.at(1).size(); i++) {
       int radius=10;
@@ -146,6 +147,8 @@ int main(int argc, char* argv[]) {
     imshow("Corners Green Channel", img_rgb_planes_corners.at(1));
     //imshow("Canny Red Channel", img_rgb_planes_canny.at(2));
  
+    cout <<"FPS: " <<(time(NULL)-startTime)/frameCount <<endl;
+
     if ((waitKey(10) & 255) == 27)
       break;
     if (isFile) {
