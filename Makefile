@@ -8,7 +8,7 @@ ALL_OBJECTS=$(OBJECTS) rectangledetector
 # End Header
 
 rectangledetector: $(OBJECTS)
-	g++ $(OBJECTS) -Wall -I$(CPP_INCLUDE) `pkg-config --cflags --libs opencv` $(GCC_ARGS) -g -o rectangledetector
+	g++ $(OBJECTS) -Wall -I$(CPP_INCLUDE) `pkg-config --cflags --libs opencv` $(GCC_ARGS) -g -o rectangledetector.bin
 # strip rectangledetector # Enable to remove debugging symbols, making the binary smaller
 main.o: main.cpp
 	g++ -c main.cpp -Wall -I$(CPP_INCLUDE) `pkg-config --cflags opencv` $(GCC_ARGS) -g -o main.o
