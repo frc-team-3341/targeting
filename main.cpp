@@ -6,6 +6,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <sstream>
 #include <cctype>
 #include <ctime>
 
@@ -108,13 +109,13 @@ int main(int argc, char* argv[]) {
     goodFeaturesToTrack(img_rgb_planes_thresh.at(2), img_rgb_planes_cornerPoints.at(2), maxCorners, qualityLevel, minDistance); 
 
     // Print Coordinates of Corners
-    for (unsigned i=0; i < img_rgb_planes_cornerPoints.at(1).size(); i++) {
+    /*for (unsigned i=0; i < img_rgb_planes_cornerPoints.at(1).size(); i++) {
       cout <<"0: " <<i <<": " <<img_rgb_planes_cornerPoints.at(1).at(i) <<endl;
     }
     for (unsigned i=0; i < img_rgb_planes_cornerPoints.size(); i++) {
       for (unsigned j=0; j < img_rgb_planes_cornerPoints.at(i).size(); j++)
 	cout <<i+1 <<": " <<j <<": " <<img_rgb_planes_cornerPoints.at(i).at(j) <<endl;
-    }
+	}*/
 
     // Create Corner Detection Output Images
     img_gray_corners=img_gray_canny.clone();
@@ -123,7 +124,7 @@ int main(int argc, char* argv[]) {
 
     // Write Corners to Output Image
     for (unsigned i=0; i < img_rgb_planes_cornerPoints.at(1).size(); i++) {
-      int radius=10;
+      int radius=img.rows/25;
       int pointX=img_rgb_planes_cornerPoints.at(1).at(i).x;
       int pointY=img_rgb_planes_cornerPoints.at(1).at(i).y;
       Point cornerCoordinates(pointX, pointY);
@@ -131,6 +132,17 @@ int main(int argc, char* argv[]) {
       int circleThickness=-1; // Filled Circle
       circle(img_rgb_planes_corners.at(1), cornerCoordinates, radius, circleColor, circleThickness);
     }
+
+    // Write FPS to Original Image
+    int fpsPointX=0;
+    int fpsPointY=img.rows-5;
+    Point fpsCoordinates(fpsPointX, fpsPointY);
+    int fontFace=FONT_HERSHEY_COMPLEX;
+    double fontScale=1.0;
+    Scalar fpsColor(255.0, 255.0, 255.0, 0.0);
+    stringstream fps;
+    fps <<"FPS: " <<frameCount/(time(NULL)-startTime);
+    putText(img, fps.str(), fpsCoordinates, fontFace, fontScale, fpsColor);
 
     // Display Images
     imshow("Original", img);
@@ -146,8 +158,6 @@ int main(int argc, char* argv[]) {
     imshow("Canny Green Channel", img_rgb_planes_canny.at(1));
     imshow("Corners Green Channel", img_rgb_planes_corners.at(1));
     //imshow("Canny Red Channel", img_rgb_planes_canny.at(2));
- 
-    cout <<"FPS: " <<frameCount/(time(NULL)-startTime) <<endl;
 
     if ((waitKey(10) & 255) == 27)
       break;
