@@ -4,6 +4,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <iomanip>
 #include <vector>
 #include <string>
 #include <sstream>
@@ -25,7 +26,6 @@ int main(int argc, char* argv[]) {
   }
 
   // Variable Declarations
-  time_t startTime=time(NULL);
   int lowerthresh=220;
   int upperthresh=255;
   VideoCapture cap;
@@ -58,7 +58,11 @@ int main(int argc, char* argv[]) {
   namedWindow("Corners Green Channel", 0);
   //namedWindow("Canny Red Channel", 0);
   
+  double secondsPerFrame=0.03;
+  double IIRFilterConstant=0.02;
+
   for (int frameCount=1;; ++frameCount) {
+    time_t startTime=time(NULL);
     Mat img;
     if (isFile)
       img=imread(argv[1]); // Load Image from File
@@ -122,8 +126,9 @@ int main(int argc, char* argv[]) {
     int fontFace=FONT_HERSHEY_COMPLEX;
     double fontScale=1.0;
     Scalar fpsColor(255.0, 255.0, 255.0, 0.0);
+    secondsPerFrame=IIRFilterConstant*(time(NULL)-startTime)+(1-IIRFilterConstant)*secondsPerFrame;
     stringstream fps;
-    fps <<"FPS: " <<frameCount/(time(NULL)-startTime);
+    fps <<setprecision(0) <<fixed <<"FPS: " <<1/secondsPerFrame;
     putText(img, fps.str(), fpsCoordinates, fontFace, fontScale, fpsColor);
 
     // Display Images
