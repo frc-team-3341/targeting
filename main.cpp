@@ -119,7 +119,7 @@ int main(int argc, char* argv[]) {
 
     // Create Corner Detection Output Images
     img_gray_corners=img_gray_canny.clone();
-    for (unsigned int i=0; i < img_rgb_planes_canny.size(); i++)
+    for (unsigned i=0; i < img_rgb_planes_canny.size(); i++)
       img_rgb_planes_corners.push_back(img_rgb_planes_canny.at(i).clone());
 
     // Write Corners to Output Image
