@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
   }
 
   // Variable Declarations
-  int lowerthresh=220;
+  int lowerthresh=190;
   int upperthresh=255;
   VideoCapture cap;
   bool isFile=false;
@@ -96,15 +96,15 @@ int main(int argc, char* argv[]) {
 
     // Run Corner Detection
     // Reference: http://www.moosechips.com/2008/08/opencv-corner-detection-using-cvgoodfeaturestotrack/
-    int maxCorners=10;
+    int maxCorners=30;
     double qualityLevel=0.1;
-    int minDistance=10;
+    int minDistance=100;
     for (unsigned i=0; i < img_planes_thresh.size(); ++i)
       goodFeaturesToTrack(img_planes_thresh.at(i), img_planes_cornerPoints.at(i), maxCorners, qualityLevel, minDistance);
 
     // Create Corner Detection Output Images
-    for (unsigned i=0; i < img_planes_canny.size(); ++i)
-      img_planes_corners.push_back(img_planes_canny.at(i).clone());
+    for (unsigned i=0; i < img_planes_thresh.size(); ++i)
+      img_planes_corners.push_back(img_planes_thresh.at(i).clone());
 
     // Write Corners to Output Image
     for (unsigned i=0; i < img_planes_cornerPoints.size(); ++i) {
@@ -124,11 +124,11 @@ int main(int argc, char* argv[]) {
     int fpsPointY=img.rows-5;
     Point fpsCoordinates(fpsPointX, fpsPointY);
     int fontFace=FONT_HERSHEY_COMPLEX;
-    double fontScale=1.0;
+    double fontScale=0.5;
     Scalar fpsColor(255.0, 255.0, 255.0, 0.0);
     secondsPerFrame=IIRFilterConstant*(time(NULL)-startTime)+(1-IIRFilterConstant)*secondsPerFrame;
     stringstream fps;
-    fps <<setprecision(0) <<fixed <<"FPS: " <<1/secondsPerFrame;
+    fps <<setprecision(2) <<fixed <<"FPS: " <<1/secondsPerFrame;
     putText(img, fps.str(), fpsCoordinates, fontFace, fontScale, fpsColor);
 
     // Display Images
