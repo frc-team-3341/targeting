@@ -124,7 +124,7 @@ int main(int argc, char* argv[]) {
     int fpsPointY=img.rows-5;
     Point fpsCoordinates(fpsPointX, fpsPointY);
     int fontFace=FONT_HERSHEY_COMPLEX;
-    double fontScale=0.5;
+    double fontScale=img.rows/960;
     Scalar fpsColor(255.0, 255.0, 255.0, 0.0);
     secondsPerFrame=IIRFilterConstant*(time(NULL)-startTime)+(1-IIRFilterConstant)*secondsPerFrame;
     stringstream fps;
