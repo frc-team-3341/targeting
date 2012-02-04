@@ -48,9 +48,7 @@ int main(int argc, char* argv[]) {
   
   // Create GUI
   namedWindow("Original", 0);
-  namedWindow("Thresholded Green Channel", 0);
-  namedWindow("Canny Green Channel", 0);
-  namedWindow("Corners Green Channel", 0);
+  namedWindow("HSV Image", 0);
 
   double secondsPerFrame=0.03;
   double IIRFilterConstant=0.02;
@@ -65,9 +63,9 @@ int main(int argc, char* argv[]) {
 
     // Image Containers
     HSVImage img_hsv(img);
-    HSVImage img_hsv_thresh();
-    HSVImage img_hsv_canny();
-    HSVImage img_hsv_corners();
+    HSVImage img_hsv_thresh(img_hsv);
+    HSVImage img_hsv_canny(img_hsv);
+    HSVImage img_hsv_corners(img_hsv);
     vector< vector<Point2f> > img_planes_cornerPoints;
     
     /* OLD CODE
@@ -123,27 +121,8 @@ int main(int argc, char* argv[]) {
     putText(img, fps.str(), fpsCoordinates, fontFace, fontScale, fpsColor);
 
     // Display Images
-    imshow("Original", img_hsv.hsv);
-    // Blues
-    //imshow("Blue Channel", img_planes.at(0));
-    //imshow("Thresholded Blue Channel", img_planes_thresh.at(0));
-    //imshow("Canny Blue Channel", img_planes_canny.at(0));
-    //imshow("Corners Blue Channel", img_planes_canny.at(0));
-    // Greens
-    //imshow("Green Channel", img_planes.at(1));
-    //imshow("Thresholded Green Channel", img_planes_thresh.at(1));
-    //imshow("Canny Green Channel", img_planes_canny.at(1));
-    //imshow("Corners Green Channel", img_planes_corners.at(1));
-    // Reds
-    //imshow("Red Channel", img_planes.at(2));
-    //imshow("Thresholded Red Channel", img_planes_thresh.at(2));
-    //imshow("Canny Red Channel", img_planes_canny.at(2));
-    //imshow("Corners Red Channel", img_planes_canny.at(2));
-    // Grayscales
-    //imshow("Grayscale", img_planes.at(3));
-    //imshow("Thresholded Grayscale", img_planes_thresh.at(3));
-    //imshow("Canny Grayscale", img_planes_canny.at(3));
-    //imshow("Corners Grayscale", img_planes_corners.at(3));
+    imshow("Original", img_hsv.rgb);
+    imshow("HSV Image", img_hsv.hsv);
  
     if ((waitKey(10) & 255) == 27)
       break;
