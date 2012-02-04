@@ -110,8 +110,8 @@ int main(int argc, char* argv[]) {
     for (unsigned i=0; i < img_planes_cornerPoints.size(); ++i) {
       for (unsigned j=0; j < img_planes_cornerPoints.at(i).size(); ++j) {
 	int radius=img.rows/25;
-	int pointX=img_planes_cornerPoints.at(1).at(i).x;
-	int pointY=img_planes_cornerPoints.at(1).at(i).y;
+	int pointX=img_planes_cornerPoints.at(i).at(j).x;
+	int pointY=img_planes_cornerPoints.at(i).at(j).y;
 	Point cornerCoordinates(pointX, pointY);
 	Scalar circleColor(255.0, 255.0, 255.0, 0.0);
 	int circleThickness=-1; // Filled Circle
