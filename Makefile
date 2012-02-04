@@ -2,16 +2,18 @@
 all: rectangledetector
 # Variable Declarations
 CPP_INCLUDE=/usr/include/c++/4.4 # Defines the path for the C++ libraries
-OBJECTS=main.o
+OBJECTS=main.o HSVImage.o
 ALL_OBJECTS=$(OBJECTS) rectangledetector
 # End Variable Declarations
 # End Header
 
 rectangledetector: $(OBJECTS)
-	g++ $(OBJECTS) -Wall -I$(CPP_INCLUDE) `pkg-config --cflags --libs opencv` $(GCC_ARGS) -g -o rectangledetector.bin
+	g++ $(OBJECTS) -Wall -I$(CPP_INCLUDE) `pkg-config --cflags --libs opencv` -g -o rectangledetector.bin
 # strip rectangledetector # Enable to remove debugging symbols, making the binary smaller
 main.o: main.cpp
-	g++ -c main.cpp -Wall -I$(CPP_INCLUDE) `pkg-config --cflags opencv` $(GCC_ARGS) -g -o main.o
+	g++ -c main.cpp -Wall -I$(CPP_INCLUDE) `pkg-config --cflags opencv` -g -o main.o
+HSVImage.o: HSVImage.cpp
+	g++ -c HSVImage.cpp -Wall -I$(CPP_INCLUDE) `pkg-config --cflags opencv`
 clean:
 	touch $(OBJECTS) o~
 	rm $(OBJECTS) *~

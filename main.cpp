@@ -2,6 +2,8 @@
 #include <opencv2/imgproc/imgproc.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
+#include "HSVImage.hpp"
+
 #include <cstdlib>
 #include <iostream>
 #include <iomanip>
@@ -46,18 +48,10 @@ int main(int argc, char* argv[]) {
   
   // Create GUI
   namedWindow("Original", 0);
-  //namedWindow("Grayscale", 0);
-  //namedWindow("Blue Channel", 0);
-  //namedWindow("Green Channel", 0);
-  //namedWindow("Red Channel", 0);
-  //namedWindow("Canny Grayscale", 0);
-  //namedWindow("Corners Grayscale", 0);
-  //namedWindow("Canny Blue Channel", 0);
   namedWindow("Thresholded Green Channel", 0);
   namedWindow("Canny Green Channel", 0);
   namedWindow("Corners Green Channel", 0);
-  //namedWindow("Canny Red Channel", 0);
-  
+
   double secondsPerFrame=0.03;
   double IIRFilterConstant=0.02;
 
@@ -68,20 +62,16 @@ int main(int argc, char* argv[]) {
       img=imread(argv[1]); // Load Image from File
     else
       cap >>img; // Load Image from Video Capture Device
-    //cvtColor(img, img, CV_RGB2HSV); // Convert Image to HSV
-    vector<Mat> img_planes; // Order: Blue, Green, Red, Gray
-    vector<Mat> img_planes_thresh;
-    vector<Mat> img_planes_canny;
-    vector<Mat> img_planes_corners;
+
+    // Image Containers
+    HSVImage img_hsv(img);
+    HSVImage img_hsv_thresh();
+    HSVImage img_hsv_canny();
+    HSVImage img_hsv_corners();
     vector< vector<Point2f> > img_planes_cornerPoints;
     
-    split(img, img_planes); // Split Image into RGB
-    img_planes.resize(img_planes.size() + 1); // Allocate Memory
-    cvtColor(img, img_planes.at(3), CV_RGB2GRAY); // Convert Image to Grayscale
-
+    /* OLD CODE
     // Allocate Memory to Vectors
-    img_planes_thresh.resize(img_planes.size());
-    img_planes_canny.resize(img_planes.size());
     img_planes_cornerPoints.resize(img_planes.size());
 
     // Run Thresholding
@@ -118,6 +108,7 @@ int main(int argc, char* argv[]) {
 	circle(img_planes_corners.at(i), cornerCoordinates, radius, circleColor, circleThickness);
       }
     }
+    */
 
     // Write FPS to Original Image
     int fpsPointX=0;
@@ -132,7 +123,7 @@ int main(int argc, char* argv[]) {
     putText(img, fps.str(), fpsCoordinates, fontFace, fontScale, fpsColor);
 
     // Display Images
-    imshow("Original", img);
+    imshow("Original", img_hsv.hsv);
     // Blues
     //imshow("Blue Channel", img_planes.at(0));
     //imshow("Thresholded Blue Channel", img_planes_thresh.at(0));
@@ -140,9 +131,9 @@ int main(int argc, char* argv[]) {
     //imshow("Corners Blue Channel", img_planes_canny.at(0));
     // Greens
     //imshow("Green Channel", img_planes.at(1));
-    imshow("Thresholded Green Channel", img_planes_thresh.at(1));
-    imshow("Canny Green Channel", img_planes_canny.at(1));
-    imshow("Corners Green Channel", img_planes_corners.at(1));
+    //imshow("Thresholded Green Channel", img_planes_thresh.at(1));
+    //imshow("Canny Green Channel", img_planes_canny.at(1));
+    //imshow("Corners Green Channel", img_planes_corners.at(1));
     // Reds
     //imshow("Red Channel", img_planes.at(2));
     //imshow("Thresholded Red Channel", img_planes_thresh.at(2));
@@ -153,7 +144,7 @@ int main(int argc, char* argv[]) {
     //imshow("Thresholded Grayscale", img_planes_thresh.at(3));
     //imshow("Canny Grayscale", img_planes_canny.at(3));
     //imshow("Corners Grayscale", img_planes_corners.at(3));
-
+ 
     if ((waitKey(10) & 255) == 27)
       break;
     if (isFile) {
