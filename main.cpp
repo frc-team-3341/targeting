@@ -28,8 +28,8 @@ int main(int argc, char* argv[]) {
   }
 
   // Variable Declarations
-  int lowerthresh=190;
-  int upperthresh=255;
+  int lowerthresh=50;
+  int upperthresh=200;
   VideoCapture cap;
   bool isFile=false;
 
@@ -49,6 +49,12 @@ int main(int argc, char* argv[]) {
   // Create GUI
   namedWindow("Original", 0);
   namedWindow("HSV Image", 0);
+  namedWindow("Hue", 0);
+  namedWindow("Saturation", 0);
+  namedWindow("Lower Saturation", 0);
+  namedWindow("Upper Saturation", 0);
+  namedWindow("Saturation Single Function", 0);
+  namedWindow("Value", 0);
 
   double secondsPerFrame=0.03;
   double IIRFilterConstant=0.02;
@@ -67,7 +73,15 @@ int main(int argc, char* argv[]) {
     HSVImage img_hsv_canny(img_hsv);
     HSVImage img_hsv_corners(img_hsv);
     vector< vector<Point2f> > img_planes_cornerPoints;
-    
+    Mat img_saturationUpper;
+    Mat img_saturationLower;
+    Mat img_saturationSingleFunction;
+
+    threshold(img_hsv.saturation, img_saturationLower, lowerthresh, 255, CV_THRESH_BINARY);
+    threshold(img_hsv.saturation, img_saturationUpper, upperthresh, 255, CV_THRESH_BINARY_INV);
+    img_hsv_thresh.saturation=img_saturationLower & img_saturationUpper;
+    threshold(img_hsv.saturation, img_saturationSingleFunction, lowerthresh, upperthresh, CV_THRESH_BINARY);
+
     /* OLD CODE
     // Allocate Memory to Vectors
     img_planes_cornerPoints.resize(img_planes.size());
@@ -118,11 +132,17 @@ int main(int argc, char* argv[]) {
     secondsPerFrame=IIRFilterConstant*(time(NULL)-startTime)+(1-IIRFilterConstant)*secondsPerFrame;
     stringstream fps;
     fps <<setprecision(2) <<"FPS: " <<fixed <<1/secondsPerFrame;
-    putText(img, fps.str(), fpsCoordinates, fontFace, fontScale, fpsColor);
+    putText(img_hsv.rgb, fps.str(), fpsCoordinates, fontFace, fontScale, fpsColor);
 
     // Display Images
     imshow("Original", img_hsv.rgb);
     imshow("HSV Image", img_hsv.hsv);
+    imshow("Hue", img_hsv.hue);
+    imshow("Lower Saturation", img_saturationLower);
+    imshow("Upper Saturation", img_saturationUpper);
+    imshow("Saturation", img_hsv.saturation);
+    imshow("Saturation Single Function", img_saturationSingleFunction);
+    imshow("Value", img_hsv.value);
  
     if ((waitKey(10) & 255) == 27)
       break;
