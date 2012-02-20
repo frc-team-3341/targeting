@@ -23,7 +23,7 @@ void help()
 	"the sequence is stored in the specified memory storage\n"
 	"Call:\n"
 	"./squares\n"
-    "Using OpenCV version " << CV_VERSION << "\n" << endl;
+    "Using OpenCV version %s\n" << CV_VERSION << "\n" << endl;
 }
 
 
@@ -56,7 +56,6 @@ void findSquares( const Mat& image, vector<vector<Point> >& squares )
     vector<vector<Point> > contours;
     
     // find squares in every color plane of the image
-    // original: for( int c = 0; c < 3; c++ )
     for( int c = 0; c < 1; c++ )
     {
         int ch[] = {c, 0};
@@ -131,23 +130,18 @@ void drawSquares( Mat& image, const vector<vector<Point> >& squares )
 {
     for( size_t i = 0; i < squares.size(); i++ )
     {
-      int wait;
-      const Point* p = &squares[i][0];
-      int n = (int)squares[i].size();
-      polylines(image, &p, &n, 1, true, Scalar(0,255,0), 3, CV_AA);
-      imwrite("tmp.jpg", image);
-      cout <<"Square #" <<i <<endl;
-      for (unsigned j=0; j<squares.at(i).size(); ++j)
-	cout <<squares.at(i).at(j) <<endl;
-      cin >>wait;
+        const Point* p = &squares[i][0];
+        int n = (int)squares[i].size();
+        polylines(image, &p, &n, 1, true, Scalar(0,255,0), 3, CV_AA);
     }
 
+    imshow(wndname, image);
 }
 
 
 int main(int /*argc*/, char** /*argv*/)
 {
-    static const char* names[] = { "../images/vanilla-two-lights-four-holes.jpg", 0 };
+  static const char* names[] = { "../experimental/experiment", 0 };
     help();
     namedWindow( wndname, 1 );
     vector<vector<Point> > squares;
@@ -160,12 +154,12 @@ int main(int /*argc*/, char** /*argv*/)
             cout << "Couldn't load " << names[i] << endl;
             continue;
         }
-
-	cvtColor(image, image, CV_RGB2GRAY); // Convert Image to Grayscale
-	threshold(image, image, 200, 255, CV_THRESH_BINARY);
+        
+        cvtColor(image, image, CV_RGB2GRAY); // Convert Image to Grayscale
+        cvtColor(image, image, CV_GRAY2RGB);
+        threshold(image, image, 200, 255, CV_THRESH_BINARY);
         findSquares(image, squares);
         drawSquares(image, squares);
-	imwrite("output.jpg", image);
 
         int c = waitKey();
         if( (char)c == 27 )
