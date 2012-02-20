@@ -160,7 +160,9 @@ int main(int /*argc*/, char** /*argv*/)
             cout << "Couldn't load " << names[i] << endl;
             continue;
         }
-        
+
+	cvtColor(image, image, CV_RGB2GRAY); // Convert Image to Grayscale
+	threshold(image, image, 200, 255, CV_THRESH_BINARY);
         findSquares(image, squares);
         drawSquares(image, squares);
 	imwrite("output.jpg", image);
