@@ -124,9 +124,10 @@ void findSquares( const Mat& image, vector<vector<Point> >& squares )
         }
     }
     // my addition
-    for (unsigned i=0; i<contours.size(); ++i) {
-      for (unsigned j=0; j<contours.at(i).size(); ++j)
-	cout <<contours.at(i).at(j) <<endl;
+    for (unsigned i=0; i<squares.size(); ++i) {
+      for (unsigned j=0; j<squares.at(i).size(); ++j)
+	cout <<squares.at(i).at(j) <<endl;
+      cout <<endl;
     }
 }
 
