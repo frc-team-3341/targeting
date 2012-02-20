@@ -28,10 +28,22 @@ int main(int argc, char* argv[]) {
   }
 
   // Variable Declarations
-  int lowerthresh=50;
-  int upperthresh=200;
+  int hueLowerThresh;
+  int hueUpperThresh;
+  int valueLowerThresh;
+  int valueUpperThresh;
   VideoCapture cap;
   bool isFile=false;
+
+  // Get Threshold Values
+  cout <<"Hue Lower Threshold: ";
+  cin >>hueLowerThresh;
+  cout <<"Hue Upper Threshold: ";
+  cin >>hueUpperThresh;
+  cout <<"Value Lower Threshold: ";
+  cin >>valueLowerThresh;
+  cout <<"Value Upper Threshold: ";
+  cin >>valueUpperThresh;
 
   // Check Argument Type
   if (isalpha(argv[1][0]))
@@ -48,13 +60,12 @@ int main(int argc, char* argv[]) {
   
   // Create GUI
   namedWindow("Original", 0);
-  namedWindow("HSV Image", 0);
-  namedWindow("Hue", 0);
-  namedWindow("Saturation", 0);
-  namedWindow("Lower Saturation", 0);
-  namedWindow("Upper Saturation", 0);
-  namedWindow("Saturation Single Function", 0);
-  namedWindow("Value", 0);
+  namedWindow("Hue Thresh", 0);
+  namedWindow("Lower Hue", 0);
+  namedWindow("Upper Hue", 0);
+  namedWindow("Saturation Thresh", 0);
+  namedWindow("Value Thresh", 0);
+  namedWindow("Hue+Value Thresh", 0);
 
   double secondsPerFrame=0.03;
   double IIRFilterConstant=0.02;
@@ -73,14 +84,41 @@ int main(int argc, char* argv[]) {
     HSVImage img_hsv_canny(img_hsv);
     HSVImage img_hsv_corners(img_hsv);
     vector< vector<Point2f> > img_planes_cornerPoints;
+    vector< vector<Point> > img_contours;
     Mat img_saturationUpper;
     Mat img_saturationLower;
-    Mat img_saturationSingleFunction;
+    Mat img_hueUpper;
+    Mat img_hueLower;
+    Mat img_valueUpper;
+    Mat img_valueLower;
+    Mat img_thresh_hueVal;
+    Mat img_valContours;
 
-    threshold(img_hsv.saturation, img_saturationLower, lowerthresh, 255, CV_THRESH_BINARY);
-    threshold(img_hsv.saturation, img_saturationUpper, upperthresh, 255, CV_THRESH_BINARY_INV);
+    // Thresholding
+    threshold(img_hsv.hue, img_hueLower, hueLowerThresh, 255, CV_THRESH_BINARY);
+    threshold(img_hsv.hue, img_hueUpper, hueUpperThresh, 255, CV_THRESH_BINARY_INV);
+    img_hsv_thresh.hue=img_hueLower & img_hueUpper;
+
+    threshold(img_hsv.saturation, img_saturationLower, hueLowerThresh, 255, CV_THRESH_BINARY);
+    threshold(img_hsv.saturation, img_saturationUpper, hueUpperThresh, 255, CV_THRESH_BINARY_INV);
     img_hsv_thresh.saturation=img_saturationLower & img_saturationUpper;
-    threshold(img_hsv.saturation, img_saturationSingleFunction, lowerthresh, upperthresh, CV_THRESH_BINARY);
+
+    threshold(img_hsv.value, img_valueLower, valueLowerThresh, 255, CV_THRESH_BINARY);
+    threshold(img_hsv.value, img_valueUpper, valueUpperThresh, 255, CV_THRESH_BINARY_INV);
+    img_hsv_thresh.value=img_valueLower & img_valueUpper;
+
+    img_thresh_hueVal=img_hsv_thresh.hue & img_hsv_thresh.value;
+
+    // Contours
+    Scalar contourColor(255.0, 0.0, 255.0, 0.0);
+    findContours(img_hsv_thresh.value, img_contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
+    cout <<"found" <<endl;
+    drawContours(img_hsv_thresh.value, img_contours, -1, contourColor, CV_FILLED);
+    cout <<"drew" <<endl;
+    for (unsigned i=0; i<img_contours.size(); ++i) {
+      for (unsigned j=0; j<img_contours.at(i).size(); ++j)
+	cout <<img_contours.at(i).at(j) <<endl;
+    }
 
     /* OLD CODE
     // Allocate Memory to Vectors
@@ -136,13 +174,12 @@ int main(int argc, char* argv[]) {
 
     // Display Images
     imshow("Original", img_hsv.rgb);
-    imshow("HSV Image", img_hsv.hsv);
-    imshow("Hue", img_hsv.hue);
-    imshow("Lower Saturation", img_saturationLower);
-    imshow("Upper Saturation", img_saturationUpper);
-    imshow("Saturation", img_hsv.saturation);
-    imshow("Saturation Single Function", img_saturationSingleFunction);
-    imshow("Value", img_hsv.value);
+    imshow("Hue Thresh", img_hsv_thresh.hue);
+    imshow("Lower Hue", img_hueLower);
+    imshow("Upper Hue", img_hueUpper);
+    imshow("Saturation Thresh", img_hsv_thresh.saturation);
+    imshow("Value Thresh", img_hsv_thresh.value);
+    imshow("Hue+Value Thresh", img_thresh_hueVal);
  
     if ((waitKey(10) & 255) == 27)
       break;
