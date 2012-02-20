@@ -123,12 +123,6 @@ void findSquares( const Mat& image, vector<vector<Point> >& squares )
             }
         }
     }
-    // my addition
-    for (unsigned i=0; i<squares.size(); ++i) {
-      for (unsigned j=0; j<squares.at(i).size(); ++j)
-	cout <<squares.at(i).at(j) <<endl;
-      cout <<endl;
-    }
 }
 
 
@@ -137,12 +131,17 @@ void drawSquares( Mat& image, const vector<vector<Point> >& squares )
 {
     for( size_t i = 0; i < squares.size(); i++ )
     {
-        const Point* p = &squares[i][0];
-        int n = (int)squares[i].size();
-        polylines(image, &p, &n, 1, true, Scalar(0,255,0), 3, CV_AA);
+      int wait;
+      const Point* p = &squares[i][0];
+      int n = (int)squares[i].size();
+      polylines(image, &p, &n, 1, true, Scalar(0,255,0), 3, CV_AA);
+      imwrite("tmp.jpg", image);
+      cout <<"Square #" <<i <<endl;
+      for (unsigned j=0; j<squares.at(i).size(); ++j)
+	cout <<squares.at(i).at(j) <<endl;
+      cin >>wait;
     }
 
-    imshow(wndname, image);
 }
 
 
