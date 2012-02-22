@@ -1,31 +1,18 @@
-// The "Square Detector" program.
-// It loads several images sequentially and tries to find squares in
-// each image
-
 #include "opencv2/core/core.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/highgui/highgui.hpp"
 
 #include <iostream>
-#include <math.h>
-#include <string.h>
+#include <cmath>
+#include <cstring>
+#include <string>
+#include <sstream>
+#include <ctime>
+
+#include "Rectangle.hpp"
 
 using namespace cv;
 using namespace std;
-
-void help()
-{
-	cout <<
-	"\nA program using pyramid scaling, Canny, contours, contour simpification and\n"
-	"memory storage (it's got it all folks) to find\n"
-	"squares in a list of images pic1-6.png\n"
-	"Returns sequence of squares detected on the image.\n"
-	"the sequence is stored in the specified memory storage\n"
-	"Call:\n"
-	"./squares\n"
-    "Using OpenCV version %s\n" << CV_VERSION << "\n" << endl;
-}
-
 
 int thresh = 50, N = 11;
 const char* wndname = "Square Detection Demo";
@@ -56,6 +43,7 @@ void findSquares( const Mat& image, vector<vector<Point> >& squares )
     vector<vector<Point> > contours;
     
     // find squares in every color plane of the image
+    // original: for( int c = 0; c < 3; c++ )
     for( int c = 0; c < 1; c++ )
     {
         int ch[] = {c, 0};
@@ -122,6 +110,12 @@ void findSquares( const Mat& image, vector<vector<Point> >& squares )
             }
         }
     }
+    // my addition
+    for (unsigned i=0; i<squares.size(); ++i) {
+      for (unsigned j=0; j<squares.at(i).size(); ++j)
+	cout <<squares.at(i).at(j) <<endl;
+      cout <<endl;
+    }
 }
 
 
@@ -139,31 +133,58 @@ void drawSquares( Mat& image, const vector<vector<Point> >& squares )
 }
 
 
-int main(int /*argc*/, char** /*argv*/)
+int main(int argc, char* argv[])
 {
-  static const char* names[] = { "../experimental/experiment", 0 };
-    help();
-    namedWindow( wndname, 1 );
+    namedWindow( wndname, 0 );
     vector<vector<Point> > squares;
-    
-    for( int i = 0; names[i] != 0; i++ )
-    {
-        Mat image = imread(names[i], 1);
-        if( image.empty() )
-        {
-            cout << "Couldn't load " << names[i] << endl;
-            continue;
-        }
-        
-        cvtColor(image, image, CV_RGB2GRAY); // Convert Image to Grayscale
-        cvtColor(image, image, CV_GRAY2RGB);
-        threshold(image, image, 200, 255, CV_THRESH_BINARY);
-        findSquares(image, squares);
-        drawSquares(image, squares);
+    VideoCapture cap;
+    bool isFile=false;
 
-        int c = waitKey();
-        if( (char)c == 27 )
-            break;
+    // Check Argument Type
+    cout <<"argv[1]=" <<argv[1] <<endl;
+    if (string(argv[1])=="-f")
+	isFile=true;
+      
+    if (!isFile) {
+      // Get Video Capture Device
+      cap.open(atoi(argv[2]));
+      if (!cap.isOpened()) {
+	cerr <<"Unable to open capture device " <<argv[2] <<"." <<endl;
+	return -1;
+      }
+    }
+    
+    while (true)
+    {
+      Mat original;
+      Mat output;
+      Mat image;
+      if (isFile)
+	original=imread(argv[2]); // Load Image from File
+      else
+	cap >>original; // Load Image from Video Capture Device
+
+      original.copyTo(image);
+      original.copyTo(output);
+      cvtColor(image, image, CV_RGB2GRAY);
+      cvtColor(image, image, CV_GRAY2RGB);
+      threshold(image, image, 200, 255, CV_THRESH_BINARY);
+      findSquares(image, squares);
+      drawSquares(original, squares);
+      int keycode=waitKey(10);
+      if (keycode==120)
+      {
+	stringstream filename;
+	filename <<time(NULL) <<".jpg";
+	imwrite(filename.str().c_str(), output);
+      }
+      else if (keycode == 27)
+	break;
+      if (isFile)
+      {
+	waitKey();
+	break;
+      }
     }
 
     return 0;
