@@ -242,8 +242,11 @@ int main(int argc, char* argv[])
       Mat image;
       if (isFile)
 	original=imread(argv[2]); // Load Image from File
-      else
+      else {
 	cap >>original; // Load Image from Video Capture Device
+	cap.set(CV_CAP_PROP_FRAME_HEIGHT, 1920);
+	cap.set(CV_CAP_PROP_FRAME_WIDTH, 1080);
+      }
 
       // Set Variables
       cameraXRes=original.cols;
