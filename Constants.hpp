@@ -7,6 +7,8 @@ const float mathPi=3.1415927;
 // Camera
 const int cameraFocalLength=655;
 const float cameraViewingAngle=1.1414453308043;
+int cameraXRes;
+int cameraYRes;
 
 // Rectangle
 const float rectBase=596.9;

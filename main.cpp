@@ -34,7 +34,7 @@ double angle( Point pt1, Point pt2, Point pt0 )
 
 // returns sequence of squares detected on the image.
 // the sequence is stored in the specified memory storage
-void findSquares(const Mat& image, vector<vector<Point> >& squares, int &distance, float &azimuth)
+bool findSquares(const Mat& image, vector< vector<Point> > &squaresOriginal, vector< vector<Point> >& squares, int &distance, float &azimuth)
 {
     squares.clear();
     
@@ -148,25 +148,33 @@ void findSquares(const Mat& image, vector<vector<Point> >& squares, int &distanc
     vector< vector<Point> > squaresTmp;
     for (unsigned i=0; i < rectIndicies.size(); ++i)
       squaresTmp.push_back(squares.at(i));
+    vector<Rectangle> rectListRevised;
+    for (unsigned i=0; i < rectIndicies.size(); ++i)
+      rectListRevised.push_back(rectList.at(rectIndicies.at(i)));
+    squaresOriginal=squares;
     squares.clear();
 
     // Get Correct Rectangle
     vector<int> rectLengthSquareds;
-    int rectIndex;
-    for (unsigned i=0; i < rectList.size(); ++i)
-      rectLengthSquareds.push_back(rectList.at(i).lengthSquaredTop);
+    int rectIndex=-1;
+    for (unsigned i=0; i < rectListRevised.size(); ++i)
+      rectLengthSquareds.push_back(rectListRevised.at(i).lengthSquaredTop);
     sort(rectLengthSquareds.begin(), rectLengthSquareds.end());
-    for (unsigned i=0; i < rectList.size(); ++i) {
-      if (rectLengthSquareds.back() == rectList.at(i).lengthSquaredTop)
+    for (unsigned i=0; i < rectListRevised.size(); ++i) {
+      if (rectLengthSquareds.back() == rectListRevised.at(i).lengthSquaredTop)
 	rectIndex=i;
     }
+
+    if (rectIndex < 0) return false;
+    if (squaresTmp.size() <= 0) return false;
+
     squares.push_back(squaresTmp.at(rectIndex));
 
     // Get Distance
-    int distanceTop=(rectBase*cameraFocalLength) / sqrt(rectList.at(rectIndex).lengthSquaredTop);
-    int distanceBottom=(rectBase*cameraFocalLength) / sqrt(rectList.at(rectIndex).lengthSquaredBottom);
-    int distanceLeft=(rectHeight*cameraFocalLength) / sqrt(rectList.at(rectIndex).lengthSquaredLeft);
-    int distanceRight=(rectHeight*cameraFocalLength) / sqrt(rectList.at(rectIndex).lengthSquaredRight);
+    int distanceTop=(rectBase*cameraFocalLength) / sqrt(rectListRevised.at(rectIndex).lengthSquaredTop);
+    int distanceBottom=(rectBase*cameraFocalLength) / sqrt(rectListRevised.at(rectIndex).lengthSquaredBottom);
+    int distanceLeft=(rectHeight*cameraFocalLength) / sqrt(rectListRevised.at(rectIndex).lengthSquaredLeft);
+    int distanceRight=(rectHeight*cameraFocalLength) / sqrt(rectListRevised.at(rectIndex).lengthSquaredRight);
     int distanceBase=(distanceTop + distanceBottom) / 2;
     int distanceHeight=(distanceLeft + distanceRight) / 2;
     if (distanceBase > distanceHeight)
@@ -174,20 +182,30 @@ void findSquares(const Mat& image, vector<vector<Point> >& squares, int &distanc
     else
       distance=distanceBase;
 
+    cout <<"Distance Height: " <<distanceHeight <<endl;
+    cout <<"Distance Base: " <<distanceBase <<endl;
+
     // Get Azimuth
-    azimuth=(rectList.at(rectIndex).center.x - 960.0) / cameraFocalLength;
+    azimuth=((float)rectListRevised.at(rectIndex).center.x - ((float)cameraXRes / 2.0)) / (float)cameraFocalLength;
+
+    return true;
 }
 
 
 // the function draws all the squares in the image
-void drawSquares( Mat& image, const vector< vector<Point> >& squares )
+void drawSquares( Mat& image, const vector< vector<Point> > &squaresOriginal, const vector< vector<Point> >& squares )
 {
-    for( size_t i = 0; i < squares.size(); i++ )
-    {
-        const Point* p = &squares[i][0];
-        int n = (int)squares[i].size();
-        polylines(image, &p, &n, 1, true, Scalar(0,255,0), 3, CV_AA);
-    }
+  for( size_t i = 0; i < squaresOriginal.size(); i++ ) {
+      const Point* p = &squaresOriginal[i][0];
+      int n = (int)squaresOriginal[i].size();
+      polylines(image, &p, &n, 1, true, Scalar(0,255,0), 3, CV_AA);
+  }
+
+  for (size_t i=0; i < squares.size(); ++i) {
+    const Point* p=&squares.at(i).at(0);
+    int n=(int)squares.at(i).size();
+    polylines(image, &p, &n, 1, true, Scalar(255, 0, 0), 3, CV_AA);
+  }
 
     imshow(wndname, image);
 }
@@ -195,7 +213,6 @@ void drawSquares( Mat& image, const vector< vector<Point> >& squares )
 int main(int argc, char* argv[])
 {
     namedWindow(wndname, 0);
-    vector<vector<Point> > squares;
     VideoCapture cap;
     bool isFile=false;
 
@@ -214,6 +231,9 @@ int main(int argc, char* argv[])
     
     while (true)
     {
+      vector< vector<Point> > squaresOriginal;
+      vector< vector<Point> > squares;
+      bool aquired=false;
       int distanceMM;
       float azimuthRadians;
       float azimuthDegrees;
@@ -225,34 +245,44 @@ int main(int argc, char* argv[])
       else
 	cap >>original; // Load Image from Video Capture Device
 
+      // Set Variables
+      cameraXRes=original.cols;
+      cameraYRes=original.rows;
+
       // Get Distance and Azimuth
       original.copyTo(image);
       original.copyTo(output);
       cvtColor(image, image, CV_RGB2GRAY);
       cvtColor(image, image, CV_GRAY2RGB);
       threshold(image, image, 200, 255, CV_THRESH_BINARY);
-      findSquares(image, squares, distanceMM, azimuthRadians);
-
-      // Convert Data
-      azimuthDegrees=(azimuthRadians * 180.0) / mathPi;
-
-      // Print Data
-      cout <<"Distance: " <<distanceMM <<"mm" <<endl;
-      cout <<"Azimuth: " <<azimuthDegrees <<" degrees, " <<azimuthRadians <<" radians" <<endl;
+      if (!findSquares(image, squaresOriginal, squares, distanceMM, azimuthRadians))
+	cout <<"No rectangle" <<endl;
+      else {
+	aquired=true;
+	// Convert Data
+	azimuthDegrees=(azimuthRadians * 180.0) / mathPi;
+	
+	// Print Data
+	cout <<"Distance: " <<distanceMM <<"mm" <<endl;
+	cout <<"Azimuth: " <<azimuthDegrees <<" degrees, " <<azimuthRadians <<" radians" <<endl;
+      }
 
       // Write Data to Original Image
       int dataPointX=0;
       int dataPointY=original.rows-5;
       Point dataCoordinates(dataPointX, dataPointY);
       int fontFace=FONT_HERSHEY_COMPLEX;
-      double fontScale=(float)original.rows / 400.0;
+      double fontScale=(float)cameraXRes / 400.0;
       Scalar fontColor(0.0, 255.0, 0.0, 0.0);
       int fontThickness=2;
       stringstream data;
-      data <<distanceMM <<"mm @ " <<azimuthDegrees <<" degrees";
+      if (aquired)
+	data <<distanceMM <<"mm @ " <<azimuthDegrees <<" degrees";
+      else
+	data <<"No rectangle";
       putText(original, data.str(), dataCoordinates, fontFace, fontScale, fontColor, fontThickness);
 
-      drawSquares(original, squares); // Draw Squares and Display Image
+      drawSquares(original, squaresOriginal, squares); // Draw Squares and Display Image
 
       int keycode=waitKey(10);
       if (keycode==120)
