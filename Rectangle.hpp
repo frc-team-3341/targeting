@@ -1,5 +1,5 @@
-#ifndef rectangle_hpp
-#define rectangle_hpp
+#ifndef Rectangle_hpp
+#define Rectangle_hpp
 
 class Rectangle {
 public:
@@ -25,4 +25,4 @@ private:
   // Data
 };
 
-#endif /* rectangle_hpp */
+#endif /* Rectangle_hpp */

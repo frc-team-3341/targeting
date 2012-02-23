@@ -12,6 +12,7 @@
 #include <set>
 
 #include "Rectangle.hpp"
+#include "Constants.hpp"
 
 using namespace cv;
 using namespace std;
@@ -33,7 +34,7 @@ double angle( Point pt1, Point pt2, Point pt0 )
 
 // returns sequence of squares detected on the image.
 // the sequence is stored in the specified memory storage
-void findSquares(const Mat& image, vector<vector<Point> >& squares, float &distance)
+void findSquares(const Mat& image, vector<vector<Point> >& squares, int &distance, float &azimuth)
 {
     squares.clear();
     
@@ -148,7 +149,33 @@ void findSquares(const Mat& image, vector<vector<Point> >& squares, float &dista
     for (unsigned i=0; i < rectIndicies.size(); ++i)
       squaresTmp.push_back(squares.at(i));
     squares.clear();
-    squares=squaresTmp;
+
+    // Get Correct Rectangle
+    vector<int> rectLengthSquareds;
+    int rectIndex;
+    for (unsigned i=0; i < rectList.size(); ++i)
+      rectLengthSquareds.push_back(rectList.at(i).lengthSquaredTop);
+    sort(rectLengthSquareds.begin(), rectLengthSquareds.end());
+    for (unsigned i=0; i < rectList.size(); ++i) {
+      if (rectLengthSquareds.back() == rectList.at(i).lengthSquaredTop)
+	rectIndex=i;
+    }
+    squares.push_back(squaresTmp.at(rectIndex));
+
+    // Get Distance
+    int distanceTop=(rectBase*cameraFocalLength) / sqrt(rectList.at(rectIndex).lengthSquaredTop);
+    int distanceBottom=(rectBase*cameraFocalLength) / sqrt(rectList.at(rectIndex).lengthSquaredBottom);
+    int distanceLeft=(rectHeight*cameraFocalLength) / sqrt(rectList.at(rectIndex).lengthSquaredLeft);
+    int distanceRight=(rectHeight*cameraFocalLength) / sqrt(rectList.at(rectIndex).lengthSquaredRight);
+    int distanceBase=(distanceTop + distanceBottom) / 2;
+    int distanceHeight=(distanceLeft + distanceRight) / 2;
+    if (distanceBase > distanceHeight)
+      distance=distanceHeight;
+    else
+      distance=distanceBase;
+
+    // Get Azimuth
+    azimuth=(rectList.at(rectIndex).center.x - 960) / cameraFocalLength;
 }
 
 
@@ -187,8 +214,10 @@ int main(int argc, char* argv[])
     
     while (true)
     {
-      int distance;
-      int azimuth;
+      int distanceMM;
+      float distanceMeters;
+      float azimuthRadians;
+      float azimuthDegrees;
       Mat original;
       Mat output;
       Mat image;
@@ -197,14 +226,20 @@ int main(int argc, char* argv[])
       else
 	cap >>original; // Load Image from Video Capture Device
 
+      // Get Distance and Azimuth
       original.copyTo(image);
       original.copyTo(output);
       cvtColor(image, image, CV_RGB2GRAY);
       cvtColor(image, image, CV_GRAY2RGB);
       threshold(image, image, 200, 255, CV_THRESH_BINARY);
-      findSquares(image, squares, distance);
-      
-      drawSquares(original, squares);
+      findSquares(image, squares, distanceMM, azimuthRadians);
+
+      // Print Data
+      cout <<"Distance: " <<distanceMM <<endl;
+      cout <<"Azimuth: " <<azimuthRadians <<endl;
+
+      drawSquares(original, squares); // Draw Squares and Display Image
+
       int keycode=waitKey(10);
       if (keycode==120)
       {

@@ -10,7 +10,7 @@ ALL_OBJECTS=$(OBJECTS) rectangledetector
 rectangledetector: $(OBJECTS)
 	g++ $(OBJECTS) -Wall -I$(CPP_INCLUDE) `pkg-config --cflags --libs opencv` -g -o rectangledetector.bin
 # strip rectangledetector # Enable to remove debugging symbols, making the binary smaller
-main.o: main.cpp
+main.o: main.cpp Constants.hpp
 	g++ -c main.cpp -Wall -I$(CPP_INCLUDE) `pkg-config --cflags opencv` -g -o main.o
 Rectangle.o: Rectangle.cpp Rectangle.hpp
 	g++ -c Rectangle.cpp -Wall -I$(CPP_INCLUDE) `pkg-config --cflags opencv` -g -o Rectangle.o
