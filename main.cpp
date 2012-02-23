@@ -175,7 +175,7 @@ void findSquares(const Mat& image, vector<vector<Point> >& squares, int &distanc
       distance=distanceBase;
 
     // Get Azimuth
-    azimuth=(rectList.at(rectIndex).center.x - 960) / cameraFocalLength;
+    azimuth=(rectList.at(rectIndex).center.x - 960.0) / cameraFocalLength;
 }
 
 
@@ -215,7 +215,6 @@ int main(int argc, char* argv[])
     while (true)
     {
       int distanceMM;
-      float distanceMeters;
       float azimuthRadians;
       float azimuthDegrees;
       Mat original;
@@ -234,9 +233,24 @@ int main(int argc, char* argv[])
       threshold(image, image, 200, 255, CV_THRESH_BINARY);
       findSquares(image, squares, distanceMM, azimuthRadians);
 
+      // Convert Data
+      azimuthDegrees=(azimuthRadians * 180.0) / mathPi;
+
       // Print Data
-      cout <<"Distance: " <<distanceMM <<endl;
-      cout <<"Azimuth: " <<azimuthRadians <<endl;
+      cout <<"Distance: " <<distanceMM <<"mm" <<endl;
+      cout <<"Azimuth: " <<azimuthDegrees <<" degrees, " <<azimuthRadians <<" radians" <<endl;
+
+      // Write Data to Original Image
+      int dataPointX=0;
+      int dataPointY=original.rows-5;
+      Point dataCoordinates(dataPointX, dataPointY);
+      int fontFace=FONT_HERSHEY_COMPLEX;
+      double fontScale=(float)original.rows / 400.0;
+      Scalar fontColor(0.0, 255.0, 0.0, 0.0);
+      int fontThickness=2;
+      stringstream data;
+      data <<distanceMM <<"mm @ " <<azimuthDegrees <<" degrees";
+      putText(original, data.str(), dataCoordinates, fontFace, fontScale, fontColor, fontThickness);
 
       drawSquares(original, squares); // Draw Squares and Display Image
 
