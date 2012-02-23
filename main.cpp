@@ -1,193 +1,225 @@
-#include <opencv2/core/core.hpp>
-#include <opencv2/imgproc/imgproc.hpp>
-#include <opencv2/highgui/highgui.hpp>
+#include "opencv2/core/core.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
+#include "opencv2/highgui/highgui.hpp"
 
-#include "HSVImage.hpp"
-
-#include <cstdlib>
 #include <iostream>
-#include <iomanip>
-#include <vector>
+#include <cmath>
+#include <cstring>
 #include <string>
 #include <sstream>
-#include <cctype>
 #include <ctime>
+#include <vector>
+#include <set>
+
+#include "Rectangle.hpp"
 
 using namespace cv;
 using namespace std;
 
-void printUsage() {
-  cout <<"Usage: ./rectangledetector.bin [input device number/filename]" <<endl;
+int thresh = 50, N = 11;
+const char* wndname = "Rectangle Detector";
+
+// helper function:
+// finds a cosine of angle between vectors
+// from pt0->pt1 and from pt0->pt2
+double angle( Point pt1, Point pt2, Point pt0 )
+{
+    double dx1 = pt1.x - pt0.x;
+    double dy1 = pt1.y - pt0.y;
+    double dx2 = pt2.x - pt0.x;
+    double dy2 = pt2.y - pt0.y;
+    return (dx1*dx2 + dy1*dy2)/sqrt((dx1*dx1 + dy1*dy1)*(dx2*dx2 + dy2*dy2) + 1e-10);
 }
 
-int main(int argc, char* argv[]) {
-  // Check Arguments
-  if (argc!=2) {
-    printUsage();
-    return -1;
-  }
-
-  // Variable Declarations
-  int hueLowerThresh;
-  int hueUpperThresh;
-  int valueLowerThresh;
-  int valueUpperThresh;
-  VideoCapture cap;
-  bool isFile=false;
-
-  // Get Threshold Values
-  cout <<"Hue Lower Threshold: ";
-  cin >>hueLowerThresh;
-  cout <<"Hue Upper Threshold: ";
-  cin >>hueUpperThresh;
-  cout <<"Value Lower Threshold: ";
-  cin >>valueLowerThresh;
-  cout <<"Value Upper Threshold: ";
-  cin >>valueUpperThresh;
-
-  // Check Argument Type
-  if (isalpha(argv[1][0]))
-    isFile=true;
-      
-  if (!isFile) {
-    // Get Video Capture Device
-    cap.open(atoi(argv[1]));
-    if (!cap.isOpened()) {
-      cerr <<"Unable to open capture device " <<argv[1] <<"." <<endl;
-      return -1;
-    }
-  }
-  
-  // Create GUI
-  namedWindow("Original", 0);
-  namedWindow("Hue Thresh", 0);
-  namedWindow("Lower Hue", 0);
-  namedWindow("Upper Hue", 0);
-  namedWindow("Saturation Thresh", 0);
-  namedWindow("Value Thresh", 0);
-  namedWindow("Hue+Value Thresh", 0);
-
-  double secondsPerFrame=0.03;
-  double IIRFilterConstant=0.02;
-
-  for (int frameCount=1;; ++frameCount) {
-    time_t startTime=time(NULL);
-    Mat img;
-    if (isFile)
-      img=imread(argv[1]); // Load Image from File
-    else
-      cap >>img; // Load Image from Video Capture Device
-
-    // Image Containers
-    HSVImage img_hsv(img);
-    HSVImage img_hsv_thresh(img_hsv);
-    HSVImage img_hsv_canny(img_hsv);
-    HSVImage img_hsv_corners(img_hsv);
-    vector< vector<Point2f> > img_planes_cornerPoints;
-    vector< vector<Point> > img_contours;
-    Mat img_saturationUpper;
-    Mat img_saturationLower;
-    Mat img_hueUpper;
-    Mat img_hueLower;
-    Mat img_valueUpper;
-    Mat img_valueLower;
-    Mat img_thresh_hueVal;
-    Mat img_valContours;
-
-    // Thresholding
-    threshold(img_hsv.hue, img_hueLower, hueLowerThresh, 255, CV_THRESH_BINARY);
-    threshold(img_hsv.hue, img_hueUpper, hueUpperThresh, 255, CV_THRESH_BINARY_INV);
-    img_hsv_thresh.hue=img_hueLower & img_hueUpper;
-
-    threshold(img_hsv.saturation, img_saturationLower, hueLowerThresh, 255, CV_THRESH_BINARY);
-    threshold(img_hsv.saturation, img_saturationUpper, hueUpperThresh, 255, CV_THRESH_BINARY_INV);
-    img_hsv_thresh.saturation=img_saturationLower & img_saturationUpper;
-
-    threshold(img_hsv.value, img_valueLower, valueLowerThresh, 255, CV_THRESH_BINARY);
-    threshold(img_hsv.value, img_valueUpper, valueUpperThresh, 255, CV_THRESH_BINARY_INV);
-    img_hsv_thresh.value=img_valueLower & img_valueUpper;
-
-    img_thresh_hueVal=img_hsv_thresh.hue & img_hsv_thresh.value;
-
-    // Contours
-    Scalar contourColor(255.0, 0.0, 255.0, 0.0);
-    findContours(img_hsv_thresh.value, img_contours, CV_RETR_EXTERNAL, CV_CHAIN_APPROX_NONE);
-    cout <<"found" <<endl;
-    drawContours(img_hsv_thresh.value, img_contours, -1, contourColor, CV_FILLED);
-    cout <<"drew" <<endl;
-    for (unsigned i=0; i<img_contours.size(); ++i) {
-      for (unsigned j=0; j<img_contours.at(i).size(); ++j)
-	cout <<img_contours.at(i).at(j) <<endl;
-    }
-
-    /* OLD CODE
-    // Allocate Memory to Vectors
-    img_planes_cornerPoints.resize(img_planes.size());
-
-    // Run Thresholding
-    int thresholdType=CV_THRESH_BINARY;
-    for (unsigned i=0; i < img_planes.size(); ++i)
-      threshold(img_planes.at(i), img_planes_thresh.at(i), lowerthresh, upperthresh, thresholdType);
+// returns sequence of squares detected on the image.
+// the sequence is stored in the specified memory storage
+void findSquares(const Mat& image, vector<vector<Point> >& squares, float &distance)
+{
+    squares.clear();
     
-    // Run Canny
-    int apertureSize=7;
-    for (unsigned i=0; i < img_planes_thresh.size(); ++i)
-      Canny(img_planes_thresh.at(i), img_planes_canny.at(i), lowerthresh, upperthresh, apertureSize);
+    Mat pyr, timg, gray0(image.size(), CV_8U), gray;
+    
+    // down-scale and upscale the image to filter out the noise
+    pyrDown(image, pyr, Size(image.cols/2, image.rows/2));
+    pyrUp(pyr, timg, image.size());
+    vector<vector<Point> > contours;
+    
+    // find squares in every color plane of the image
+    // original: for( int c = 0; c < 3; c++ )
+    for( int c = 0; c < 1; c++ )
+    {
+        int ch[] = {c, 0};
+        mixChannels(&timg, 1, &gray0, 1, ch, 1);
+        
+        // try several threshold levels
+        for( int l = 0; l < N; l++ )
+        {
+            // hack: use Canny instead of zero threshold level.
+            // Canny helps to catch squares with gradient shading
+            if( l == 0 )
+	      {
+	      // apply Canny. Take the upper threshold from slider
+	      // and set the lower to 0 (which forces edges merging)
+	      Canny(gray0, gray, 0, thresh, 5);
+                // dilate canny output to remove potential
+                // holes between edge segments
+                dilate(gray, gray, Mat(), Point(-1,-1));
+            }
+            else
+            {
+                // apply threshold if l!=0:
+                //     tgray(x,y) = gray(x,y) < (l+1)*255/N ? 255 : 0
+                gray = gray0 >= (l+1)*255/N;
+            }
 
-    // Run Corner Detection
-    // Reference: http://www.moosechips.com/2008/08/opencv-corner-detection-using-cvgoodfeaturestotrack/
-    int maxCorners=30;
-    double qualityLevel=0.1;
-    int minDistance=100;
-    for (unsigned i=0; i < img_planes_thresh.size(); ++i)
-      goodFeaturesToTrack(img_planes_thresh.at(i), img_planes_cornerPoints.at(i), maxCorners, qualityLevel, minDistance);
+            // find contours and store them all as a list
+            findContours(gray, contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE);
 
-    // Create Corner Detection Output Images
-    for (unsigned i=0; i < img_planes_thresh.size(); ++i)
-      img_planes_corners.push_back(img_planes_thresh.at(i).clone());
+            vector<Point> approx;
+            
+            // test each contour
+            for( size_t i = 0; i < contours.size(); i++ )
+            {
+                // approximate contour with accuracy proportional
+                // to the contour perimeter
+                approxPolyDP(Mat(contours[i]), approx, arcLength(Mat(contours[i]), true)*0.02, true);
+                
+                // square contours should have 4 vertices after approximation
+                // relatively large area (to filter out noisy contours)
+                // and be convex.
+                // Note: absolute value of an area is used because
+                // area may be positive or negative - in accordance with the
+                // contour orientation
+                if( approx.size() == 4 &&
+                    fabs(contourArea(Mat(approx))) > 1000 &&
+                    isContourConvex(Mat(approx)) )
+                {
+                    double maxCosine = 0;
 
-    // Write Corners to Output Image
-    for (unsigned i=0; i < img_planes_cornerPoints.size(); ++i) {
-      for (unsigned j=0; j < img_planes_cornerPoints.at(i).size(); ++j) {
-	int radius=img.rows/25;
-	int pointX=img_planes_cornerPoints.at(i).at(j).x;
-	int pointY=img_planes_cornerPoints.at(i).at(j).y;
-	Point cornerCoordinates(pointX, pointY);
-	Scalar circleColor(255.0, 255.0, 255.0, 0.0);
-	int circleThickness=-1; // Filled Circle
-	circle(img_planes_corners.at(i), cornerCoordinates, radius, circleColor, circleThickness);
+                    for( int j = 2; j < 5; j++ )
+                    {
+                        // find the maximum cosine of the angle between joint edges
+                        double cosine = fabs(angle(approx[j%4], approx[j-2], approx[j-1]));
+                        maxCosine = MAX(maxCosine, cosine);
+                    }
+
+                    // if cosines of all angles are small
+                    // (all angles are ~90 degree) then write quandrange
+                    // vertices to resultant sequence
+                    if( maxCosine < 0.3 )
+                        squares.push_back(approx);
+                }
+            }
+        }
+    }
+    /* my addition
+    for (unsigned i=0; i<squares.size(); ++i) {
+      for (unsigned j=0; j<squares.at(i).size(); ++j)
+	cout <<squares.at(i).at(j) <<endl;
+      cout <<endl;
+      }*/
+
+    vector<Rectangle> rectList;
+    for (unsigned i=0; i < squares.size(); ++i) {
+      Rectangle temprect(squares.at(i));
+      rectList.push_back(temprect);
+    }
+    for (unsigned i=0; i < rectList.size(); ++i) {
+      for (unsigned j=0; j < rectList.size(); ++j) {
+	if (i==j) continue;
+	if (rectList.at(i).containsPoint(rectList.at(j).center) &&
+	    rectList.at(j).lengthSquaredLeft < rectList.at(i).lengthSquaredLeft &&
+	    rectList.at(j).lengthSquaredRight < rectList.at(i).lengthSquaredRight &&
+	    rectList.at(j).lengthSquaredTop < rectList.at(i).lengthSquaredTop &&
+	    rectList.at(j).lengthSquaredBottom < rectList.at(i).lengthSquaredBottom)
+	  rectList.at(i).containedRectangles.push_back(j);
       }
     }
-    */
 
-    // Write FPS to Original Image
-    int fpsPointX=0;
-    int fpsPointY=img.rows-5;
-    Point fpsCoordinates(fpsPointX, fpsPointY);
-    int fontFace=FONT_HERSHEY_COMPLEX;
-    double fontScale=img.rows/320.0;
-    Scalar fpsColor(255.0, 255.0, 255.0, 0.0);
-    secondsPerFrame=IIRFilterConstant*(time(NULL)-startTime)+(1-IIRFilterConstant)*secondsPerFrame;
-    stringstream fps;
-    fps <<setprecision(2) <<"FPS: " <<fixed <<1/secondsPerFrame;
-    putText(img_hsv.rgb, fps.str(), fpsCoordinates, fontFace, fontScale, fpsColor);
-
-    // Display Images
-    imshow("Original", img_hsv.rgb);
-    imshow("Hue Thresh", img_hsv_thresh.hue);
-    imshow("Lower Hue", img_hueLower);
-    imshow("Upper Hue", img_hueUpper);
-    imshow("Saturation Thresh", img_hsv_thresh.saturation);
-    imshow("Value Thresh", img_hsv_thresh.value);
-    imshow("Hue+Value Thresh", img_thresh_hueVal);
- 
-    if ((waitKey(10) & 255) == 27)
-      break;
-    if (isFile) {
-      waitKey();
-      break;
+    vector<int> rectIndiciesTmp;
+    for (unsigned i=0; i < rectList.size(); ++i) {
+      for (unsigned j=0; j < rectList.at(i).containedRectangles.size(); ++j)
+	rectIndiciesTmp.push_back(rectList.at(i).containedRectangles.at(j));
     }
-  }
-  
-  return EXIT_SUCCESS;
+    set<int> rectIndiciesSet(rectIndiciesTmp.begin(), rectIndiciesTmp.end());
+    vector<int> rectIndicies(rectIndiciesSet.begin(), rectIndiciesSet.end());
+
+    vector< vector<Point> > squaresTmp;
+    for (unsigned i=0; i < rectIndicies.size(); ++i)
+      squaresTmp.push_back(squares.at(i));
+    squares.clear();
+    squares=squaresTmp;
+}
+
+
+// the function draws all the squares in the image
+void drawSquares( Mat& image, const vector< vector<Point> >& squares )
+{
+    for( size_t i = 0; i < squares.size(); i++ )
+    {
+        const Point* p = &squares[i][0];
+        int n = (int)squares[i].size();
+        polylines(image, &p, &n, 1, true, Scalar(0,255,0), 3, CV_AA);
+    }
+
+    imshow(wndname, image);
+}
+
+int main(int argc, char* argv[])
+{
+    namedWindow(wndname, 0);
+    vector<vector<Point> > squares;
+    VideoCapture cap;
+    bool isFile=false;
+
+    // Check Argument Type
+    if (string(argv[1])=="-f")
+	isFile=true;
+      
+    if (!isFile) {
+      // Get Video Capture Device
+      cap.open(atoi(argv[2]));
+      if (!cap.isOpened()) {
+	cerr <<"Unable to open capture device " <<argv[2] <<"." <<endl;
+	return -1;
+      }
+    }
+    
+    while (true)
+    {
+      int distance;
+      int azimuth;
+      Mat original;
+      Mat output;
+      Mat image;
+      if (isFile)
+	original=imread(argv[2]); // Load Image from File
+      else
+	cap >>original; // Load Image from Video Capture Device
+
+      original.copyTo(image);
+      original.copyTo(output);
+      cvtColor(image, image, CV_RGB2GRAY);
+      cvtColor(image, image, CV_GRAY2RGB);
+      threshold(image, image, 200, 255, CV_THRESH_BINARY);
+      findSquares(image, squares, distance);
+      
+      drawSquares(original, squares);
+      int keycode=waitKey(10);
+      if (keycode==120)
+      {
+	stringstream filename;
+	filename <<time(NULL) <<".jpg";
+	imwrite(filename.str().c_str(), output);
+      }
+      else if (keycode == 27)
+	break;
+      if (isFile)
+      {
+	waitKey();
+	break;
+      }
+    }
+
+    return 0;
 }

@@ -4,7 +4,7 @@
 class Rectangle {
 public:
   // Methods
-  Rectangle(std::vector<cv::Point> inputRect); // Populate Rectangle
+  Rectangle(std::vector<cv::Point>); // Populate Rectangle
   bool containsPoint(cv::Point); // Checks if Point is Inside Rectangle
 
   // Data
