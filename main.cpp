@@ -215,10 +215,13 @@ int main(int argc, char* argv[])
     namedWindow(wndname, 0);
     VideoCapture cap;
     bool isFile=false;
+    bool isHD=false;
 
-    // Check Argument Type
+    // Check Arguments
     if (string(argv[1])=="-f")
-	isFile=true;
+      isFile=true;
+    else if (string(argv[1])=="-hd")
+      isHD=true;
       
     if (!isFile) {
       // Get Video Capture Device
@@ -226,6 +229,15 @@ int main(int argc, char* argv[])
       if (!cap.isOpened()) {
 	cerr <<"Unable to open capture device " <<argv[2] <<"." <<endl;
 	return -1;
+      }
+      if (isHD) {
+	// Set Capture Resolution
+	cap.set(CV_CAP_PROP_FRAME_HEIGHT, 1920);
+	cap.set(CV_CAP_PROP_FRAME_WIDTH, 1080);
+
+	// Change Camera Data
+	cameraFocalLength=cameraHDFocalLength;
+	cameraViewingAngle=cameraHDViewingAngle;
       }
     }
     
@@ -242,11 +254,8 @@ int main(int argc, char* argv[])
       Mat image;
       if (isFile)
 	original=imread(argv[2]); // Load Image from File
-      else {
+      else
 	cap >>original; // Load Image from Video Capture Device
-	cap.set(CV_CAP_PROP_FRAME_HEIGHT, 1920);
-	cap.set(CV_CAP_PROP_FRAME_WIDTH, 1080);
-      }
 
       // Set Variables
       cameraXRes=original.cols;
