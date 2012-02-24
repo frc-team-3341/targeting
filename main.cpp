@@ -216,6 +216,7 @@ int main(int argc, char* argv[])
     VideoCapture cap;
     bool isFile=false;
     bool isHD=false;
+    bool firstRun=true;
 
     // Check Arguments
     if (string(argv[1])=="-f")
@@ -260,6 +261,8 @@ int main(int argc, char* argv[])
       // Set Variables
       cameraXRes=original.cols;
       cameraYRes=original.rows;
+      if (firstRun)
+	cout <<"Camera Resolution: " <<cameraXRes <<"x" <<cameraYRes <<endl;
 
       // Get Distance and Azimuth
       original.copyTo(image);
@@ -295,6 +298,8 @@ int main(int argc, char* argv[])
       putText(original, data.str(), dataCoordinates, fontFace, fontScale, fontColor, fontThickness);
 
       drawSquares(original, squaresOriginal, squares); // Draw Squares and Display Image
+
+      firstRun=false;
 
       int keycode=waitKey(10);
       if (keycode==120)
