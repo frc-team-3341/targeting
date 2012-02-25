@@ -2,7 +2,7 @@
 all: rectangledetector
 # Variable Declarations
 #CFLAGS=-march=native -O2 -pipe
-CFLAGS=-ggdb
+CFLAGS=-ggdb -pipe
 CXXFLAGS=$(CFLAGS)
 CPP_INCLUDE=/usr/include/c++/4.6.2 # Defines the path for the C++ libraries
 OBJECTS=main.o Constants.o Rectangle.o RectangleDetector.o CommLink.o
@@ -11,7 +11,7 @@ ALL_OBJECTS=$(OBJECTS) rectangledetector
 # End Header
 
 rectangledetector: $(OBJECTS)
-	g++ $(OBJECTS) -Wall -I$(CPP_INCLUDE) `pkg-config --cflags --libs opencv` $(CXXFLAGS) -o rectangledetector.bin
+	g++ $(OBJECTS) -Wall -I$(CPP_INCLUDE) `pkg-config --cflags --libs opencv` $(CXXFLAGS) -o rectangledetector
 # strip rectangledetector # Enable to remove debugging symbols, making the binary smaller
 main.o: main.cpp Constants.hpp
 	g++ -c main.cpp -Wall -I$(CPP_INCLUDE) `pkg-config --cflags opencv` $(CXXFLAGS) -o main.o
