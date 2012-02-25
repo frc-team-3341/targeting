@@ -14,26 +14,13 @@ using namespace std;
 
 // Public Methods
 CommLink::CommLink() {
-  initServer();
+  // Variable Initializations
+  serverInit = 0;
 }
 
-void CommLink::waitForPing() {
-  if (recvMessage().empty()) exit(0);
-}
-
-void CommLink::sendData(int distance, int height, float azimuth, float tilt) {
-  stringstream datatoSend;
-  datatoSend <<distance <<";" <<height <<";" <<azimuth <<";" <<tilt;
-  sendMessage(datatoSend.str());
-}
-
-CommLink::~CommLink() {
-  deInitServer();
-}
-
-// Private Methods
 void CommLink::initServer() {
   // Variable Initializations
+  serverInit = 1;
   memset(&hints, 0, sizeof hints); // Zero Out Structure
   hints.ai_family=AF_UNSPEC; // Use IPv4 or IPv6
   hints.ai_flags=AI_PASSIVE; // Auto-determine IP
@@ -55,6 +42,27 @@ void CommLink::initServer() {
   sendMessage(msg);
 }
 
+void CommLink::waitForPing() {
+  if (recvMessage().empty()) exit(0);
+}
+
+void CommLink::sendData(int distance, int height, float azimuth, float tilt) {
+  stringstream datatoSend;
+  datatoSend <<distance <<";" <<height <<";" <<azimuth <<";" <<tilt;
+  sendMessage(datatoSend.str());
+}
+
+void CommLink::sendData() {
+  string datatoSend="No rectangle";
+  sendMessage(datatoSend);
+}
+
+CommLink::~CommLink() {
+  if (serverInit)
+    deInitServer();
+}
+
+// Private Methods
 void CommLink::deInitServer() {
   close(sockfd);
   close(clientfd);
@@ -76,7 +84,7 @@ string CommLink::recvMessage() {
   if (recv(clientfd, input, length, 0))
     inputStream <<input;
   else
-    inputStream <<"Connection closed.";
+    inputStream <<"";
   delete[] input;
 
   return inputStream.str();

@@ -14,6 +14,8 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <getopt.h>
+#include <unistd.h>
 
 #include "Constants.hpp"
 #include "Rectangle.hpp"
@@ -45,25 +47,62 @@ void drawRectangles(Mat& image, const vector< vector<Point> > &allRectangles, co
 
 int main(int argc, char* argv[])
 {
-  namedWindow(wndname, 0);
-  CommLink commLink;
+  
   Constants constList;
   VideoCapture cap;
-  bool isFile = false;
-  bool isHD = false;
-  bool firstRun = true;
+  stringstream fileName;
+  stringstream deviceName;
+  int isFile = 0;
+  int isDevice = 0;
+  int isHD = 0;
+  int isHeadless = 0;
+  int isNetworking = 1;
+  int firstRun = 1;
 
-  // Check Arguments
-  if (string(argv[1]) == "-f")
-    isFile = true;
-  else if (string(argv[1]) == "-hd")
-    isHD = true;
-      
-  if (!isFile) {
+  while (true) {
+    static struct option long_options[] = {
+      {"high-definition", no_argument, &isHD, 1},
+      {"headless", no_argument, &isHeadless, 1},
+      {"no-networking", no_argument, &isNetworking, 0},
+      {"device", required_argument, 0, 'd'},
+      {"file", required_argument, 0, 'f'},
+      {0, 0, 0, 0}
+    };
+
+    int option_index = 0;
+    int c = getopt_long(argc, argv, "d:f:", long_options, &option_index);
+
+    if (c == -1) // End of Options
+      break;
+
+    switch (c) {
+    case 0:
+      break;
+    case 'd':
+      deviceName <<optarg;
+      isDevice = 1;
+      break;
+    case 'f':
+      fileName <<optarg;
+      isFile = 1;
+    case '?':
+      exit(127);
+      break;
+    default:
+      abort();
+    }
+  }
+
+  if (! isFile && ! isDevice) {
+    cout <<argv[0] <<": missing required options" <<endl;
+    exit(127);
+  }
+  
+  if (isDevice) {
     // Get Video Capture Device
-    cap.open(atoi(argv[2]));
+    cap.open(atoi(deviceName.str().c_str()));
     if (!cap.isOpened()) {
-      cerr <<"Unable to open capture device " <<argv[2] <<"." <<endl;
+      cerr <<"Unable to open capture device " <<deviceName <<"." <<endl;
       return -1;
     }
     if (isHD) {
@@ -76,33 +115,41 @@ int main(int argc, char* argv[])
       constList.cameraViewingAngle = constList.cameraHDViewingAngle;
     }
   }
-    
+
+  CommLink commLink;
+  if (isNetworking)
+    commLink.initServer(); // Initialize Communication Link
+
+  if (! isHeadless)
+    namedWindow(wndname, 0);
+  
   while (true)
     {
       vector< vector<Point> > allRectangles;
       vector< vector<Point> > finalRectangles;
-      bool aquired = false;
+      int aquired = 0;
       int distanceMM;
       float azimuthRadians;
       float azimuthDegrees;
       Mat original;
       Mat output;
 
-      commLink.waitForPing();
+      if (isNetworking)
+	commLink.waitForPing();
 
       if (isFile)
-	original = imread(argv[2]); // Load Image from File
+	original = imread(fileName.str().c_str()); // Load Image from File
       else
 	cap >>original; // Load Image from Video Capture Device
 
-      // Set Variables
-      if (firstRun)
+      // Print Variables
+      if (firstRun && ! isHeadless)
 	cout <<"Camera Resolution: " <<original.cols <<"x" <<original.rows <<endl;
 
       // Get Distance and Azimuth
       RectangleDetector rectDetector(original);
       if (rectDetector.rectangleWasFound()) {
-	aquired = true;
+	aquired = 1;
 	
 	// Retrieve Data
 	distanceMM = rectDetector.getDistance();
@@ -114,15 +161,25 @@ int main(int argc, char* argv[])
 	azimuthDegrees = (azimuthRadians * 180.0) / constList.mathPi;
 	
 	// Print Data
-	cout <<"Distance: " <<distanceMM <<"mm" <<endl;
-	cout <<"Azimuth: " <<azimuthDegrees <<" degrees, " <<azimuthRadians <<" radians" <<endl;
+	if (! isHeadless) {
+	  cout <<"Distance: " <<distanceMM <<"mm" <<endl;
+	  cout <<"Azimuth: " <<azimuthDegrees <<" degrees, " <<azimuthRadians <<" radians" <<endl;
+	}
+	
+	// Send Data
+	if (isNetworking)
+	  commLink.sendData(distanceMM, 0, azimuthRadians, 0.0);
+      }
+      else {
+	// Print Data
+	if (! isHeadless)
+	  cout <<"No rectangle" <<endl;
 
 	// Send Data
-	commLink.sendData(distanceMM, 0, azimuthRadians, 0.0);
+	if (isNetworking)
+	  commLink.sendData();
       }
-      else
-	cout <<"No rectangle" <<endl;
-
+      
       // Write Data to Original Image
       int dataPointX = 0;
       int dataPointY = original.rows-5;
@@ -138,25 +195,26 @@ int main(int argc, char* argv[])
 	data <<"No rectangle";
       putText(original, data.str(), dataCoordinates, fontFace, fontScale, fontColor, fontThickness);
 
-      drawRectangles(original, allRectangles, finalRectangles); // Draw Rectangles and Display Image
+      if (! isHeadless)
+	drawRectangles(original, allRectangles, finalRectangles); // Draw Rectangles and Display Image
 
-      firstRun = false;
+      firstRun = 0;
 
-      int keycode = waitKey(10);
-      if (keycode == 120)
-	{
+      if (! isHeadless) {
+	int keycode = waitKey(10);
+	if (keycode == 120) {
 	  stringstream filename;
 	  filename <<time(NULL) <<".jpg";
 	  imwrite(filename.str().c_str(), output);
 	}
-      else if (keycode == 27)
-	break;
-      if (isFile)
-	{
+	else if (keycode == 27)
+	  break;
+	if (isFile) {
 	  waitKey();
 	  break;
 	}
+      }
     }
-
+  
   return 0;
 }
