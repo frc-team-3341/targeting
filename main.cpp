@@ -10,11 +10,15 @@
 #include <ctime>
 #include <vector>
 #include <set>
-
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <netdb.h>
 
 #include "Constants.hpp"
 #include "Rectangle.hpp"
 #include "RectangleDetector.hpp"
+#include "CommLink.hpp"
 
 using namespace cv;
 using namespace std;
@@ -42,6 +46,7 @@ void drawRectangles(Mat& image, const vector< vector<Point> > &allRectangles, co
 int main(int argc, char* argv[])
 {
   namedWindow(wndname, 0);
+  CommLink commLink;
   Constants constList;
   VideoCapture cap;
   bool isFile = false;
@@ -83,6 +88,8 @@ int main(int argc, char* argv[])
       Mat original;
       Mat output;
 
+      commLink.waitForPing();
+
       if (isFile)
 	original = imread(argv[2]); // Load Image from File
       else
@@ -109,6 +116,9 @@ int main(int argc, char* argv[])
 	// Print Data
 	cout <<"Distance: " <<distanceMM <<"mm" <<endl;
 	cout <<"Azimuth: " <<azimuthDegrees <<" degrees, " <<azimuthRadians <<" radians" <<endl;
+
+	// Send Data
+	commLink.sendData(distanceMM, 0, azimuthRadians, 0.0);
       }
       else
 	cout <<"No rectangle" <<endl;

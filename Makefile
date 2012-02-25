@@ -5,7 +5,7 @@ all: rectangledetector
 CFLAGS=-ggdb
 CXXFLAGS=$(CFLAGS)
 CPP_INCLUDE=/usr/include/c++/4.6.2 # Defines the path for the C++ libraries
-OBJECTS=main.o Constants.o Rectangle.o RectangleDetector.o
+OBJECTS=main.o Constants.o Rectangle.o RectangleDetector.o CommLink.o
 ALL_OBJECTS=$(OBJECTS) rectangledetector
 # End Variable Declarations
 # End Header
@@ -21,6 +21,8 @@ Rectangle.o: Rectangle.cpp Rectangle.hpp Constants.hpp
 	g++ -c Rectangle.cpp -Wall -I$(CPP_INCLUDE) `pkg-config --cflags opencv` $(CXXFLAGS) -o Rectangle.o
 RectangleDetector.o: RectangleDetector.cpp RectangleDetector.hpp Constants.hpp
 	g++ -c RectangleDetector.cpp -Wall -I$(CPP_INCLUDE) `pkg-config --cflags opencv` $(CXXFLAGS) -o RectangleDetector.o
+CommLink.o: CommLink.cpp CommLink.hpp
+	g++ -c CommLink.cpp -Wall -I$(CPP_INCLUDE) `pkg-config --cflags opencv` $(CXXFLAGS) -o CommLink.o
 clean:
 	touch $(OBJECTS) o~
 	rm $(OBJECTS) *~
