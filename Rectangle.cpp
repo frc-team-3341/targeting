@@ -32,7 +32,7 @@ Rectangle::Rectangle(vector<Point> input) {
     }
   }
   for (unsigned i=0; i < input.size(); ++i) {
-    if (i==indexTopLeft || i==indexBottomRight) continue;
+    if (i == (unsigned)indexTopLeft || i == (unsigned)indexBottomRight) continue;
 
     if (indexTopRight < 0)
       indexTopRight=i;

@@ -1,19 +1,24 @@
 #ifndef Constants_hpp
 #define Constants_hpp
 
-// Math
-float mathPi=3.1415927;
+class Constants {
+public:
+  Constants();
 
-// Camera
-int cameraFocalLength=655;
-float cameraViewingAngle=1.1414453308043;
-int cameraHDFocalLength=655;
-float cameraHDViewingAngle=1.1414453308043;
-int cameraXRes;
-int cameraYRes;
+  // Math
+  float mathPi;
 
-// Rectangle
-float rectBase=596.9;
-float rectHeight=457.2;
+  // Camera
+  int cameraFocalLength;
+  float cameraViewingAngle;
+  int cameraHDFocalLength;
+  float cameraHDViewingAngle;
 
+  // Rectangle
+  float rectBase;
+  float rectHeight;
+
+  // Preprocessing
+  int preprocessingLowerThreshold;
+};
 #endif /* Constants_hpp */
