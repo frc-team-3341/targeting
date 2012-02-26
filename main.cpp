@@ -49,7 +49,6 @@ int main(int argc, char* argv[])
 {
   
   Constants constList;
-  VideoCapture cap;
   stringstream fileName;
   stringstream deviceName;
   int isFile = 0;
@@ -85,6 +84,7 @@ int main(int argc, char* argv[])
     case 'f':
       fileName <<optarg;
       isFile = 1;
+      break;
     case '?':
       exit(127);
       break;
@@ -98,23 +98,6 @@ int main(int argc, char* argv[])
     exit(127);
   }
   
-  if (isDevice) {
-    // Get Video Capture Device
-    cap.open(atoi(deviceName.str().c_str()));
-    if (!cap.isOpened()) {
-      cerr <<"Unable to open capture device " <<deviceName <<"." <<endl;
-      return -1;
-    }
-    if (isHD) {
-      // Set Capture Resolution
-      cap.set(CV_CAP_PROP_FRAME_HEIGHT, 1920);
-      cap.set(CV_CAP_PROP_FRAME_WIDTH, 1080);
-
-      // Change Camera Data
-      constList.cameraFocalLength = constList.cameraHDFocalLength;
-      constList.cameraViewingAngle = constList.cameraHDViewingAngle;
-    }
-  }
 
   CommLink commLink;
   if (isNetworking)
@@ -133,10 +116,29 @@ int main(int argc, char* argv[])
       float azimuthDegrees;
       Mat original;
       Mat output;
+      VideoCapture cap;
 
       if (isNetworking)
 	commLink.waitForPing();
-
+      
+      if (isDevice) {
+	// Get Video Capture Device
+	cap.open(atoi(deviceName.str().c_str()));
+	if (!cap.isOpened()) {
+	  cerr <<"Unable to open capture device " <<deviceName <<"." <<endl;
+	  return -1;
+	}
+	if (isHD) {
+	  // Set Capture Resolution
+	  cap.set(CV_CAP_PROP_FRAME_HEIGHT, 1920);
+	  cap.set(CV_CAP_PROP_FRAME_WIDTH, 1080);
+	  
+	  // Change Camera Data
+	  constList.cameraFocalLength = constList.cameraHDFocalLength;
+      constList.cameraViewingAngle = constList.cameraHDViewingAngle;
+	}
+      }
+      
       if (isFile)
 	original = imread(fileName.str().c_str()); // Load Image from File
       else
@@ -213,6 +215,10 @@ int main(int argc, char* argv[])
 	  waitKey();
 	  break;
 	}
+      }
+      else {
+	if (isNetworking && isFile)
+	  commLink.waitForPing();
       }
     }
   

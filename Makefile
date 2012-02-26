@@ -4,25 +4,30 @@ all: rectangledetector
 #CFLAGS=-march=native -O2 -pipe
 CFLAGS=-ggdb -pipe
 CXXFLAGS=$(CFLAGS)
-CPP_INCLUDE=/usr/include/c++/4.6.2 # Defines the path for the C++ libraries
+CXX_INCLUDE=/usr/include/c++/4.6.2 # Defines the path for the C++ libraries
+FLAGS=-Wall
+INCLUDE=-I$(CXX_INCLUDE) `pkg-config --cflags opencv`
+LINK_INCLUDE=-I$(CXX_INCLUDE) `pkg-config --cflags --libs opencv`
+COMPILE=$(CXX) $(FLAGS) $(CXXFLAGS) $(INCLUDE)
+LINK=$(CXX) $(FLAGS) $(CXXFLAGS) $(LINK_INCLUDE)
+
 OBJECTS=main.o Constants.o Rectangle.o RectangleDetector.o CommLink.o
 ALL_OBJECTS=$(OBJECTS) rectangledetector
 # End Variable Declarations
 # End Header
 
 rectangledetector: $(OBJECTS)
-	g++ $(OBJECTS) -Wall -I$(CPP_INCLUDE) `pkg-config --cflags --libs opencv` $(CXXFLAGS) -o rectangledetector
-# strip rectangledetector # Enable to remove debugging symbols, making the binary smaller
+	$(LINK) $(OBJECTS) -o rectangledetector
 main.o: main.cpp Constants.hpp
-	g++ -c main.cpp -Wall -I$(CPP_INCLUDE) `pkg-config --cflags opencv` $(CXXFLAGS) -o main.o
+	$(COMPILE) -c main.cpp -o main.o
 Constants.o: Constants.cpp Constants.hpp
-	g++ -c Constants.cpp -Wall -I$(CPP_INCLUDE) `pkg-config --cflags opencv` $(CXXFLAGS) -o Constants.o
+	$(COMPILE) -c Constants.cpp -o Constants.o
 Rectangle.o: Rectangle.cpp Rectangle.hpp Constants.hpp
-	g++ -c Rectangle.cpp -Wall -I$(CPP_INCLUDE) `pkg-config --cflags opencv` $(CXXFLAGS) -o Rectangle.o
+	$(COMPILE) -c Rectangle.cpp -o Rectangle.o
 RectangleDetector.o: RectangleDetector.cpp RectangleDetector.hpp Constants.hpp
-	g++ -c RectangleDetector.cpp -Wall -I$(CPP_INCLUDE) `pkg-config --cflags opencv` $(CXXFLAGS) -o RectangleDetector.o
+	$(COMPILE) -c RectangleDetector.cpp -o RectangleDetector.o
 CommLink.o: CommLink.cpp CommLink.hpp
-	g++ -c CommLink.cpp -Wall -I$(CPP_INCLUDE) `pkg-config --cflags opencv` $(CXXFLAGS) -o CommLink.o
+	$(COMPILE) -c CommLink.cpp -o CommLink.o
 clean:
 	touch $(OBJECTS) o~
 	rm $(OBJECTS) *~
