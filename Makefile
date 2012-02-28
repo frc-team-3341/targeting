@@ -11,7 +11,7 @@ LINK_INCLUDE=-I$(CXX_INCLUDE) `pkg-config --cflags --libs opencv`
 COMPILE=$(CXX) $(FLAGS) $(CXXFLAGS) $(INCLUDE)
 LINK=$(CXX) $(FLAGS) $(CXXFLAGS) $(LINK_INCLUDE)
 
-OBJECTS=main.o Constants.o Rectangle.o RectangleDetector.o CommLink.o
+OBJECTS=main.o Constants.o Rectangle.o RectangleDetector.o CommLink.o HSVImage.o
 ALL_OBJECTS=$(OBJECTS) rectangledetector
 # End Variable Declarations
 # End Header
@@ -28,6 +28,8 @@ RectangleDetector.o: RectangleDetector.cpp RectangleDetector.hpp Constants.hpp
 	$(COMPILE) -c RectangleDetector.cpp -o RectangleDetector.o
 CommLink.o: CommLink.cpp CommLink.hpp
 	$(COMPILE) -c CommLink.cpp -o CommLink.o
+HSVImage.o: HSVImage.cpp HSVImage.hpp
+	$(COMPILE) -c HSVImage.cpp -o HSVImage.o
 clean:
 	touch $(OBJECTS) o~
 	rm $(OBJECTS) *~

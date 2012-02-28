@@ -12,6 +12,7 @@
 #include <set>
 
 #include "Constants.hpp"
+#include "HSVImage.hpp"
 #include "Rectangle.hpp"
 #include "RectangleDetector.hpp"
 
@@ -71,11 +72,24 @@ double RectangleDetector::angle(Point pt1, Point pt2, Point pt0) {
 }
 
 void RectangleDetector::preprocessImage() {
-  // Convert Image to Grayscale
-  cvtColor(image, image, CV_RGB2GRAY);
-  cvtColor(image, image, CV_GRAY2RGB);
+  // Variable Declarations
+  HSVImage imageHSV(image);
+  Mat hsv_threshHueLower;
+  Mat hsv_threshHueUpper;
+  Mat hsv_threshValueLower;
+  Mat hsv_threshValueUpper;
 
-  threshold(image, image, constList.preprocessingLowerThreshold, 255, CV_THRESH_BINARY); // Threshold Image
+  // Hue Threshold
+  threshold(imageHSV.hue, hsv_threshHueLower, constList.preprocessingHueLowerThreshold, 255, CV_THRESH_BINARY);
+  threshold(imageHSV.hue, hsv_threshHueUpper, constList.preprocessingHueUpperThreshold, 255, CV_THRESH_BINARY_INV);
+  imageHSV.hue = hsv_threshHueLower & hsv_threshHueUpper;
+
+  // Value Threshold
+  threshold(imageHSV.value, hsv_threshValueLower, constList.preprocessingValueLowerThreshold, 255, CV_THRESH_BINARY);
+  threshold(imageHSV.value, hsv_threshValueUpper, constList.preprocessingValueUpperThreshold, 255, CV_THRESH_BINARY_INV);
+  imageHSV.value = hsv_threshValueLower & hsv_threshValueUpper;
+
+  image = imageHSV.hue & imageHSV.value;
 }
 
 void RectangleDetector::findRectangles() {

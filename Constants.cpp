@@ -2,18 +2,21 @@
 
 Constants::Constants() {
   // Math
-  mathPi=3.1415927;
+  mathPi = 3.1415927;
 
   // Camera
-  cameraFocalLength=655;
-  cameraViewingAngle=1.1414453308043;
-  cameraHDFocalLength=655;
-  cameraHDViewingAngle=1.1414453308043;
+  cameraFocalLength = 655;
+  cameraViewingAngle = 1.1414453308043;
+  cameraHDFocalLength = 655;
+  cameraHDViewingAngle = 1.1414453308043;
 
   // Rectangle
-  rectBase=596.9;
-  rectHeight=457.2;
+  rectBase = 596.9;
+  rectHeight = 457.2;
 
   // Preprocessing
-  preprocessingLowerThreshold=200;
+  preprocessingHueLowerThreshold = 0;
+  preprocessingHueUpperThreshold = 40;
+  preprocessingValueLowerThreshold = 200;
+  preprocessingValueUpperThreshold = 255;
 }

@@ -19,6 +19,9 @@ public:
   float rectHeight;
 
   // Preprocessing
-  int preprocessingLowerThreshold;
+  int preprocessingHueLowerThreshold;
+  int preprocessingHueUpperThreshold;
+  int preprocessingValueLowerThreshold;
+  int preprocessingValueUpperThreshold;
 };
 #endif /* Constants_hpp */
