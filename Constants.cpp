@@ -11,7 +11,7 @@ Constants::Constants() {
   cameraHDViewingAngle = 1.1414453308043;
 
   // Rectangle
-  rectBase = 596.9;
+  rectBase = 609.6;
   rectHeight = 457.2;
 
   // Preprocessing

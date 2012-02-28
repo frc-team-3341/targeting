@@ -40,6 +40,7 @@ RectangleDetector::RectangleDetector(Mat input) {
   if (! foundRectangle) return;
   computeDistance();
   computeAzimuth();
+  computeTilt();
 }
 
 bool RectangleDetector::rectangleWasFound() {
@@ -52,6 +53,10 @@ float RectangleDetector::getAzimuth() {
 
 int RectangleDetector::getDistance() {
   return distance;
+}
+
+float RectangleDetector::getTilt() {
+  return tilt;
 }
 
 vector< vector<Point> > RectangleDetector::getAllRectangles() {
@@ -266,4 +271,11 @@ void RectangleDetector::computeDistance() {
 
 void RectangleDetector::computeAzimuth() {
   azimuth = ((float)rectListRevised.at(rectIndex).center.x - ((float)image.cols / 2.0)) / (float)constList.cameraFocalLength;
+}
+
+void RectangleDetector::computeTilt() {
+  tilt = acos(((sqrt(rectListRevised.at(rectIndex).lengthSquaredTop) + sqrt(rectList.at(rectIndex).lengthSquaredBottom)) / (sqrt(rectListRevised.at(rectIndex).lengthSquaredLeft) + sqrt(rectListRevised.at(rectIndex).lengthSquaredRight))) * (constList.rectHeight / constList.rectBase));
+
+  if (rectListRevised.at(rectIndex).lengthSquaredLeft < rectListRevised.at(rectIndex).lengthSquaredRight)
+    tilt *= -1;
 }

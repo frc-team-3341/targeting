@@ -114,6 +114,8 @@ int main(int argc, char* argv[])
       int distanceMM;
       float azimuthRadians;
       float azimuthDegrees;
+      float tiltRadians;
+      float tiltDegrees;
       Mat original;
       Mat output;
       VideoCapture cap;
@@ -156,21 +158,24 @@ int main(int argc, char* argv[])
 	// Retrieve Data
 	distanceMM = rectDetector.getDistance();
 	azimuthRadians = rectDetector.getAzimuth();
+	tiltRadians = rectDetector.getTilt();
 	allRectangles = rectDetector.getAllRectangles();
 	finalRectangles = rectDetector.getFinalRectangles();
 
 	// Convert Data
 	azimuthDegrees = (azimuthRadians * 180.0) / constList.mathPi;
+	tiltDegrees = (tiltRadians * 180.0) / constList.mathPi;
 	
 	// Print Data
 	if (! isHeadless) {
 	  cout <<"Distance: " <<distanceMM <<"mm" <<endl;
 	  cout <<"Azimuth: " <<azimuthDegrees <<" degrees, " <<azimuthRadians <<" radians" <<endl;
+	  cout <<"Tilt: " <<tiltDegrees <<" degrees, " <<tiltRadians <<" radians" <<endl;
 	}
 	
 	// Send Data
 	if (isNetworking)
-	  commLink.sendData(distanceMM, 0, azimuthRadians, 0.0);
+	  commLink.sendData(distanceMM, 0, azimuthRadians, tiltRadians);
       }
       else {
 	// Print Data

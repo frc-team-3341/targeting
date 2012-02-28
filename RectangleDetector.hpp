@@ -9,7 +9,7 @@ public:
   float getAzimuth();
   int getDistance();
   //int getHeight();
-  //float getTilt();
+  float getTilt();
   std::vector< std::vector<cv::Point> > getAllRectangles();
   std::vector< std::vector<cv::Point> > getFinalRectangles();
 private:
@@ -25,7 +25,7 @@ private:
   float azimuth;
   int distance;
   //int height;
-  //float tilt;
+  float tilt;
 
   // Methods
   double angle(cv::Point, cv::Point, cv::Point); // Find Cosine of Angle Between Vectors
@@ -38,7 +38,7 @@ private:
   void computeDistance(); // Computes Distance to the Rectangle
   //void computeHeight(); // Computes Height of the Rectangle
   void computeAzimuth(); // Computes Azimuth to the Rectangle
-  //void computeTilt(); // Computes Tilt of the Rectangle
+  void computeTilt(); // Computes Tilt of the Rectangle
 };
 
 #endif /* RectangleDetector_hpp */
