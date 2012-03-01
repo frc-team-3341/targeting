@@ -12,12 +12,13 @@
 #include <unistd.h>
 
 #include "Constants.hpp"
+#include "VideoData.hpp"
 #include "VideoServer.hpp"
 
 using namespace cv;
 using namespace std;
 
-VideoServer::VideoServer(int deviceID) {
+VideoServer::VideoServer(int deviceID, bool isHD, Constants inputConstList) {
   signal(SIGCHLD, SIG_IGN); // Ignore Process Death
 
   if (!fork()) {
@@ -31,26 +32,19 @@ void VideoServer::createSharedMemory() {
   key_t key;
   int shmid;
 
-  if ((key = ftok("rectangledetector", 'R')) == -1) { // Create Key
-    perror("ftok");
+  if ((key = ftok("rectangledetector", 'R')) == -1) // Create Key
     exit(1);
-  }
 
-  if ((shmid = shmget(key, 1048576, 0644 | IPC_CREAT)) == -1) { // Create Memory Segment
-    perror("shmget");
+  if ((shmid = shmget(key, 1048576, 0644 | IPC_CREAT)) == -1) // Create Memory Segment
     exit(1);
-  }
 
-  videoData = shmat(shmid, (void *)0, 0);
-  if (videoData == (char *)(-1)) {
-    perror("shmat");
+  videoData = (VideoData *)shmat(shmid, (void *)0, 0);
+  if (videoData == (VideoData *)(-1))
     exit(1);
-  }
 }
 
 void VideoServer::destroySharedMemory() {
   if (shmdt(videoData) == -1) {
-    perror("shmdt");
     exit(1);
   }
 }
@@ -78,5 +72,5 @@ void VideoServer::getCameraImage() {
   Mat image;
   camera >>image;
 
-  image.copyTo(videoData->image);
+  videoData->modifyImage(image);
 }

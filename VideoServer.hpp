@@ -4,7 +4,7 @@
 class VideoServer {
 public:
   // Methods
-  VideoServer(int /* Device ID */, bool /* Is HD */);
+  VideoServer(int /* Device ID */, bool /* Is HD */, Constants /* Constant List */);
 
   // Data
 private:
@@ -16,7 +16,8 @@ private:
 
   // Data
   VideoData *videoData;
-  VideoCapture camera;
+  cv::VideoCapture camera;
+  Constants constList;
 };
 
 #endif /* VideoServer_hpp */
