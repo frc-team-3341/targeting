@@ -4,14 +4,14 @@ all: rectangledetector
 #CFLAGS=-march=native -O2 -pipe
 CFLAGS=-ggdb -pipe
 CXXFLAGS=$(CFLAGS)
-CXX_INCLUDE=/usr/include/c++/4.6.2 # Defines the path for the C++ libraries
+CXX_INCLUDE=/usr/include/c++/4.6.2
 FLAGS=-Wall
 INCLUDE=-I$(CXX_INCLUDE) `pkg-config --cflags opencv`
 LINK_INCLUDE=-I$(CXX_INCLUDE) `pkg-config --cflags --libs opencv`
 COMPILE=$(CXX) $(FLAGS) $(CXXFLAGS) $(INCLUDE)
 LINK=$(CXX) $(FLAGS) $(CXXFLAGS) $(LINK_INCLUDE)
 
-OBJECTS=main.o Constants.o Rectangle.o RectangleDetector.o CommLink.o HSVImage.o
+OBJECTS=main.o Constants.o Rectangle.o RectangleDetector.o CommLink.o HSVImage.o VideoServer.o VideoClient.o VideoData.o
 ALL_OBJECTS=$(OBJECTS) rectangledetector
 # End Variable Declarations
 # End Header
@@ -30,6 +30,12 @@ CommLink.o: CommLink.cpp CommLink.hpp
 	$(COMPILE) -c CommLink.cpp -o CommLink.o
 HSVImage.o: HSVImage.cpp HSVImage.hpp
 	$(COMPILE) -c HSVImage.cpp -o HSVImage.o
+VideoServer.o: VideoServer.cpp VideoServer.hpp
+	$(COMPILE) -c VideoServer.cpp -o VideoServer.o
+VideoClient.o: VideoClient.cpp VideoClient.hpp
+	$(COMPILE) -c VideoClient.cpp -o VideoClient.o
+VideoData.o: VideoData.cpp VideoData.hpp
+	$(COMPILE) -c VideoData.cpp -o VideoData.o
 clean:
 	touch $(OBJECTS) o~
 	rm $(OBJECTS) *~

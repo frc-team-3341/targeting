@@ -2,6 +2,7 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/highgui/highgui.hpp"
 
+#include <cstdlib>
 #include <iostream>
 #include <cmath>
 #include <cstring>
@@ -227,5 +228,5 @@ int main(int argc, char* argv[])
       }
     }
   
-  return 0;
+  return EXIT_SUCCESS;
 }
