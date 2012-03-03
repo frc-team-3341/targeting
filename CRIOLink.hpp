@@ -1,15 +1,15 @@
-#ifndef CommLink_hpp
-#define CommLink_hpp
+#ifndef CRIOLink_hpp
+#define CRIOLink_hpp
 
-class CommLink {
+class CRIOLink {
 public:
   // Functions
-  CommLink(); // Constructor
+  CRIOLink(); // Constructor
   void initServer(); // Server Initialization
   void waitForPing(); // Wait for Ping
   void sendData(int /* Distance */, int /* Height */, float /* Azimuth */, float /* Tilt */); // Send Data
   void sendData(); // Send Empty Data
-  ~CommLink(); // Destructor
+  ~CRIOLink(); // Destructor
 
   // Variables
 private:
@@ -30,4 +30,4 @@ private:
   int backlog;
 };
 
-#endif /* CommLink_hpp */
+#endif /* CRIOLink_hpp */

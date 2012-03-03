@@ -5,13 +5,13 @@ all: rectangledetector
 CFLAGS=-ggdb -pipe
 CXXFLAGS=$(CFLAGS)
 CXX_INCLUDE=/usr/include/c++/4.6.2
-FLAGS=-Wall
+FLAGS=-Wall -std=gnu++0x
 INCLUDE=-I$(CXX_INCLUDE) `pkg-config --cflags opencv`
 LINK_INCLUDE=-I$(CXX_INCLUDE) `pkg-config --cflags --libs opencv`
 COMPILE=$(CXX) $(FLAGS) $(CXXFLAGS) $(INCLUDE)
 LINK=$(CXX) $(FLAGS) $(CXXFLAGS) $(LINK_INCLUDE)
 
-OBJECTS=main.o Constants.o Rectangle.o RectangleDetector.o CommLink.o HSVImage.o VideoServer.o VideoClient.o VideoData.o
+OBJECTS=main.o Constants.o Rectangle.o RectangleDetector.o CRIOLink.o HSVImage.o VideoDevice.o
 ALL_OBJECTS=$(OBJECTS) rectangledetector
 # End Variable Declarations
 # End Header
@@ -26,16 +26,12 @@ Rectangle.o: Rectangle.cpp Rectangle.hpp Constants.hpp
 	$(COMPILE) -c Rectangle.cpp -o Rectangle.o
 RectangleDetector.o: RectangleDetector.cpp RectangleDetector.hpp Constants.hpp
 	$(COMPILE) -c RectangleDetector.cpp -o RectangleDetector.o
-CommLink.o: CommLink.cpp CommLink.hpp
-	$(COMPILE) -c CommLink.cpp -o CommLink.o
+CRIOLink.o: CRIOLink.cpp CRIOLink.hpp
+	$(COMPILE) -c CRIOLink.cpp -o CRIOLink.o
 HSVImage.o: HSVImage.cpp HSVImage.hpp
 	$(COMPILE) -c HSVImage.cpp -o HSVImage.o
-VideoServer.o: VideoServer.cpp VideoServer.hpp
-	$(COMPILE) -c VideoServer.cpp -o VideoServer.o
-VideoClient.o: VideoClient.cpp VideoClient.hpp
-	$(COMPILE) -c VideoClient.cpp -o VideoClient.o
-VideoData.o: VideoData.cpp VideoData.hpp
-	$(COMPILE) -c VideoData.cpp -o VideoData.o
+VideoDevice.o: VideoDevice.cpp VideoDevice.hpp
+	$(COMPILE) -c VideoDevice.cpp -o VideoDevice.o
 clean:
 	touch $(OBJECTS) o~
 	rm $(OBJECTS) *~

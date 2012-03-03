@@ -8,17 +8,17 @@
 #include <netinet/in.h>
 #include <netdb.h>
 
-#include "CommLink.hpp"
+#include "CRIOLink.hpp"
 
 using namespace std;
 
 // Public Methods
-CommLink::CommLink() {
+CRIOLink::CRIOLink() {
   // Variable Initializations
   serverInit = 0;
 }
 
-void CommLink::initServer() {
+void CRIOLink::initServer() {
   // Variable Initializations
   serverInit = 1;
   memset(&hints, 0, sizeof hints); // Zero Out Structure
@@ -42,33 +42,33 @@ void CommLink::initServer() {
   sendMessage(msg);
 }
 
-void CommLink::waitForPing() {
+void CRIOLink::waitForPing() {
   if (recvMessage().empty()) exit(0);
 }
 
-void CommLink::sendData(int distance, int height, float azimuth, float tilt) {
+void CRIOLink::sendData(int distance, int height, float azimuth, float tilt) {
   stringstream datatoSend;
   datatoSend <<distance <<";" <<height <<";" <<azimuth <<";" <<tilt;
   sendMessage(datatoSend.str());
 }
 
-void CommLink::sendData() {
+void CRIOLink::sendData() {
   string datatoSend="No rectangle";
   sendMessage(datatoSend);
 }
 
-CommLink::~CommLink() {
+CRIOLink::~CRIOLink() {
   if (serverInit)
     deInitServer();
 }
 
 // Private Methods
-void CommLink::deInitServer() {
+void CRIOLink::deInitServer() {
   close(sockfd);
   close(clientfd);
 }
 
-void CommLink::sendMessage(string msg) {
+void CRIOLink::sendMessage(string msg) {
   char *cmsg=new char[msg.size()+1];
   strcpy(cmsg, msg.c_str());
   int msglength=strlen(cmsg);
@@ -77,7 +77,7 @@ void CommLink::sendMessage(string msg) {
   delete[] cmsg;
 }
 
-string CommLink::recvMessage() {
+string CRIOLink::recvMessage() {
   int length=256;
   char *input=new char[length];
   stringstream inputStream;

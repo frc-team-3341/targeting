@@ -11,6 +11,7 @@
 #include <ctime>
 #include <vector>
 #include <set>
+#include <thread>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
@@ -19,12 +20,10 @@
 #include <unistd.h>
 
 #include "Constants.hpp"
-#include "VideoData.hpp"
-#include "VideoServer.hpp"
-#include "VideoClient.hpp"
+#include "VideoDevice.hpp"
 #include "Rectangle.hpp"
 #include "RectangleDetector.hpp"
-#include "CommLink.hpp"
+#include "CRIOLink.hpp"
 
 using namespace cv;
 using namespace std;
@@ -102,20 +101,15 @@ int main(int argc, char* argv[])
     exit(127);
   }
   
-  // Initialize Communication Link
-  CommLink commLink;
+  // Initialize CRIO Communication Link
+  CRIOLink cRIOLink;
   if (isNetworking)
-    commLink.initServer();
+    cRIOLink.initServer();
 
-  // Initialize Video System
-  VideoServer videoServer(constList);
-  VideoClient videoClient;
+  // Initialize Video Device
+  VideoDevice videoDevice(constList);
   if (isDevice) {
-    videoServer.initServer(atoi(deviceName.str().c_str()), isHD);
-    cout <<"sleeping" <<endl;
-    sleep(20);
-    cout <<"done" <<endl;
-    videoClient.initClient();
+    videoDevice.startCapture(atoi(deviceName.str().c_str()), isHD);
   }
 
   if (! isHeadless)
@@ -134,12 +128,12 @@ int main(int argc, char* argv[])
       Mat output;
 
       if (isNetworking)
-	commLink.waitForPing();
+	cRIOLink.waitForPing();
       
       if (isFile)
 	original = imread(fileName.str().c_str()); // Load Image from File
       else if (isDevice)
-	videoClient.getCameraImage().copyTo(original); // Load Image from Camera
+	videoDevice.getImage().copyTo(original); // Load Image from Camera
       else
 	exit(1);
 
@@ -172,7 +166,7 @@ int main(int argc, char* argv[])
 	
 	// Send Data
 	if (isNetworking)
-	  commLink.sendData(distanceMM, 0, azimuthRadians, tiltRadians);
+	  cRIOLink.sendData(distanceMM, 0, azimuthRadians, tiltRadians);
       }
       else {
 	// Print Data
@@ -181,7 +175,7 @@ int main(int argc, char* argv[])
 
 	// Send Data
 	if (isNetworking)
-	  commLink.sendData();
+	  cRIOLink.sendData();
       }
       
       // Write Data to Original Image
@@ -220,7 +214,7 @@ int main(int argc, char* argv[])
       }
       else {
 	if (isNetworking && isFile)
-	  commLink.waitForPing();
+	  cRIOLink.waitForPing();
       }
     }
   
