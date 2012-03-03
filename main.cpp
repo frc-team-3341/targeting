@@ -19,6 +19,9 @@
 #include <unistd.h>
 
 #include "Constants.hpp"
+#include "VideoData.hpp"
+#include "VideoServer.hpp"
+#include "VideoClient.hpp"
 #include "Rectangle.hpp"
 #include "RectangleDetector.hpp"
 #include "CommLink.hpp"
@@ -99,16 +102,26 @@ int main(int argc, char* argv[])
     exit(127);
   }
   
-
+  // Initialize Communication Link
   CommLink commLink;
   if (isNetworking)
-    commLink.initServer(); // Initialize Communication Link
+    commLink.initServer();
+
+  // Initialize Video System
+  VideoServer videoServer(constList);
+  VideoClient videoClient;
+  if (isDevice) {
+    videoServer.initServer(atoi(deviceName.str().c_str()), isHD);
+    cout <<"sleeping" <<endl;
+    sleep(20);
+    cout <<"done" <<endl;
+    videoClient.initClient();
+  }
 
   if (! isHeadless)
     namedWindow(wndname, 0);
   
-  while (true)
-    {
+  while (true) {
       vector< vector<Point> > allRectangles;
       vector< vector<Point> > finalRectangles;
       int aquired = 0;
@@ -119,33 +132,16 @@ int main(int argc, char* argv[])
       float tiltDegrees;
       Mat original;
       Mat output;
-      VideoCapture cap;
 
       if (isNetworking)
 	commLink.waitForPing();
       
-      if (isDevice) {
-	// Get Video Capture Device
-	cap.open(atoi(deviceName.str().c_str()));
-	if (!cap.isOpened()) {
-	  cerr <<"Unable to open capture device " <<deviceName <<"." <<endl;
-	  return -1;
-	}
-	if (isHD) {
-	  // Set Capture Resolution
-	  cap.set(CV_CAP_PROP_FRAME_HEIGHT, 1920);
-	  cap.set(CV_CAP_PROP_FRAME_WIDTH, 1080);
-	  
-	  // Change Camera Data
-	  constList.cameraFocalLength = constList.cameraHDFocalLength;
-      constList.cameraViewingAngle = constList.cameraHDViewingAngle;
-	}
-      }
-      
       if (isFile)
 	original = imread(fileName.str().c_str()); // Load Image from File
+      else if (isDevice)
+	videoClient.getCameraImage().copyTo(original); // Load Image from Camera
       else
-	cap >>original; // Load Image from Video Capture Device
+	exit(1);
 
       // Print Variables
       if (firstRun && ! isHeadless)

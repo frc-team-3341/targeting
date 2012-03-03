@@ -4,7 +4,8 @@
 class VideoServer {
 public:
   // Methods
-  VideoServer(int /* Device ID */, bool /* Is HD */, Constants /* Constant List */);
+  VideoServer(Constants /* Constant List */);
+  void initServer(int /* Device ID */, bool /* Is HD */);
 
   // Data
 private:
@@ -12,10 +13,12 @@ private:
   void createSharedMemory();
   void destroySharedMemory();
   void initCamera(int /* Device ID */, bool /* Is HD */);
-  void getCameraImage();
+  void runCamera();
+  void readCameraImage();
 
   // Data
   VideoData *videoData;
+  int shmid;
   cv::VideoCapture camera;
   Constants constList;
 };

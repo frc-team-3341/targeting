@@ -18,11 +18,18 @@
 using namespace cv;
 using namespace std;
 
-VideoServer::VideoServer(int deviceID, bool isHD, Constants inputConstList) {
+VideoServer::VideoServer(Constants inputConstList) {
+  constList = inputConstList; // Save Constants List to Class
+}
+
+void VideoServer::initServer(int deviceID, bool isHD) {
   signal(SIGCHLD, SIG_IGN); // Ignore Process Death
 
   if (!fork()) {
-    
+    initCamera(deviceID, isHD);
+    createSharedMemory();
+    runCamera();
+    destroySharedMemory();
     exit(0);
   }
 }
@@ -30,23 +37,26 @@ VideoServer::VideoServer(int deviceID, bool isHD, Constants inputConstList) {
 void VideoServer::createSharedMemory() {
   // Variable Declarations
   key_t key;
-  int shmid;
 
-  if ((key = ftok("rectangledetector", 'R')) == -1) // Create Key
+  // Create Key
+  if ((key = ftok("rectangledetector", 'R')) == -1)
     exit(1);
 
-  if ((shmid = shmget(key, 1048576, 0644 | IPC_CREAT)) == -1) // Create Memory Segment
+  // Create Memory Segment
+  if ((shmid = shmget(key, 1048576, 0666 | IPC_CREAT)) == -1)
     exit(1);
 
+  // Get Pointer to Memory Segment
   videoData = (VideoData *)shmat(shmid, (void *)0, 0);
   if (videoData == (VideoData *)(-1))
     exit(1);
 }
 
 void VideoServer::destroySharedMemory() {
-  if (shmdt(videoData) == -1) {
+  if (shmdt(videoData) == -1)
     exit(1);
-  }
+
+  shmctl(shmid, IPC_RMID, NULL);
 }
 
 void VideoServer::initCamera(int deviceID, bool isHD) {
@@ -67,10 +77,24 @@ void VideoServer::initCamera(int deviceID, bool isHD) {
   }
 }
 
-void VideoServer::getCameraImage() {
+void VideoServer::runCamera() {
+  cout <<"server: running camera" <<endl;
+  while (! videoData->getIsFinished()) {
+    cout <<"server: getting frame" <<endl;
+    readCameraImage();
+  }
+}
+  
+void VideoServer::readCameraImage() {
   // Variable Declarations
   Mat image;
   camera >>image;
 
+  cout <<"server: grabbing frame" <<endl;
+
+  imshow("test", image);
+
   videoData->modifyImage(image);
+
+  cout <<"server: grabbed frame" <<endl;
 }

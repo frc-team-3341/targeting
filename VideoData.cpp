@@ -19,6 +19,7 @@ VideoData::VideoData() {
 }
 
 Mat VideoData::getImage() {
+  cout <<"data: returning image" <<endl;
   return image;
 }
 
