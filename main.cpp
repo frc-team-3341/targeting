@@ -120,6 +120,9 @@ int main(int argc, char* argv[])
       vector< vector<Point> > finalRectangles;
       int aquired = 0;
       int distanceMM;
+      int horizontalDistanceMM;
+      int heightMM;
+      float velocity;
       float azimuthRadians;
       float azimuthDegrees;
       float tiltRadians;
@@ -148,6 +151,9 @@ int main(int argc, char* argv[])
 	
 	// Retrieve Data
 	distanceMM = rectDetector.getDistance();
+	horizontalDistanceMM = rectDetector.getHorizontalDistance();
+	heightMM = rectDetector.getHeight();
+	velocity = rectDetector.getVelocity();
 	azimuthRadians = rectDetector.getAzimuth();
 	tiltRadians = rectDetector.getTilt();
 	allRectangles = rectDetector.getAllRectangles();
@@ -159,14 +165,18 @@ int main(int argc, char* argv[])
 	
 	// Print Data
 	if (! isHeadless) {
-	  cout <<"Distance: " <<distanceMM <<"mm" <<endl;
+	  cout <<"Distance: " <<distanceMM <<" mm" <<endl;
+	  cout <<"Horizontal Distance: " <<horizontalDistanceMM <<" mm" <<endl;
+	  cout <<"Height: " <<heightMM <<" mm" <<endl;
+	  cout <<"Velocity: " <<velocity <<" m/s" <<endl;
 	  cout <<"Azimuth: " <<azimuthDegrees <<" degrees, " <<azimuthRadians <<" radians" <<endl;
 	  cout <<"Tilt: " <<tiltDegrees <<" degrees, " <<tiltRadians <<" radians" <<endl;
+	  
 	}
 	
 	// Send Data
 	if (isNetworking)
-	  cRIOLink.sendData(distanceMM, 0, azimuthRadians, tiltRadians);
+	  cRIOLink.sendData(velocity, heightMM, azimuthRadians, tiltRadians);
       }
       else {
 	// Print Data

@@ -8,7 +8,9 @@ public:
   bool rectangleWasFound();
   float getAzimuth();
   int getDistance();
-  //int getHeight();
+  int getHorizontalDistance();
+  float getVelocity();
+  int getHeight();
   float getTilt();
   std::vector< std::vector<cv::Point> > getAllRectangles();
   std::vector< std::vector<cv::Point> > getFinalRectangles();
@@ -24,7 +26,9 @@ private:
   int rectIndex;
   float azimuth;
   int distance;
-  //int height;
+  int horizontalDistance;
+  float velocity;
+  int height;
   float tilt;
 
   // Methods
@@ -36,8 +40,11 @@ private:
   void findContainedRectangles(); // Finds Contained Rectangles
   void findCorrectRectangles(); // Figures Out Which Rectangles Are Correct
   void computeDistance(); // Computes Distance to the Rectangle
-  //void computeHeight(); // Computes Height of the Rectangle
+  void computeHorizontalDistance(); // Computes Horizontal Distance to the Rectangle
+  void computeHeight(); // Computes Height of the Rectangle
+  void computeVelocity(); // Computes Velocity of Ball
   void computeAzimuth(); // Computes Azimuth to the Rectangle
+  void fixHeight(); // Changes Lowest Hoop to Highest
   void computeTilt(); // Computes Tilt of the Rectangle
 };
 

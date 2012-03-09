@@ -13,10 +13,16 @@ public:
   float cameraViewingAngle;
   int cameraHDFocalLength;
   float cameraHDViewingAngle;
+  int cameraHeight;
 
   // Rectangle
   float rectBase;
   float rectHeight;
+  std::vector<int> rectPossibleHeights;
+
+  // Shooter
+  float launchAngleDegrees;
+  float launchAngleRadians;
 
   // Preprocessing
   int preprocessingHueLowerThreshold;

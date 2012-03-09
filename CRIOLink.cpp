@@ -46,9 +46,9 @@ void CRIOLink::waitForPing() {
   if (recvMessage().empty()) exit(0);
 }
 
-void CRIOLink::sendData(int distance, int height, float azimuth, float tilt) {
+void CRIOLink::sendData(int velocity, int height, float azimuth, float tilt) {
   stringstream datatoSend;
-  datatoSend <<distance <<";" <<height <<";" <<azimuth <<";" <<tilt;
+  datatoSend <<velocity <<";" <<height <<";" <<azimuth <<";" <<tilt;
   sendMessage(datatoSend.str());
 }
 
