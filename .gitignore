@@ -1,4 +1,13 @@
 *~
 *.o
 *.bin
-rectangledetector
+ChangeLog
+Makefile.in
+aclocal.m4
+autom4te.cache/*
+config.log
+config.status
+configure
+frc-team-3341-aimer
+src/stamp-h1
+src/.deps/*

@@ -1,3 +1,20 @@
+/*
+ *    This file is part of FRC Team 3341 Aimer.
+ *
+ *    FRC Team 3341 Aimer is free software: you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation, either version 3 of the License, or
+ *    (at your option) any later version.
+ *
+ *    FRC Team 3341 Aimer is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with FRC Team 3341 Aimer.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "opencv2/core/core.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/highgui/highgui.hpp"
@@ -28,7 +45,7 @@
 using namespace cv;
 using namespace std;
 
-const char* wndname = "Rectangle Detector";
+const char* wndname = "FRC Team 3341 2012 Aimer";
 
 // the function draws all the rectangles in the image
 void drawRectangles(Mat& image, const vector< vector<Point> > &allRectangles, const vector< vector<Point> >& finalRectangles)
@@ -100,11 +117,6 @@ int main(int argc, char* argv[])
     cout <<argv[0] <<": missing required options" <<endl;
     exit(127);
   }
-  
-  // Initialize CRIO Communication Link
-  CRIOLink cRIOLink;
-  if (isNetworking)
-    cRIOLink.initServer();
 
   // Initialize Video Device
   VideoDevice videoDevice(constList);
@@ -112,9 +124,18 @@ int main(int argc, char* argv[])
     videoDevice.startCapture(atoi(deviceName.str().c_str()), isHD);
   }
 
+  cout <<"Video Camera Initialized" <<endl;
+  
+  // Initialize CRIO Communication Link
+  CRIOLink cRIOLink;
+  if (isNetworking)
+    cRIOLink.initServer();
+
   if (! isHeadless)
     namedWindow(wndname, 0);
   
+  cout <<"Beginning Processing Loop" <<endl;
+
   while (true) {
       vector< vector<Point> > allRectangles;
       vector< vector<Point> > finalRectangles;
@@ -130,8 +151,12 @@ int main(int argc, char* argv[])
       Mat original;
       Mat output;
 
+      cout <<"Looping..." <<endl;
+
       if (isNetworking)
 	cRIOLink.waitForPing();
+
+      cout <<"Passed Through Network" <<endl;
       
       if (isFile)
 	original = imread(fileName.str().c_str()); // Load Image from File
@@ -139,6 +164,8 @@ int main(int argc, char* argv[])
 	videoDevice.getImage().copyTo(original); // Load Image from Camera
       else
 	exit(1);
+
+      cout <<"Got Video Frame" <<endl;
 
       // Print Variables
       if (firstRun && ! isHeadless)
