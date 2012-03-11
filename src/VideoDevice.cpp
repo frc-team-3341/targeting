@@ -45,11 +45,8 @@ void VideoDevice::startCapture(int deviceID, int isHD) {
 }
 
 Mat VideoDevice::getImage() {
-  cout <<"Preparing Image" <<endl;
   while (! isReady)
-    cout <<"Waiting For Camera..." <<endl;
-  //isReady = 0;
-  cout <<"Returning Image" <<endl;
+      cout <<"Waiting for camera..." <<endl;
   return image;
 }
 
@@ -74,13 +71,9 @@ void VideoDevice::initCamera(int deviceID, int isHD) {
 
 void VideoDevice::captureFromCamera() {
   while (! isFinished) {
-    //isReady = 0;
-    cout <<"Capturing Image" <<endl;
     camera >>image;
     isReady = 1;
-    cout <<"Storing Image" <<endl;
   }
-  cout <<"Exitting" <<endl;
 }
 
 VideoDevice::~VideoDevice() {

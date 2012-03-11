@@ -24,7 +24,7 @@ public:
   CRIOLink(); // Constructor
   void initServer(); // Server Initialization
   void waitForPing(); // Wait for Ping
-  void sendData(int /* Distance */, int /* Height */, float /* Azimuth */, float /* Tilt */); // Send Data
+  void sendData(float /* Velocity */, int /* Height */, float /* Azimuth */, float /* Tilt */); // Send Data
   void sendData(); // Send Empty Data
   ~CRIOLink(); // Destructor
 

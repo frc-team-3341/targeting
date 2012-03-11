@@ -124,8 +124,6 @@ int main(int argc, char* argv[])
     videoDevice.startCapture(atoi(deviceName.str().c_str()), isHD);
   }
 
-  cout <<"Video Camera Initialized" <<endl;
-  
   // Initialize CRIO Communication Link
   CRIOLink cRIOLink;
   if (isNetworking)
@@ -133,8 +131,6 @@ int main(int argc, char* argv[])
 
   if (! isHeadless)
     namedWindow(wndname, 0);
-  
-  cout <<"Beginning Processing Loop" <<endl;
 
   while (true) {
       vector< vector<Point> > allRectangles;
@@ -151,21 +147,15 @@ int main(int argc, char* argv[])
       Mat original;
       Mat output;
 
-      cout <<"Looping..." <<endl;
-
       if (isNetworking)
 	cRIOLink.waitForPing();
 
-      cout <<"Passed Through Network" <<endl;
-      
       if (isFile)
 	original = imread(fileName.str().c_str()); // Load Image from File
       else if (isDevice)
 	videoDevice.getImage().copyTo(original); // Load Image from Camera
       else
 	exit(1);
-
-      cout <<"Got Video Frame" <<endl;
 
       // Print Variables
       if (firstRun && ! isHeadless)
