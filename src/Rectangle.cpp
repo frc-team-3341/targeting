@@ -18,6 +18,7 @@
 #include "opencv2/core/core.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 
+#include <cstdlib>
 #include <iostream>
 #include <cmath>
 #include <cstring>
@@ -29,7 +30,17 @@
 using namespace cv;
 using namespace std;
 
+Rectangle::Rectangle() {
+}
+
+Rectangle::Rectangle(int *nullInput) {
+}
+
 Rectangle::Rectangle(vector<Point> input) {
+  populate(input);
+}
+
+void Rectangle::populate(vector<Point> input) {
   // Populate Points
   int minLengthSquared=6e6;
   int maxLengthSquared=0;

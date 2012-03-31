@@ -32,6 +32,10 @@ public:
   float cameraHDViewingAngle;
   int cameraHeight;
 
+  // Image
+  int imgCols;
+  int imgRows;
+
   // Rectangle
   float rectBase;
   float rectHeight;

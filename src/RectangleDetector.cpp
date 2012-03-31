@@ -19,6 +19,7 @@
 #include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/highgui/highgui.hpp"
 
+#include <cstdlib>
 #include <iostream>
 #include <cmath>
 #include <cstring>
@@ -40,56 +41,32 @@ int thresh = 50;
 int N = 11;
 
 // Public Functions
-RectangleDetector::RectangleDetector(Mat input) {
+RectangleDetector::RectangleDetector(Constants *inputConstList) {
   // Variable Initializations
-  input.copyTo(image);
   foundRectangle=true;
   rectIndex=-1;
+  constList = inputConstList;
+}
+
+Rectangle RectangleDetector::processImage(Mat input) {
+  // Variable Initializations
+  input.copyTo(image);
 
   preprocessImage();
   findRectangles();
-  if (! foundRectangle) return;
+  if (! foundRectangle) return static_cast<Rectangle>(NULL);
   populateRectangles();
-  if (! foundRectangle) return;
+  if (! foundRectangle) return static_cast<Rectangle>(NULL);
   findContainedRectangles();
-  if (! foundRectangle) return;
+  if (! foundRectangle) return static_cast<Rectangle>(NULL);
   findCorrectRectangles();
-  if (! foundRectangle) return;
-  computeDistance();
-  computeHorizontalDistance();
-  computeHeight();
-  computeVelocity();
-  computeAzimuth();
-  computeTilt();
-  fixHeight();
+  if (! foundRectangle) return static_cast<Rectangle>(NULL);
+
+  return rectListRevised.at(rectIndex);
 }
 
 bool RectangleDetector::rectangleWasFound() {
   return foundRectangle;
-}
-
-float RectangleDetector::getAzimuth() {
-  return azimuth;
-}
-
-int RectangleDetector::getDistance() {
-  return distance;
-}
-
-int RectangleDetector::getHorizontalDistance() {
-  return horizontalDistance;
-}
-
-float RectangleDetector::getVelocity() {
-  return velocity;
-}
-
-int RectangleDetector::getHeight() {
-  return height;
-}
-
-float RectangleDetector::getTilt() {
-  return tilt;
 }
 
 vector< vector<Point> > RectangleDetector::getAllRectangles() {
@@ -118,13 +95,13 @@ void RectangleDetector::preprocessImage() {
   Mat hsv_threshValueUpper;
 
   // Hue Threshold
-  threshold(imageHSV.hue, hsv_threshHueLower, constList.preprocessingHueLowerThreshold, 255, CV_THRESH_BINARY);
-  threshold(imageHSV.hue, hsv_threshHueUpper, constList.preprocessingHueUpperThreshold, 255, CV_THRESH_BINARY_INV);
+  threshold(imageHSV.hue, hsv_threshHueLower, constList->preprocessingHueLowerThreshold, 255, CV_THRESH_BINARY);
+  threshold(imageHSV.hue, hsv_threshHueUpper, constList->preprocessingHueUpperThreshold, 255, CV_THRESH_BINARY_INV);
   imageHSV.hue = hsv_threshHueLower & hsv_threshHueUpper;
 
   // Value Threshold
-  threshold(imageHSV.value, hsv_threshValueLower, constList.preprocessingValueLowerThreshold, 255, CV_THRESH_BINARY);
-  threshold(imageHSV.value, hsv_threshValueUpper, constList.preprocessingValueUpperThreshold, 255, CV_THRESH_BINARY_INV);
+  threshold(imageHSV.value, hsv_threshValueLower, constList->preprocessingValueLowerThreshold, 255, CV_THRESH_BINARY);
+  threshold(imageHSV.value, hsv_threshValueUpper, constList->preprocessingValueUpperThreshold, 255, CV_THRESH_BINARY_INV);
   imageHSV.value = hsv_threshValueLower & hsv_threshValueUpper;
 
   image = imageHSV.hue & imageHSV.value;
@@ -287,106 +264,4 @@ void RectangleDetector::findCorrectRectangles() {
   vector<Point> correctRectTmp = finalRectangles.at(rectIndex);
   finalRectangles.clear();
   finalRectangles.push_back(correctRectTmp);
-}
-
-void RectangleDetector::computeDistance() {
-  int distanceTop = (constList.rectBase * constList.cameraFocalLength) / sqrt(rectListRevised.at(rectIndex).lengthSquaredTop);
-  int distanceBottom = (constList.rectBase * constList.cameraFocalLength) / sqrt(rectListRevised.at(rectIndex).lengthSquaredBottom);
-  int distanceLeft = (constList.rectHeight * constList.cameraFocalLength) / sqrt(rectListRevised.at(rectIndex).lengthSquaredLeft);
-  int distanceRight = (constList.rectHeight * constList.cameraFocalLength) / sqrt(rectListRevised.at(rectIndex).lengthSquaredRight);
-  int distanceBase = (distanceTop + distanceBottom) / 2;
-  int distanceHeight = (distanceLeft + distanceRight) / 2;
-  if (distanceBase > distanceHeight)
-    distance = distanceHeight;
-  else
-    distance = distanceBase;
-}
-
-void RectangleDetector::computeVelocity() {
-  float launchDistance = (float)horizontalDistance / 1000;
-  float launchHeight = (float)height / 1000;
-  float mass = 0.29;
-  float cd = 0.5;
-  float gravity = 9.80665;
-  float air_density = 1.2;
-  float surface_area = (8 * 2.54 / 200) * (8 * 2.54 / 200) * 3.14159265358979;
-  float air_resistance_constant = 0.5 * cd * air_density * surface_area;
-  float a = sqrt(air_resistance_constant / (mass * gravity));
-  float b = air_resistance_constant / mass;
-  constList.launchAngleRadians = constList.launchAngleDegrees * 3.14159265358979 / 180;
-  float velocity1;
-  float velocity2;
-  float velocity3;
-  float f1 = 1;
-  float f2 = 2;
-  float f3 = 3;
-  float psi = exp(b * launchHeight);
-  velocity1 = 1;
-  velocity2 = 25;
-  int i = 0;
-  while (fabs(f1) > 0.0001) {	
-    ++i;
-    velocity3 = (velocity1 + velocity2) / 2;
-    float z1velocity1 = a * velocity1 * sin(constList.launchAngleRadians);
-    float z2velocity1 = a * velocity1 * cos(constList.launchAngleRadians);
-    float phi_velocity1 = (exp(b * launchDistance) -1) / z2velocity1;
-    f1 = psi - z1velocity1 * sin(phi_velocity1) - cos(phi_velocity1);
-    float z1velocity2 = a * velocity2 * sin(constList.launchAngleRadians);
-    float z2velocity2 = a * velocity2 * cos(constList.launchAngleRadians);
-    float phi_velocity2 = (exp(b * launchDistance) - 1)/ z2velocity2;
-    f2 = psi - z1velocity2 * sin(phi_velocity2) - cos(phi_velocity2);
-    float z1velocity3 = a * velocity3 * sin(constList.launchAngleRadians);
-    float z2velocity3 = a * velocity3 * cos(constList.launchAngleRadians);
-    float phi_velocity3 = (exp(b * launchDistance) -1)/ z2velocity3;
-    f3 = psi - z1velocity3 * sin(phi_velocity3) - cos(phi_velocity3);
-    if(f1 * f3 < 0)
-      velocity2 = velocity3;
-    else
-      velocity1 = velocity3;
-    if (i > 30) {
-      velocity1 = 0;
-      f1 = 0;
-    }
-  }
-  velocity = velocity1;
-}
-
-void RectangleDetector::computeAzimuth() {
-  azimuth = ((float)rectListRevised.at(rectIndex).center.x - ((float)image.cols / 2.0)) / (float)constList.cameraFocalLength;
-}
-
-void RectangleDetector::computeHeight() {
-  int tanTheta = (((float)image.rows / 2.0) - (float)rectListRevised.at(rectIndex).center.y) / (float)constList.cameraFocalLength;
-  float theta = atan(tanTheta);
-  height = (float)distance * sin(theta);
-  int heightError = 1000000;
-  int heightIndex = 0;
-  for (unsigned i = 0; i < constList.rectPossibleHeights.size(); ++i) {
-    if (abs(constList.rectPossibleHeights.at(i) - height) < heightError) {
-      heightIndex = i;
-      heightError = abs(constList.rectPossibleHeights.at(i) - height);
-    }
-  }
-
-  height = constList.rectPossibleHeights.at(heightIndex);
-}
-
-void RectangleDetector::computeHorizontalDistance() {
-  horizontalDistance = sqrt(pow(distance, 2) - pow(height, 2));
-}
-
-void RectangleDetector::fixHeight() {
-  if (height == constList.rectPossibleHeights.at(0))
-    height = constList.rectPossibleHeights.at(2);
-}
-
-void RectangleDetector::computeTilt() {
-  float cosTilt = ((sqrt(rectListRevised.at(rectIndex).lengthSquaredTop) + sqrt(rectList.at(rectIndex).lengthSquaredBottom)) / (sqrt(rectListRevised.at(rectIndex).lengthSquaredLeft) + sqrt(rectListRevised.at(rectIndex).lengthSquaredRight))) * (constList.rectHeight / constList.rectBase);
-  if (cosTilt > 0.98)
-    tilt = 0;
-  else
-    tilt = acos(cosTilt);
-
-  if (rectListRevised.at(rectIndex).lengthSquaredLeft < rectListRevised.at(rectIndex).lengthSquaredRight)
-    tilt *= -1;
 }

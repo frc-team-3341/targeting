@@ -32,15 +32,15 @@ using namespace cv;
 using namespace std;
 
 // Public Methods
-VideoDevice::VideoDevice(Constants inputConstList) {
+VideoDevice::VideoDevice(Constants *inputConstList) {
   // Variable Declarations
   isFinished = 0;
   isReady = 0;
-  constList = inputConstList; // Save Constant List to Class
+  constList = *inputConstList;
 }
 
-void VideoDevice::startCapture(int deviceID, int isHD) {
-  initCamera(deviceID, isHD);
+void VideoDevice::startCapture(int deviceID) {
+  initCamera(deviceID);
   captureThread = new thread(&VideoDevice::captureFromCamera, this);
 }
 
@@ -51,21 +51,12 @@ Mat VideoDevice::getImage() {
 }
 
 // Private Methods
-void VideoDevice::initCamera(int deviceID, int isHD) {
+void VideoDevice::initCamera(int deviceID) {
   // Get Video Capture Device
   camera.open(deviceID);
   if (!camera.isOpened()) {
     cerr <<"Unable to open capture device " <<deviceID <<"." <<endl;
     exit(1);
-  }
-  if (isHD) {
-    // Set Capture Resolution
-    camera.set(CV_CAP_PROP_FRAME_HEIGHT, 1920);
-    camera.set(CV_CAP_PROP_FRAME_WIDTH, 1080);
-	  
-    // Change Camera Data
-    constList.cameraFocalLength = constList.cameraHDFocalLength;
-    constList.cameraViewingAngle = constList.cameraHDViewingAngle;
   }
 }
 
@@ -73,6 +64,8 @@ void VideoDevice::captureFromCamera() {
   while (! isFinished) {
     camera >>image;
     isReady = 1;
+    constList.imgCols = image.cols;
+    constList.imgRows = image.rows;
   }
 }
 

@@ -40,6 +40,7 @@
 #include "VideoDevice.hpp"
 #include "Rectangle.hpp"
 #include "RectangleDetector.hpp"
+#include "RectangleProcessor.hpp"
 #include "CRIOLink.hpp"
 
 using namespace cv;
@@ -73,14 +74,12 @@ int main(int argc, char* argv[])
   stringstream deviceName;
   int isFile = 0;
   int isDevice = 0;
-  int isHD = 0;
   int isHeadless = 0;
   int isNetworking = 1;
   int firstRun = 1;
 
   while (true) {
     static struct option long_options[] = {
-      {"high-definition", no_argument, &isHD, 1},
       {"headless", no_argument, &isHeadless, 1},
       {"no-networking", no_argument, &isNetworking, 0},
       {"device", required_argument, 0, 'd'},
@@ -119,9 +118,9 @@ int main(int argc, char* argv[])
   }
 
   // Initialize Video Device
-  VideoDevice videoDevice(constList);
+  VideoDevice videoDevice(&constList);
   if (isDevice) {
-    videoDevice.startCapture(atoi(deviceName.str().c_str()), isHD);
+    videoDevice.startCapture(atoi(deviceName.str().c_str()));
   }
 
   // Initialize CRIO Communication Link
@@ -161,18 +160,24 @@ int main(int argc, char* argv[])
       if (firstRun && ! isHeadless)
 	cout <<"Camera Resolution: " <<original.cols <<"x" <<original.rows <<endl;
 
-      // Get Distance and Azimuth
-      RectangleDetector rectDetector(original);
+      // Process Rectangle
+      RectangleDetector rectDetector(&constList);
+      Rectangle foundRectangle = rectDetector.processImage(original);
+
       if (rectDetector.rectangleWasFound()) {
 	aquired = 1;
+
+	// Process Rectangle
+	RectangleProcessor rectProcessor(&constList);
+	rectProcessor.processRectangle(foundRectangle);
 	
 	// Retrieve Data
-	distanceMM = rectDetector.getDistance();
-	horizontalDistanceMM = rectDetector.getHorizontalDistance();
-	heightMM = rectDetector.getHeight();
-	velocity = rectDetector.getVelocity();
-	azimuthRadians = rectDetector.getAzimuth();
-	tiltRadians = rectDetector.getTilt();
+	distanceMM = rectProcessor.getDistance();
+	horizontalDistanceMM = rectProcessor.getHorizontalDistance();
+	heightMM = rectProcessor.getHeight();
+	velocity = rectProcessor.getVelocity();
+	azimuthRadians = rectProcessor.getAzimuth();
+	tiltRadians = rectProcessor.getTilt();
 	allRectangles = rectDetector.getAllRectangles();
 	finalRectangles = rectDetector.getFinalRectangles();
 
@@ -207,7 +212,7 @@ int main(int argc, char* argv[])
       
       // Write Data to Original Image
       int dataPointX = 0;
-      int dataPointY = original.rows-5;
+      int dataPointY = constList.imgRows - 5;
       Point dataCoordinates(dataPointX, dataPointY);
       int fontFace = FONT_HERSHEY_COMPLEX;
       double fontScale = (float)original.cols / 400.0;
@@ -227,16 +232,16 @@ int main(int argc, char* argv[])
 
       if (! isHeadless) {
 	int keycode = waitKey(10);
-	if (keycode == 120) {
+	if (keycode == 57) {
 	  stringstream filename;
 	  filename <<time(NULL) <<".jpg";
 	  imwrite(filename.str().c_str(), output);
 	}
 	else if (keycode == 27)
-	  break;
+	  exit(EXIT_SUCCESS);
 	if (isFile) {
 	  waitKey();
-	  break;
+	  exit(EXIT_SUCCESS);
 	}
       }
       else {

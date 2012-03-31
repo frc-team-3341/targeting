@@ -75,6 +75,7 @@ am_frc_team_3341_aimer_OBJECTS =  \
 	src/frc_team_3341_aimer-HSVImage.$(OBJEXT) \
 	src/frc_team_3341_aimer-main.$(OBJEXT) \
 	src/frc_team_3341_aimer-Rectangle.$(OBJEXT) \
+	src/frc_team_3341_aimer-RectangleProcessor.$(OBJEXT) \
 	src/frc_team_3341_aimer-RectangleDetector.$(OBJEXT) \
 	src/frc_team_3341_aimer-VideoDevice.$(OBJEXT)
 frc_team_3341_aimer_OBJECTS = $(am_frc_team_3341_aimer_OBJECTS)
@@ -149,15 +150,15 @@ OBJEXT = o
 PACKAGE = frc-team-3341-aimer
 PACKAGE_BUGREPORT = software@wvrobotics.com
 PACKAGE_NAME = FRC Team 3341 Aimer
-PACKAGE_STRING = FRC Team 3341 Aimer 2012.3
+PACKAGE_STRING = FRC Team 3341 Aimer 2012.03.01
 PACKAGE_TARNAME = frc-team-3341-aimer
 PACKAGE_URL = http://wvrobotics.com/
-PACKAGE_VERSION = 2012.3
+PACKAGE_VERSION = 2012.03.01
 PATH_SEPARATOR = :
 SET_MAKE = 
 SHELL = /bin/sh
 STRIP = 
-VERSION = 2012.3
+VERSION = 2012.03.01
 abs_builddir = /home/tushar/Documents/School/9th-grade/robotics/frc/programming/image-processing/opencv/frc-team-3341-aimer
 abs_srcdir = /home/tushar/Documents/School/9th-grade/robotics/frc/programming/image-processing/opencv/frc-team-3341-aimer
 abs_top_builddir = /home/tushar/Documents/School/9th-grade/robotics/frc/programming/image-processing/opencv/frc-team-3341-aimer
@@ -205,7 +206,7 @@ AUTOMAKE_OPTIONS = subdir-objects
 ACLOCAL_AMFLAGS = ${ACLOCAL_FLAGS}
 frc_team_3341_aimer_LDFLAGS = `pkg-config --cflags --libs opencv`
 frc_team_3341_aimer_CXXFLAGS = -Wall -std=gnu++0x
-frc_team_3341_aimer_SOURCES = src/Constants.cpp src/Constants.hpp src/CRIOLink.cpp src/CRIOLink.hpp src/HSVImage.cpp src/HSVImage.hpp src/main.cpp src/Rectangle.cpp src/Rectangle.hpp src/RectangleDetector.cpp src/RectangleDetector.hpp src/VideoDevice.cpp src/VideoDevice.hpp
+frc_team_3341_aimer_SOURCES = src/Constants.cpp src/Constants.hpp src/CRIOLink.cpp src/CRIOLink.hpp src/HSVImage.cpp src/HSVImage.hpp src/main.cpp src/Rectangle.cpp src/Rectangle.hpp src/RectangleProcessor.cpp src/RectangleProcessor.hpp src/RectangleDetector.cpp src/RectangleDetector.hpp src/VideoDevice.cpp src/VideoDevice.hpp
 dist_noinst_SCRIPTS = autogen.sh
 dist_noinst_DATA = images/
 all: all-am
@@ -316,6 +317,8 @@ src/frc_team_3341_aimer-main.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
 src/frc_team_3341_aimer-Rectangle.$(OBJEXT): src/$(am__dirstamp) \
 	src/$(DEPDIR)/$(am__dirstamp)
+src/frc_team_3341_aimer-RectangleProcessor.$(OBJEXT):  \
+	src/$(am__dirstamp) src/$(DEPDIR)/$(am__dirstamp)
 src/frc_team_3341_aimer-RectangleDetector.$(OBJEXT):  \
 	src/$(am__dirstamp) src/$(DEPDIR)/$(am__dirstamp)
 src/frc_team_3341_aimer-VideoDevice.$(OBJEXT): src/$(am__dirstamp) \
@@ -331,6 +334,7 @@ mostlyclean-compile:
 	-rm -f src/frc_team_3341_aimer-HSVImage.$(OBJEXT)
 	-rm -f src/frc_team_3341_aimer-Rectangle.$(OBJEXT)
 	-rm -f src/frc_team_3341_aimer-RectangleDetector.$(OBJEXT)
+	-rm -f src/frc_team_3341_aimer-RectangleProcessor.$(OBJEXT)
 	-rm -f src/frc_team_3341_aimer-VideoDevice.$(OBJEXT)
 	-rm -f src/frc_team_3341_aimer-main.$(OBJEXT)
 
@@ -342,6 +346,7 @@ include src/$(DEPDIR)/frc_team_3341_aimer-Constants.Po
 include src/$(DEPDIR)/frc_team_3341_aimer-HSVImage.Po
 include src/$(DEPDIR)/frc_team_3341_aimer-Rectangle.Po
 include src/$(DEPDIR)/frc_team_3341_aimer-RectangleDetector.Po
+include src/$(DEPDIR)/frc_team_3341_aimer-RectangleProcessor.Po
 include src/$(DEPDIR)/frc_team_3341_aimer-VideoDevice.Po
 include src/$(DEPDIR)/frc_team_3341_aimer-main.Po
 
@@ -430,6 +435,20 @@ src/frc_team_3341_aimer-Rectangle.obj: src/Rectangle.cpp
 #	source='src/Rectangle.cpp' object='src/frc_team_3341_aimer-Rectangle.obj' libtool=no \
 #	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
 #	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(frc_team_3341_aimer_CXXFLAGS) $(CXXFLAGS) -c -o src/frc_team_3341_aimer-Rectangle.obj `if test -f 'src/Rectangle.cpp'; then $(CYGPATH_W) 'src/Rectangle.cpp'; else $(CYGPATH_W) '$(srcdir)/src/Rectangle.cpp'; fi`
+
+src/frc_team_3341_aimer-RectangleProcessor.o: src/RectangleProcessor.cpp
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(frc_team_3341_aimer_CXXFLAGS) $(CXXFLAGS) -MT src/frc_team_3341_aimer-RectangleProcessor.o -MD -MP -MF src/$(DEPDIR)/frc_team_3341_aimer-RectangleProcessor.Tpo -c -o src/frc_team_3341_aimer-RectangleProcessor.o `test -f 'src/RectangleProcessor.cpp' || echo '$(srcdir)/'`src/RectangleProcessor.cpp
+	$(am__mv) src/$(DEPDIR)/frc_team_3341_aimer-RectangleProcessor.Tpo src/$(DEPDIR)/frc_team_3341_aimer-RectangleProcessor.Po
+#	source='src/RectangleProcessor.cpp' object='src/frc_team_3341_aimer-RectangleProcessor.o' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(frc_team_3341_aimer_CXXFLAGS) $(CXXFLAGS) -c -o src/frc_team_3341_aimer-RectangleProcessor.o `test -f 'src/RectangleProcessor.cpp' || echo '$(srcdir)/'`src/RectangleProcessor.cpp
+
+src/frc_team_3341_aimer-RectangleProcessor.obj: src/RectangleProcessor.cpp
+	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(frc_team_3341_aimer_CXXFLAGS) $(CXXFLAGS) -MT src/frc_team_3341_aimer-RectangleProcessor.obj -MD -MP -MF src/$(DEPDIR)/frc_team_3341_aimer-RectangleProcessor.Tpo -c -o src/frc_team_3341_aimer-RectangleProcessor.obj `if test -f 'src/RectangleProcessor.cpp'; then $(CYGPATH_W) 'src/RectangleProcessor.cpp'; else $(CYGPATH_W) '$(srcdir)/src/RectangleProcessor.cpp'; fi`
+	$(am__mv) src/$(DEPDIR)/frc_team_3341_aimer-RectangleProcessor.Tpo src/$(DEPDIR)/frc_team_3341_aimer-RectangleProcessor.Po
+#	source='src/RectangleProcessor.cpp' object='src/frc_team_3341_aimer-RectangleProcessor.obj' libtool=no \
+#	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) \
+#	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(frc_team_3341_aimer_CXXFLAGS) $(CXXFLAGS) -c -o src/frc_team_3341_aimer-RectangleProcessor.obj `if test -f 'src/RectangleProcessor.cpp'; then $(CYGPATH_W) 'src/RectangleProcessor.cpp'; else $(CYGPATH_W) '$(srcdir)/src/RectangleProcessor.cpp'; fi`
 
 src/frc_team_3341_aimer-RectangleDetector.o: src/RectangleDetector.cpp
 	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(frc_team_3341_aimer_CXXFLAGS) $(CXXFLAGS) -MT src/frc_team_3341_aimer-RectangleDetector.o -MD -MP -MF src/$(DEPDIR)/frc_team_3341_aimer-RectangleDetector.Tpo -c -o src/frc_team_3341_aimer-RectangleDetector.o `test -f 'src/RectangleDetector.cpp' || echo '$(srcdir)/'`src/RectangleDetector.cpp

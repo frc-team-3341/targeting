@@ -15,6 +15,7 @@
  *    along with FRC Team 3341 Aimer.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <cstdlib>
 #include <vector>
 
 #include "Constants.hpp"
