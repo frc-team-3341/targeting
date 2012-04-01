@@ -15,43 +15,36 @@
  *    along with FRC Team 3341 Aimer.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef Constants_hpp
-#define Constants_hpp
+#include "opencv2/core/core.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
+#include "opencv2/highgui/highgui.hpp"
 
-class Constants {
-public:
-  Constants();
+#include <cstdlib>
+#include <iostream>
+#include <cmath>
+#include <cstring>
+#include <string>
+#include <sstream>
+#include <ctime>
+#include <vector>
+#include <set>
 
-  // Math
-  float mathPi;
+#include "Constants.hpp"
+#include "GUIManager.hpp"
 
-  // Camera
-  int cameraFocalLength;
-  float cameraViewingAngle;
-  int cameraHDFocalLength;
-  float cameraHDViewingAngle;
-  int cameraHeight;
+using namespace cv;
+using namespace std;
 
-  // Image
-  int imgCols;
-  int imgRows;
+// Public Functions
+GUIManager::GUIManager(Constants *inputConstList) {
+  // Variable Initializations
+  constList = *inputConstList;
+}
 
-  // GUI
-  std::string guiWindowName;
+void GUIManager::init() {
+  namedWindow(constList.guiWindowName.c_str(), 0);
+}
 
-  // Rectangle
-  float rectBase;
-  float rectHeight;
-  std::vector<int> rectPossibleHeights;
-
-  // Shooter
-  float launchAngleDegrees;
-  float launchAngleRadians;
-
-  // Preprocessing
-  int preprocessingHueLowerThreshold;
-  int preprocessingHueUpperThreshold;
-  int preprocessingValueLowerThreshold;
-  int preprocessingValueUpperThreshold;
-};
-#endif /* Constants_hpp */
+void GUIManager::show(Mat imageToDisplay) {
+  imshow(constList.guiWindowName.c_str(), imageToDisplay);
+}

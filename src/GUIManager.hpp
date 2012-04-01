@@ -15,43 +15,21 @@
  *    along with FRC Team 3341 Aimer.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef Constants_hpp
-#define Constants_hpp
+#ifndef GUIManager_hpp
+#define GUIManager_hpp
 
-class Constants {
+class GUIManager {
 public:
-  Constants();
+  // Methods
+  GUIManager(Constants* /* Constants List */); // Constructor
+  void init(); // Initialize GUI
+  void show(cv::Mat /* Image to Display */); // Show Image
 
-  // Math
-  float mathPi;
+private:
+  // Data
+  Constants constList;
 
-  // Camera
-  int cameraFocalLength;
-  float cameraViewingAngle;
-  int cameraHDFocalLength;
-  float cameraHDViewingAngle;
-  int cameraHeight;
-
-  // Image
-  int imgCols;
-  int imgRows;
-
-  // GUI
-  std::string guiWindowName;
-
-  // Rectangle
-  float rectBase;
-  float rectHeight;
-  std::vector<int> rectPossibleHeights;
-
-  // Shooter
-  float launchAngleDegrees;
-  float launchAngleRadians;
-
-  // Preprocessing
-  int preprocessingHueLowerThreshold;
-  int preprocessingHueUpperThreshold;
-  int preprocessingValueLowerThreshold;
-  int preprocessingValueUpperThreshold;
+  // Methods
 };
-#endif /* Constants_hpp */
+
+#endif /* GUIManager_hpp */

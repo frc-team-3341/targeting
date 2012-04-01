@@ -41,14 +41,12 @@
 #include "Rectangle.hpp"
 #include "RectangleDetector.hpp"
 #include "RectangleProcessor.hpp"
+#include "GUIManager.hpp"
 #include "CRIOLink.hpp"
 
 using namespace cv;
 using namespace std;
 
-const char* wndname = "FRC Team 3341 2012 Aimer";
-
-// the function draws all the rectangles in the image
 void drawRectangles(Mat& image, const vector< vector<Point> > &allRectangles, const vector< vector<Point> >& finalRectangles)
 {
   for (size_t i = 0; i < allRectangles.size(); i++) {
@@ -62,8 +60,6 @@ void drawRectangles(Mat& image, const vector< vector<Point> > &allRectangles, co
     int n=(int)finalRectangles.at(i).size();
     polylines(image, &p, &n, 1, true, Scalar(255, 0, 0), 3, CV_AA);
   }
-
-  imshow(wndname, image);
 }
 
 int main(int argc, char* argv[])
@@ -128,8 +124,10 @@ int main(int argc, char* argv[])
   if (isNetworking)
     cRIOLink.initServer();
 
+  // Initialize GUI
+  GUIManager guiManager(&constList);
   if (! isHeadless)
-    namedWindow(wndname, 0);
+    guiManager.init();
 
   while (true) {
       vector< vector<Point> > allRectangles;
@@ -225,8 +223,10 @@ int main(int argc, char* argv[])
 	data <<"No rectangle";
       putText(original, data.str(), dataCoordinates, fontFace, fontScale, fontColor, fontThickness);
 
-      if (! isHeadless)
-	drawRectangles(original, allRectangles, finalRectangles); // Draw Rectangles and Display Image
+      if (! isHeadless) {
+	drawRectangles(original, allRectangles, finalRectangles); // Draw Rectangles
+	guiManager.show(original); // Show Image
+      }
 
       firstRun = 0;
 

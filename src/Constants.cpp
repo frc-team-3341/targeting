@@ -16,6 +16,7 @@
 */
 
 #include <cstdlib>
+#include <string>
 #include <vector>
 
 #include "Constants.hpp"
@@ -30,6 +31,9 @@ Constants::Constants() {
   cameraHDFocalLength = 655;
   cameraHDViewingAngle = 1.1414453308043;
   cameraHeight = 1162;
+
+  // GUI
+  guiWindowName = "FRC Team 3341 Aimer";
 
   // Rectangle
   rectBase = 609.6;

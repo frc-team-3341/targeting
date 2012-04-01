@@ -53,9 +53,16 @@ Mat VideoDevice::getImage() {
 // Private Methods
 void VideoDevice::initCamera(int deviceID) {
   // Get Video Capture Device
-  camera.open(deviceID);
-  if (!camera.isOpened()) {
-    cerr <<"Unable to open capture device " <<deviceID <<"." <<endl;
+  try {
+    camera.open(deviceID);
+    if (!camera.isOpened()) {
+      stringstream errorMsg;
+      errorMsg <<"Unable to open capture device /dev/video" <<deviceID;
+      throw errorMsg.str();
+    }
+  }
+  catch (string errMsg) {
+    cout <<errMsg <<endl;
     exit(1);
   }
 }
