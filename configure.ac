@@ -19,11 +19,6 @@ AM_INIT_AUTOMAKE([dist-bzip2])
 AC_CONFIG_SRCDIR([src])
 AC_CONFIG_HEADERS([src/config.h])
 
-# Set Environment Variables
-#CFLAGS="-g -pipe"
-CFLAGS="-march=native -O2 -pipe"
-CXXFLAGS="${CFLAGS}"
-
 # Check For Compiler
 AC_PROG_CXX
 
