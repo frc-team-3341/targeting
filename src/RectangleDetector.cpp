@@ -57,6 +57,7 @@ Rectangle RectangleDetector::processImage(Mat input) {
   if (! foundRectangle) return static_cast<Rectangle>(NULL);
   populateRectangles();
   if (! foundRectangle) return static_cast<Rectangle>(NULL);
+  filterUniqueRectangles();
   findContainedRectangles();
   if (! foundRectangle) return static_cast<Rectangle>(NULL);
   findCorrectRectangles();
@@ -195,6 +196,26 @@ void RectangleDetector::populateRectangles() {
 
   if (rectList.size() == 0)
     foundRectangle = false;
+}
+
+void RectangleDetector::filterUniqueRectangles() {
+  // Variable Declarations
+  vector<Rectangle> rectListUnique;
+
+  for (unsigned i = 0; i < rectList.size(); ++i) {
+    bool isUnique = true;
+    for (unsigned j = 0; j < rectListUnique.size(); ++j) {
+      if (rectList.at(i).topLeft == rectListUnique.at(j).topLeft &&
+          rectList.at(i).topRight == rectListUnique.at(j).topRight &&
+          rectList.at(i).bottomRight == rectListUnique.at(j).bottomRight &&
+          rectList.at(i).bottomLeft == rectListUnique.at(j).bottomLeft)
+        isUnique = false;
+    }
+
+    if (isUnique)
+      rectListUnique.push_back(rectList.at(i));
+  }
+  rectList = rectListUnique;
 }
 
 bool RectangleDetector::rectangleIsContained(Rectangle rectContainer, Rectangle rectContained) {

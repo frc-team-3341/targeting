@@ -59,7 +59,7 @@
 #define PACKAGE_NAME "FRC Team 3341 Aimer"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "FRC Team 3341 Aimer 2012.04"
+#define PACKAGE_STRING "FRC Team 3341 Aimer 2012.04.1"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "frc-team-3341-aimer"
@@ -68,10 +68,10 @@
 #define PACKAGE_URL "http://wvrobotics.com/"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "2012.04"
+#define PACKAGE_VERSION "2012.04.1"
 
 /* Define to 1 if you have the ANSI C header files. */
 #define STDC_HEADERS 1
 
 /* Version number of package */
-#define VERSION "2012.04"
+#define VERSION "2012.04.1"
