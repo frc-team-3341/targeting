@@ -81,8 +81,8 @@ CRIOLink::~CRIOLink() {
 
 // Private Methods
 void CRIOLink::deInitServer() {
-  close(sockfd);
-  close(clientfd);
+  shutdown(sockfd, 2);
+  shutdown(clientfd, 2);
 }
 
 void CRIOLink::sendMessage(string msg) {
