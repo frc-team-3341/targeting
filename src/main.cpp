@@ -78,6 +78,17 @@ int main(int argc, char* argv[])
   int isNetworking = 1;
   int firstRun = 1;
 
+  if (argc == 1) { // No Options on Command Line
+    vector<char*> cmdArgs;
+    cmdArgs.push_back(argv[0]);
+    cmdArgs.push_back("--file");
+    cmdArgs.push_back("/home/tushar/Documents/School/9th-grade/robotics/frc/image-processing/frc-team-3341-aimer/dev/images/calibration/81inches.jpg");
+    cmdArgs.push_back("--headless");
+
+    argv = &cmdArgs[0];
+    argc = cmdArgs.size();
+  }
+
   while (true) {
     static struct option long_options[] = {
       {"headless", no_argument, &isHeadless, 1},
