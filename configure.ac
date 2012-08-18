@@ -14,7 +14,7 @@
 #    along with FRC Team 3341 Aimer.  If not, see <http://www.gnu.org/licenses/>.
 
 AC_PREREQ([2.65])
-AC_INIT([FRC Team 3341 Aimer], [2012.05.0], [software@wvrobotics.com], [frc-team-3341-aimer], [http://wvrobotics.com/])
+AC_INIT([FRC Team 3341 Aimer], [1.0], [software@wvrobotics.com], [frc-team-3341-aimer], [http://wvrobotics.com/])
 AM_INIT_AUTOMAKE([dist-bzip2 dist-xz])
 AC_CONFIG_SRCDIR([src])
 AC_CONFIG_HEADERS([src/config.h])

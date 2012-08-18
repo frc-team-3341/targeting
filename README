@@ -1,3 +1,3 @@
-FRC Team 3341 2012 Aimer 2012.05.0
-==================================
+FRC Team 3341 2012 Aimer 1.0
+============================
 This program is used to aim the shooter on FRC Team 3341's robot. It uses the size of the rectangle located on the basketball hoop to compute the distance, height, and azimuth, which is then used to compute the velocity.
