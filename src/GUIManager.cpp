@@ -40,15 +40,18 @@ using namespace cv;
 using namespace std;
 
 // Public Functions
-GUIManager::GUIManager(Constants *inputConstList) {
-  // Variable Initializations
-  constList = *inputConstList;
+GUIManager::GUIManager(Constants *inputConstList)
+{
+    // Variable Initializations
+    constList = *inputConstList;
 }
 
-void GUIManager::init() {
-  namedWindow(constList.guiWindowName.c_str(), 0);
+void GUIManager::init()
+{
+    namedWindow(constList.guiWindowName.c_str(), 0);
 }
 
-void GUIManager::show(Mat imageToDisplay) {
-  imshow(constList.guiWindowName.c_str(), imageToDisplay);
+void GUIManager::show(Mat imageToDisplay)
+{
+    imshow(constList.guiWindowName.c_str(), imageToDisplay);
 }

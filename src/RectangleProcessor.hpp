@@ -18,36 +18,37 @@
 #ifndef RectangleProcessor_hpp
 #define RectangleProcessor_hpp
 
-class RectangleProcessor {
+class RectangleProcessor
+{
 public:
-  // Methods
-  RectangleProcessor(Constants* /* Constant List */);
-  void processRectangle(Rectangle);
-  float getAzimuth();
-  int getDistance();
-  int getHorizontalDistance();
-  float getVelocity();
-  int getHeight();
-  float getTilt();
+    // Methods
+    RectangleProcessor(Constants* /* Constant List */);
+    void processRectangle(Rectangle);
+    float getAzimuth();
+    int getDistance();
+    int getHorizontalDistance();
+    float getVelocity();
+    int getHeight();
+    float getTilt();
 private:
-  // Data
-  Rectangle inputRect;
-  Constants *constList;
-  float azimuth;
-  int distance;
-  int horizontalDistance;
-  float velocity;
-  int height;
-  float tilt;
+    // Data
+    Rectangle inputRect;
+    Constants *constList;
+    float azimuth;
+    int distance;
+    int horizontalDistance;
+    float velocity;
+    int height;
+    float tilt;
 
-  // Methods
-  void computeDistance(); // Computes Distance to the Rectangle
-  void computeHorizontalDistance(); // Computes Horizontal Distance to the Rectangle
-  void computeHeight(); // Computes Height of the Rectangle
-  void computeVelocity(); // Computes Velocity of Ball
-  void computeAzimuth(); // Computes Azimuth to the Rectangle
-  void fixHeight(); // Changes Lowest Hoop to Highest
-  void computeTilt(); // Computes Tilt of the Rectangle
+    // Methods
+    void computeDistance(); // Computes Distance to the Rectangle
+    void computeHorizontalDistance(); // Computes Horizontal Distance to the Rectangle
+    void computeHeight(); // Computes Height of the Rectangle
+    void computeVelocity(); // Computes Velocity of Ball
+    void computeAzimuth(); // Computes Azimuth to the Rectangle
+    void fixHeight(); // Changes Lowest Hoop to Highest
+    void computeTilt(); // Computes Tilt of the Rectangle
 };
 
 #endif /* RectangleProcessor_hpp */

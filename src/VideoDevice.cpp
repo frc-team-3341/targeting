@@ -36,52 +36,57 @@ using namespace cv;
 using namespace std;
 
 // Public Methods
-VideoDevice::VideoDevice(Constants *inputConstList) {
-  // Variable Declarations
-  isFinished = 0;
-  isReady = 0;
-  constList = *inputConstList;
+VideoDevice::VideoDevice(Constants *inputConstList)
+{
+    // Variable Declarations
+    isFinished = 0;
+    isReady = 0;
+    constList = *inputConstList;
 }
 
-void VideoDevice::startCapture(int deviceID) {
-  initCamera(deviceID);
-  captureThread = new thread(&VideoDevice::captureFromCamera, this);
+void VideoDevice::startCapture(int deviceID)
+{
+    initCamera(deviceID);
+    captureThread = new thread(&VideoDevice::captureFromCamera, this);
 }
 
-Mat VideoDevice::getImage() {
-  while (! isReady)
-      cout <<"Waiting for camera..." <<endl;
-  return image;
+Mat VideoDevice::getImage()
+{
+    while (! isReady)
+        cout <<"Waiting for camera..." <<endl;
+    return image;
 }
 
 // Private Methods
-void VideoDevice::initCamera(int deviceID) {
-  // Get Video Capture Device
-  try {
-    camera.open(deviceID);
-    if (!camera.isOpened()) {
-      stringstream errorMsg;
-      errorMsg <<"Unable to open capture device /dev/video" <<deviceID;
-      throw errorMsg.str();
+void VideoDevice::initCamera(int deviceID)
+{
+    // Get Video Capture Device
+    try {
+        camera.open(deviceID);
+        if (!camera.isOpened()) {
+            stringstream errorMsg;
+            errorMsg <<"Unable to open capture device /dev/video" <<deviceID;
+            throw errorMsg.str();
+        }
+    } catch (string errMsg) {
+        cout <<errMsg <<endl;
+        exit(1);
     }
-  }
-  catch (string errMsg) {
-    cout <<errMsg <<endl;
-    exit(1);
-  }
 }
 
-void VideoDevice::captureFromCamera() {
-  while (! isFinished) {
-    camera >>image;
-    isReady = 1;
-    constList.imgCols = image.cols;
-    constList.imgRows = image.rows;
-  }
+void VideoDevice::captureFromCamera()
+{
+    while (! isFinished) {
+        camera >>image;
+        isReady = 1;
+        constList.imgCols = image.cols;
+        constList.imgRows = image.rows;
+    }
 }
 
-VideoDevice::~VideoDevice() {
-  isFinished = 1;
-  captureThread->join();
-  delete captureThread;
+VideoDevice::~VideoDevice()
+{
+    isFinished = 1;
+    captureThread->join();
+    delete captureThread;
 }
