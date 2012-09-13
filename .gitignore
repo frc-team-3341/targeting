@@ -12,3 +12,10 @@ configure
 frc-team-3341-aimer
 src/stamp-h1
 src/.deps/*
+src/config.h
+src/config.h.in
+config.guess
+config.sub
+libtool
+ltmain.sh
+src/frc-team-3341-targeting
