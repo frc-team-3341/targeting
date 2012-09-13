@@ -13,19 +13,26 @@
 #    You should have received a copy of the GNU General Public License
 #    along with FRC Team 3341 Aimer.  If not, see <http://www.gnu.org/licenses/>.
 
-AC_PREREQ([2.65])
-AC_INIT([FRC Team 3341 Aimer], [1.0], [software@wvrobotics.com], [frc-team-3341-aimer], [http://wvrobotics.com/])
-AC_CONFIG_SRCDIR([src])
-AC_CONFIG_HEADERS([src/config.h])
-AM_INIT_AUTOMAKE([dist-xz])
-
-AC_LANG([C++])
-AC_PROG_CC
-AC_PROG_CXX
-AC_PROG_INSTALL
-AC_PROG_LIBTOOL
-
-AC_CHECK_HEADERS([sys/socket.h netinet/in.h netdb.h getopt.h opencv2/core/core.hpp opencv2/imgproc/imgproc.hpp opencv2/highgui/highgui.hpp])
-
-AC_CONFIG_FILES([Makefile src/Makefile])
-AC_OUTPUT
+bin_PROGRAMS = frc-team-3341-targeting
+frc_team_3341_targeting_SOURCES = \
+CRIOLink.cpp \
+CRIOLink.hpp \
+Constants.cpp \
+Constants.hpp \
+GUIManager.cpp \
+GUIManager.hpp \
+HSVImage.cpp \
+HSVImage.hpp \
+Rectangle.cpp \
+Rectangle.hpp \
+RectangleDetector.cpp \
+RectangleDetector.hpp \
+RectangleProcessor.cpp \
+RectangleProcessor.hpp \
+VideoDevice.cpp \
+VideoDevice.hpp \
+main.cpp
+frc_team_3341_targeting_CXXFLAGS = $(AM_CXXFLAGS) -std=gnu++0x `pkg-config --libs --cflags opencv`
+frc_team_3341_targeting_CPPFLAGS = $(AM_CPPFLAGS)
+frc_team_3341_targeting_LDFLAGS = $(LDFLAGS)
+frc_team_3341_targeting_LDADD = $(LDADD)

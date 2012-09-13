@@ -13,13 +13,7 @@
 #    You should have received a copy of the GNU General Public License
 #    along with FRC Team 3341 Aimer.  If not, see <http://www.gnu.org/licenses/>.
 
-AUTOMAKE_OPTIONS = subdir-objects
-ACLOCAL_AMFLAGS = ${ACLOCAL_FLAGS}
-
-bin_PROGRAMS = frc-team-3341-aimer
-frc_team_3341_aimer_LDFLAGS = `pkg-config --cflags --libs opencv`
-frc_team_3341_aimer_CXXFLAGS = -Wall -std=gnu++0x
-frc_team_3341_aimer_SOURCES = src/Constants.cpp src/Constants.hpp src/CRIOLink.cpp src/CRIOLink.hpp src/GUIManager.cpp src/GUIManager.hpp src/HSVImage.cpp src/HSVImage.hpp src/main.cpp src/Rectangle.cpp src/Rectangle.hpp src/RectangleDetector.cpp src/RectangleDetector.hpp src/RectangleProcessor.cpp src/RectangleProcessor.hpp src/VideoDevice.cpp src/VideoDevice.hpp
-
-dist_noinst_SCRIPTS = autogen.sh
+ACLOCAL_AMFLAGS = -I build-aux
+SUBDIRS = src/
 dist_noinst_DATA = images/
+dist_noinst_SCRIPTS = autogen.sh

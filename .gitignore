@@ -19,3 +19,8 @@ config.sub
 libtool
 ltmain.sh
 src/frc-team-3341-targeting
+build-aux/libtool.m4
+build-aux/ltoptions.m4
+build-aux/ltsugar.m4
+build-aux/ltversion.m4
+build-aux/lt~obsolete.m4
