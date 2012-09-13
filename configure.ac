@@ -25,10 +25,14 @@ AC_PROG_CXX
 AC_PROG_INSTALL
 AC_PROG_LIBTOOL
 
+PKG_CHECK_MODULES(OpenCV, opencv >= 2.2)
+AC_SUBST(OPENCV_CFLAGS)
+AC_SUBST(OPENCV_LIBS)
+
 BOOST_REQUIRE([1.34.1])
 BOOST_ASIO
 
-AC_CHECK_HEADERS([sys/socket.h netinet/in.h netdb.h getopt.h opencv2/core/core.hpp opencv2/imgproc/imgproc.hpp opencv2/highgui/highgui.hpp])
+AC_CHECK_HEADERS([sys/socket.h netinet/in.h netdb.h getopt.h])
 
 AC_CONFIG_FILES([Makefile src/Makefile])
 AC_OUTPUT

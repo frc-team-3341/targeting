@@ -32,7 +32,7 @@ RectangleProcessor.hpp \
 VideoDevice.cpp \
 VideoDevice.hpp \
 main.cpp
-frc_team_3341_targeting_CXXFLAGS = $(AM_CXXFLAGS) -std=gnu++0x `pkg-config --libs --cflags opencv`
-frc_team_3341_targeting_CPPFLAGS = $(AM_CPPFLAGS)
-frc_team_3341_targeting_LDFLAGS = $(LDFLAGS)
+frc_team_3341_targeting_CXXFLAGS = $(AM_CXXFLAGS) -std=gnu++0x
+frc_team_3341_targeting_CPPFLAGS = $(AM_CPPFLAGS) $(OPENCV_CFLAGS)
+frc_team_3341_targeting_LDFLAGS = $(LDFLAGS) $(OPENCV_LIBS)
 frc_team_3341_targeting_LDADD = $(LDADD)
