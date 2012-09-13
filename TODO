@@ -1,0 +1,13 @@
+* Rebrand
+* Remove "using" namespaces
+* Move main() operations to Application class
+* Move command line processing to CmdArgs class
+* Add rectangle printer to GUIManager
+* Add RPM printer to GUIManager
+* Use initializer lists
+* Move from C networking to Boost.Asio
+* Replace handmade std::string<->int conversion with Boost.Lexical_Cast
+* Remove blur function
+* Add duplicate rectangle pruner
+* Add auto-offset to highest possible hoop
+* Rewrite RectangleProcessor with linear algebra
