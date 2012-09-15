@@ -21,38 +21,38 @@
 class Constants
 {
 public:
-    Constants();
+        Constants();
 
-    // Math
-    float mathPi;
+        // Math
+        float mathPi;
 
-    // Camera
-    int cameraFocalLength;
-    float cameraViewingAngle;
-    int cameraHDFocalLength;
-    float cameraHDViewingAngle;
-    int cameraHeight;
+        // Camera
+        int cameraFocalLength;
+        float cameraViewingAngle;
+        int cameraHDFocalLength;
+        float cameraHDViewingAngle;
+        int cameraHeight;
 
-    // Image
-    int imgCols;
-    int imgRows;
+        // Image
+        int imgCols;
+        int imgRows;
 
-    // GUI
-    std::string guiWindowName;
+        // GUI
+        std::string guiWindowName;
 
-    // Rectangle
-    float rectBase;
-    float rectHeight;
-    std::vector<int> rectPossibleHeights;
+        // Rectangle
+        float rectBase;
+        float rectHeight;
+        std::vector<int> rectPossibleHeights;
 
-    // Shooter
-    float launchAngleDegrees;
-    float launchAngleRadians;
+        // Shooter
+        float launchAngleDegrees;
+        float launchAngleRadians;
 
-    // Preprocessing
-    int preprocessingHueLowerThreshold;
-    int preprocessingHueUpperThreshold;
-    int preprocessingValueLowerThreshold;
-    int preprocessingValueUpperThreshold;
+        // Preprocessing
+        int preprocessingHueLowerThreshold;
+        int preprocessingHueUpperThreshold;
+        int preprocessingValueLowerThreshold;
+        int preprocessingValueUpperThreshold;
 };
 #endif /* Constants_hpp */

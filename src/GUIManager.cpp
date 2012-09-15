@@ -36,22 +36,19 @@
 #include "Constants.hpp"
 #include "GUIManager.hpp"
 
-using namespace cv;
-using namespace std;
-
 // Public Functions
 GUIManager::GUIManager(Constants *inputConstList)
 {
-    // Variable Initializations
-    constList = *inputConstList;
+        // Variable Initializations
+        constList = *inputConstList;
 }
 
 void GUIManager::init()
 {
-    namedWindow(constList.guiWindowName.c_str(), 0);
+	cv::namedWindow(constList.guiWindowName.c_str(), 0);
 }
 
-void GUIManager::show(Mat imageToDisplay)
+void GUIManager::show(cv::Mat imageToDisplay)
 {
-    imshow(constList.guiWindowName.c_str(), imageToDisplay);
+	cv::imshow(constList.guiWindowName.c_str(), imageToDisplay);
 }

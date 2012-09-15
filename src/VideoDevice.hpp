@@ -21,24 +21,24 @@
 class VideoDevice
 {
 public:
-    // Methods
-    VideoDevice(Constants* /* Constant List */);
-    void startCapture(int /* Device ID */);
-    cv::Mat getImage();
-    ~VideoDevice();
+        // Methods
+        VideoDevice(Constants* /* Constant List */);
+        void startCapture(int /* Device ID */);
+        cv::Mat getImage();
+        ~VideoDevice();
 
 private:
-    // Methods
-    void initCamera(int /* Device ID */);
-    void captureFromCamera();
+        // Methods
+        void initCamera(int /* Device ID */);
+        void captureFromCamera();
 
-    // Data
-    Constants constList;
-    std::thread *captureThread;
-    cv::VideoCapture camera;
-    cv::Mat image;
-    int isFinished;
-    int isReady;
+        // Data
+        Constants constList;
+        std::thread *captureThread;
+        cv::VideoCapture camera;
+        cv::Mat image;
+        int isFinished;
+        int isReady;
 };
 
 #endif /* VideoDevice_hpp */

@@ -1,5 +1,4 @@
-* Rebrand
-* Remove "using" namespaces
+To Do:
 * Move main() operations to Application class
 * Move command line processing to CmdArgs class
 * Add rectangle printer to GUIManager
@@ -11,3 +10,7 @@
 * Add duplicate rectangle pruner
 * Add auto-offset to highest possible hoop
 * Rewrite RectangleProcessor with linear algebra
+
+Complete:
+* Rebrand (completed 2012-09-13 Tushar Pankaj)
+* Remove "using" namespaces (completed 2012-09-14 Tushar Pankaj)

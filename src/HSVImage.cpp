@@ -34,24 +34,21 @@
 #include <cctype>
 #include <ctime>
 
-using namespace cv;
-using namespace std;
-
-HSVImage::HSVImage(Mat &InputImage)
+HSVImage::HSVImage(cv::Mat &InputImage)
 {
-    LoadRGBImage(InputImage);
+        LoadRGBImage(InputImage);
 }
 
-void HSVImage::LoadRGBImage(Mat &InputImage)
+void HSVImage::LoadRGBImage(cv::Mat &InputImage)
 {
-    InputImage.copyTo(rgb);
-    cvtColor(InputImage, InputImage, CV_RGB2HSV); // Convert Image to HSV
+        InputImage.copyTo(rgb);
+        cvtColor(InputImage, InputImage, CV_RGB2HSV); // Convert Image to HSV
 
-    // Get HSV Slices
-    vector<Mat> slices;
-    split(InputImage, slices);
-    InputImage.copyTo(hsv);
-    slices.at(0).copyTo(hue);
-    slices.at(1).copyTo(saturation);
-    slices.at(2).copyTo(value);
+        // Get HSV Slices
+	std::vector<cv::Mat> slices;
+        split(InputImage, slices);
+        InputImage.copyTo(hsv);
+        slices.at(0).copyTo(hue);
+        slices.at(1).copyTo(saturation);
+        slices.at(2).copyTo(value);
 }

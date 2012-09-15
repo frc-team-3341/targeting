@@ -21,16 +21,16 @@
 class GUIManager
 {
 public:
-    // Methods
-    GUIManager(Constants* /* Constants List */); // Constructor
-    void init(); // Initialize GUI
-    void show(cv::Mat /* Image to Display */); // Show Image
+        // Methods
+        GUIManager(Constants* /* Constants List */); // Constructor
+        void init(); // Initialize GUI
+        void show(cv::Mat /* Image to Display */); // Show Image
 
 private:
-    // Data
-    Constants constList;
+        // Data
+        Constants constList;
 
-    // Methods
+        // Methods
 };
 
 #endif /* GUIManager_hpp */
