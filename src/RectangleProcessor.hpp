@@ -22,7 +22,7 @@ class RectangleProcessor
 {
 public:
         // Methods
-        RectangleProcessor(Constants* /* Constant List */);
+        RectangleProcessor(Constants *constList);
         void processRectangle(Rectangle);
         float getAzimuth();
         int getDistance();

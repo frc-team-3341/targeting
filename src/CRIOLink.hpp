@@ -25,7 +25,7 @@ public:
         CRIOLink(); // Constructor
         void initServer(); // Server Initialization
         void waitForPing(); // Wait for Ping
-        void sendData(float /* Velocity */, int /* Height */, float /* Azimuth */, float /* Tilt */); // Send Data
+        void sendData(float velocity, int height, float azimuth, float tilt); // Send Data
         void sendData(); // Send Empty Data
         ~CRIOLink(); // Destructor
 
@@ -33,7 +33,7 @@ public:
 private:
         // Functions
         void deInitServer(); // Server Deinitialization
-        void sendMessage(std::string); // Send Message
+        void sendMessage(std::string message); // Send Message
         std::string recvMessage(); // Receive Message
 
         // Variables

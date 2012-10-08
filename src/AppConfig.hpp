@@ -15,23 +15,35 @@
  *    along with FRC Team 3341 Targeting.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GUIManager_hpp
-#define GUIManager_hpp
+#ifndef AppConfig_hpp
+#define AppConfig_hpp
 
 #include <string>
 
-class GUIManager
+class AppConfig
 {
 public:
-        GUIManager(Constants* constList); // Constructor
-        void init(); // Initialize GUI
-	void setImage(cv::Mat image);
-	void setImageText(std::string imageText);
-        void show(const std::vector<std::vector<cv::Point> > &allRectangles, const std::vector<std::vector<cv::Point> >& finalRectangles); // Show Image
-
+	AppConfig();
+	std::string getFileName();
+	void setFileName(std::string fileName);
+	int getDeviceID();
+	void setDeviceID(int deviceID);
+	int getIsFile();
+	void setIsFile(int isFile);
+	int getIsDevice();
+	void setIsDevice(int isDevice);
+	int getIsHeadless();
+	void setIsHeadless(int isHeadless);
+	int getIsNetworking();
+	void setIsNetworking(int isNetworking);
 private:
-        Constants *constList;
-	cv::Mat image;
+	std::string fileName;
+	int deviceID;
+	int isFile;
+	int isDevice;
+	int isHeadless;
+	int isNetworking;
 };
 
-#endif /* GUIManager_hpp */
+#endif /* AppConfig_hpp */
+

@@ -15,23 +15,30 @@
  *    along with FRC Team 3341 Targeting.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GUIManager_hpp
-#define GUIManager_hpp
+#ifndef NetworkController_hpp
+#define NetworkController_hpp
 
-#include <string>
+#include <boost/asio.hpp>
 
-class GUIManager
+#include "Constants.hpp"
+
+class NetworkController
 {
 public:
-        GUIManager(Constants* constList); // Constructor
-        void init(); // Initialize GUI
-	void setImage(cv::Mat image);
-	void setImageText(std::string imageText);
-        void show(const std::vector<std::vector<cv::Point> > &allRectangles, const std::vector<std::vector<cv::Point> >& finalRectangles); // Show Image
+	NetworkController(Constants *constList);
+	~NetworkController();
+	void startServer();
+	void waitForPing();
+	void sendData(float velocity, float azimuth, float tilt);
+	void sendData();
 
 private:
-        Constants *constList;
-	cv::Mat image;
+	int portNumber;
+	boost::asio::io_service *io_service;
+	boost::asio::ip::tcp::acceptor *acceptor;
+	boost::asio::ip::tcp::socket *socket;
+	boost::system::error_code ignored_error;
+	boost::system::error_code error;
 };
 
-#endif /* GUIManager_hpp */
+#endif /* NetworkController_hpp  */

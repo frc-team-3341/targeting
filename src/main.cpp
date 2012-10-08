@@ -47,8 +47,9 @@
 #include "RectangleProcessor.hpp"
 #include "GUIManager.hpp"
 #include "CRIOLink.hpp"
+#include "Application.hpp"
 
-void drawRectangles(cv::Mat& image, const std::vector<std::vector<cv::Point> > &allRectangles, const std::vector<std::vector<cv::Point> >& finalRectangles)
+/*void drawRectangles(cv::Mat& image, const std::vector<std::vector<cv::Point> > &allRectangles, const std::vector<std::vector<cv::Point> >& finalRectangles)
 {
         for (size_t i = 0; i < allRectangles.size(); i++) {
                 const cv::Point* p = &allRectangles.at(i).at(0);
@@ -60,13 +61,13 @@ void drawRectangles(cv::Mat& image, const std::vector<std::vector<cv::Point> > &
                 const cv::Point* p = &finalRectangles.at(i).at(0);
                 int n = (int)finalRectangles.at(i).size();
 		cv::polylines(image, &p, &n, 1, true, cv::Scalar(255, 0, 0), 3, CV_AA);
-        }
-}
+		}
+		}*/
 
 int main(int argc, char* argv[])
 {
 
-        Constants constList;
+/*        Constants constList;
 	std::stringstream fileName;
 	std::stringstream deviceName;
         int isFile = 0;
@@ -224,8 +225,7 @@ int main(int argc, char* argv[])
 		cv::putText(original, data.str(), dataCoordinates, fontFace, fontScale, fontColor, fontThickness);
 
                 if (! isHeadless) {
-                        drawRectangles(original, allRectangles, finalRectangles); // Draw Rectangles
-                        guiManager.show(original); // Show Image
+                        guiManager.show(original, allRectangles, finalRectangles); // Show Image
                 }
 
                 firstRun = 0;
@@ -246,7 +246,10 @@ int main(int argc, char* argv[])
                         if (isNetworking && isFile)
                                 cRIOLink.waitForPing();
                 }
-        }
+		}
 
-        return EXIT_SUCCESS;
+		return EXIT_SUCCESS;*/
+
+	Application app(argc, argv);
+	return app.exec();
 }

@@ -15,24 +15,33 @@
 
 bin_PROGRAMS = frc-team-3341-targeting
 frc_team_3341_targeting_SOURCES = \
+AppConfig.cpp \
+Application.cpp \
 CRIOLink.cpp \
-CRIOLink.hpp \
+CmdLineInterface.cpp \
 Constants.cpp \
-Constants.hpp \
 GUIManager.cpp \
-GUIManager.hpp \
 HSVImage.cpp \
-HSVImage.hpp \
+NetworkController.cpp \
 Rectangle.cpp \
-Rectangle.hpp \
 RectangleDetector.cpp \
-RectangleDetector.hpp \
 RectangleProcessor.cpp \
-RectangleProcessor.hpp \
 VideoDevice.cpp \
-VideoDevice.hpp \
-main.cpp
-frc_team_3341_targeting_CXXFLAGS = $(AM_CXXFLAGS) -std=gnu++0x
+main.cpp \
+AppConfig.hpp \
+Application.hpp \
+CRIOLink.hpp \
+CmdLineInterface.hpp \
+Constants.hpp \
+GUIManager.hpp \
+HSVImage.hpp \
+NetworkController.hpp \
+Rectangle.hpp \
+RectangleDetector.hpp \
+RectangleProcessor.hpp \
+VideoDevice.hpp
+frc_team_3341_targeting_CXXFLAGS = $(AM_CXXFLAGS) $(BOOST_CPPFLAGS) -std=gnu++0x -Wall -Werror
 frc_team_3341_targeting_CPPFLAGS = $(AM_CPPFLAGS) $(OPENCV_CFLAGS)
-frc_team_3341_targeting_LDFLAGS = $(LDFLAGS)
+frc_team_3341_targeting_LDFLAGS = $(LDFLAGS) $(BOOST_LDFLAGS) $(BOOST_ASIO_LDFLAGS) -lboost_system
 frc_team_3341_targeting_LDADD = $(LDADD) $(OPENCV_LIBS)
+frc_team_3341_targeting_LIBS = $(BOOST_ASIO_LIBS)

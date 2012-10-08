@@ -152,6 +152,7 @@ void RectangleProcessor::computeVelocity()
 void RectangleProcessor::computeAzimuth()
 {
         azimuth = ((float)inputRect.center.x - ((float)constList->imgCols / 2.0)) / (float)constList->cameraFocalLength;
+	azimuth *= 180.0 / constList->mathPi;
 }
 
 void RectangleProcessor::computeHeight()
@@ -192,4 +193,5 @@ void RectangleProcessor::computeTilt()
 
         if (inputRect.lengthSquaredLeft < inputRect.lengthSquaredRight)
                 tilt *= -1;
+	tilt *= 180.0 / constList->mathPi;
 }

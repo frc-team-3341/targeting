@@ -22,8 +22,8 @@ class HSVImage
 {
 public:
         // Functions
-        HSVImage(cv::Mat &); // Constructor
-        void LoadRGBImage(cv::Mat &); // Loads RGB Image
+        HSVImage(cv::Mat &rgbImg); // Constructor
+        void LoadRGBImage(cv::Mat &rgbImg); // Loads RGB Image
 
         // Variables
         cv::Mat rgb;

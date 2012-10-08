@@ -24,8 +24,8 @@ public:
         // Methods
         Rectangle(); // Constructor
         Rectangle(int*); // Constructor
-        Rectangle(std::vector<cv::Point>); // Populate Rectangle
-        void populate(std::vector<cv::Point>); // Populate Rectangle
+        Rectangle(std::vector<cv::Point> rectPoints); // Populate Rectangle
+        void populate(std::vector<cv::Point> rectPoints); // Populate Rectangle
         bool containsPoint(cv::Point); // Checks if Point is Inside Rectangle
 
         // Data

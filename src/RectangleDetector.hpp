@@ -22,8 +22,8 @@ class RectangleDetector
 {
 public:
         // Methods
-        RectangleDetector(Constants* /* Constant List */);
-        Rectangle processImage(cv::Mat /* Input Image */);
+        RectangleDetector(Constants* constList);
+        Rectangle processImage(cv::Mat inputImage);
         bool rectangleWasFound();
         std::vector< std::vector<cv::Point> > getAllRectangles();
         std::vector< std::vector<cv::Point> > getFinalRectangles();

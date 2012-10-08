@@ -22,14 +22,14 @@ class VideoDevice
 {
 public:
         // Methods
-        VideoDevice(Constants* /* Constant List */);
-        void startCapture(int /* Device ID */);
+        VideoDevice(Constants *constList);
+        void startCapture(int devID);
         cv::Mat getImage();
         ~VideoDevice();
 
 private:
         // Methods
-        void initCamera(int /* Device ID */);
+        void initCamera(int devID);
         void captureFromCamera();
 
         // Data

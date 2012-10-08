@@ -15,23 +15,27 @@
  *    along with FRC Team 3341 Targeting.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GUIManager_hpp
-#define GUIManager_hpp
+#ifndef CmdLineInterface_hpp
+#define CmdLineInterface_hpp
 
-#include <string>
+#include "AppConfig.hpp"
 
-class GUIManager
+class CmdLineInterface
 {
 public:
-        GUIManager(Constants* constList); // Constructor
-        void init(); // Initialize GUI
-	void setImage(cv::Mat image);
-	void setImageText(std::string imageText);
-        void show(const std::vector<std::vector<cv::Point> > &allRectangles, const std::vector<std::vector<cv::Point> >& finalRectangles); // Show Image
-
+	CmdLineInterface(int argc, char *argv[]);
+	AppConfig getConfig();
 private:
-        Constants *constList;
-	cv::Mat image;
+	AppConfig config;	
 };
 
-#endif /* GUIManager_hpp */
+#endif /* CmdLineInterface_hpp */
+
+
+
+
+
+
+
+
+

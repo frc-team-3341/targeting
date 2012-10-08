@@ -54,5 +54,8 @@ public:
         int preprocessingHueUpperThreshold;
         int preprocessingValueLowerThreshold;
         int preprocessingValueUpperThreshold;
+
+	// Server
+	int portNumber;
 };
 #endif /* Constants_hpp */

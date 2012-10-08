@@ -15,23 +15,34 @@
  *    along with FRC Team 3341 Targeting.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef GUIManager_hpp
-#define GUIManager_hpp
+#ifndef Application_hpp
+#define Application_hpp
 
-#include <string>
+#include "CmdLineInterface.hpp"
+#include "VideoDevice.hpp"
+#include "NetworkController.hpp"
+#include "GUIManager.hpp"
+#include "AppConfig.hpp"
 
-class GUIManager
+class Application
 {
 public:
-        GUIManager(Constants* constList); // Constructor
-        void init(); // Initialize GUI
-	void setImage(cv::Mat image);
-	void setImageText(std::string imageText);
-        void show(const std::vector<std::vector<cv::Point> > &allRectangles, const std::vector<std::vector<cv::Point> >& finalRectangles); // Show Image
-
+	Application(int argc, char *argv[]);
+	~Application();
+	int exec();
 private:
-        Constants *constList;
-	cv::Mat image;
+	void initVideoDevice();
+	void initNetworking();
+	void initGUI();
+	void targetingInit();
+	void targetingContinuous();
+	cv::Mat loadImage();
+	CmdLineInterface *cmdLineInterface;
+	VideoDevice *videoDevice;
+	NetworkController *networkController;
+	GUIManager *guiManager;
+	Constants *constList;
+	AppConfig config;
 };
 
-#endif /* GUIManager_hpp */
+#endif /* Application_hpp */
