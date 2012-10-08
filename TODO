@@ -1,16 +1,17 @@
 To Do:
-* Move main() operations to Application class
-* Move command line processing to CmdArgs class
-* Add rectangle printer to GUIManager
-* Add RPM printer to GUIManager
-* Use initializer lists
-* Move from C networking to Boost.Asio
-* Replace handmade std::string<->int conversion with Boost.Lexical_Cast
+* Add RPM calculator which was somehow erased
 * Remove blur function
 * Add duplicate rectangle pruner
 * Add auto-offset to highest possible hoop
 * Rewrite RectangleProcessor with linear algebra
 
 Complete:
-* Rebrand (completed 2012-09-13 Tushar Pankaj)
-* Remove "using" namespaces (completed 2012-09-14 Tushar Pankaj)
+* Rebrand (completed 2012-09-13 Tushar Pankaj <tushar.s.pankaj@gmail.com>)
+* Remove "using" namespaces (completed 2012-09-14 Tushar Pankaj <tushar.s.pankaj@gmail.com>)
+* Move main() operations to Application class (completed 2012-10-07 Tushar Pankaj <tushar.s.pankaj@gmail.com>)
+* Move command line processing to CmdArgs class (completed 2012-10-07 Tushar Pankaj <tushar.s.pankaj@gmail.com>)
+* Add rectangle printer to GUIManager (completed 2012-10-07 Tushar Pankaj <tushar.s.pankaj@gmail.com>)
+* Add RPM printer to GUIManager (completed 2012-10-07 Tushar Pankaj <tushar.s.pankaj@gmail.com>)
+* Use initializer lists (completed 2012-10-07 Tushar Pankaj <tushar.s.pankaj@gmail.com>)
+* Move from C networking to Boost.Asio (completed 2012-10-07 Tushar Pankaj <tushar.s.pankaj@gmail.com>)
+* Replace handmade std::string<->int conversion with Boost.Lexical_Cast (completed 2012-10-07 Tushar Pankaj <tushar.s.pankaj@gmail.com>)
