@@ -18,6 +18,14 @@
 #ifndef VideoDevice_hpp
 #define VideoDevice_hpp
 
+#include <opencv2/core/core.hpp>
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
+
+#include <thread>
+
+#include "Constants.hpp"
+
 class VideoDevice
 {
 public:

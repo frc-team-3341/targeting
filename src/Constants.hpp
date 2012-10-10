@@ -18,6 +18,8 @@
 #ifndef Constants_hpp
 #define Constants_hpp
 
+#include <vector>
+
 class Constants
 {
 public:
