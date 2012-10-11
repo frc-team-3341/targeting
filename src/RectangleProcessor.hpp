@@ -30,6 +30,7 @@ public:
         float getVelocity();
         int getHeight();
         float getTilt();
+	float getRPM();
 private:
         // Data
         Rectangle inputRect;
@@ -40,6 +41,7 @@ private:
         float velocity;
         int height;
         float tilt;
+	float rpm;
 
         // Methods
         void computeDistance(); // Computes Distance to the Rectangle
@@ -49,6 +51,7 @@ private:
         void computeAzimuth(); // Computes Azimuth to the Rectangle
         void fixHeight(); // Changes Lowest Hoop to Highest
         void computeTilt(); // Computes Tilt of the Rectangle
+	void computeRPM(); // Compute Required Shooter RPM
 };
 
 #endif /* RectangleProcessor_hpp */

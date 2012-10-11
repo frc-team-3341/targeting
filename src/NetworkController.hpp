@@ -29,8 +29,7 @@ public:
 	~NetworkController();
 	void startServer();
 	void waitForPing();
-	void sendData(float velocity, float azimuth, float tilt);
-	void sendData();
+	void sendMessage(std::string message);
 
 private:
 	int portNumber;

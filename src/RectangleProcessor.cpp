@@ -56,6 +56,7 @@ void RectangleProcessor::processRectangle(Rectangle input)
         computeVelocity();
         computeAzimuth();
         computeTilt();
+	computeRPM();
         fixHeight();
 }
 
@@ -87,6 +88,11 @@ int RectangleProcessor::getHeight()
 float RectangleProcessor::getTilt()
 {
         return tilt;
+}
+
+float RectangleProcessor::getRPM()
+{
+	return rpm;
 }
 
 // Private Functions
@@ -194,4 +200,9 @@ void RectangleProcessor::computeTilt()
         if (inputRect.lengthSquaredLeft < inputRect.lengthSquaredRight)
                 tilt *= -1;
 	tilt *= 180.0 / constList->mathPi;
+}
+
+void RectangleProcessor::computeRPM()
+{	
+	rpm = (float)distance / 100;
 }

@@ -125,22 +125,23 @@ void Application::targetingContinuous()
 		std::cout << "Velocity: " << rectProcessor.getVelocity() << " m/s" << std::endl;
 		std::cout << "Azimuth: " << rectProcessor.getAzimuth() << " degrees" << std::endl;
 		std::cout << "Tilt: " << rectProcessor.getTilt() << " degrees" << std::endl;
+		std::cout << "RPM: " << rectProcessor.getRPM() << " RPM" << std::endl;
 
 		if (config.getIsNetworking())
-			networkController->sendData(rectProcessor.getVelocity(), rectProcessor.getAzimuth(), rectProcessor.getTilt());
+			networkController->sendMessage(boost::lexical_cast<std::string>(rectProcessor.getRPM()) + std::string(";") + boost::lexical_cast<std::string>(rectProcessor.getAzimuth()) + std::string(";") + boost::lexical_cast<std::string>(rectProcessor.getTilt()));
 	} else {
 		std::cout << "No rectangle" << std::endl;
 		
 		if (config.getIsNetworking())
-			networkController->sendData();
+			networkController->sendMessage("No rectangle");
 	}
 
-	std::stringstream data;
+	std::string message;
 	if (rectDetector.rectangleWasFound())
-		data << rectProcessor.getDistance() << " mm @ " << rectProcessor.getAzimuth() << " degrees";
+		message = boost::lexical_cast<std::string>(rectProcessor.getDistance()) + " mm @ " + boost::lexical_cast<std::string>(rectProcessor.getAzimuth()) + " degrees";
 	else
-		data << "No rectangle";
-	guiManager->setImageText(data.str());
+		message = "No rectangle";
+	guiManager->setImageText(message);
 
 	if (! config.getIsHeadless()) {
 		guiManager->show(rectDetector.getAllRectangles(), rectDetector.getFinalRectangles());

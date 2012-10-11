@@ -67,15 +67,7 @@ void NetworkController::waitForPing()
 		throw boost::system::system_error(error);
 }
 
-void NetworkController::sendData(float velocity, float azimuth, float tilt)
+void NetworkController::sendMessage(std::string message)
 {
-	std::stringstream data;
-	data << velocity << ";" << azimuth << ";" << tilt << std::endl;
-	boost::asio::write(*socket, boost::asio::buffer(data.str()), ignored_error);
-}
-
-void NetworkController::sendData()
-{
-	std::string data = "";
-	boost::asio::write(*socket, boost::asio::buffer(data), ignored_error);
+	boost::asio::write(*socket, boost::asio::buffer(message), ignored_error);
 }
