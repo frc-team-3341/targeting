@@ -204,5 +204,5 @@ void RectangleProcessor::computeTilt()
 
 void RectangleProcessor::computeRPM()
 {	
-	rpm = (float)distance / 100;
+	rpm = (0.2269 * (float)distance) + 943.64;
 }
