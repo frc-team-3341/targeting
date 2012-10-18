@@ -69,5 +69,5 @@ void NetworkController::waitForPing()
 
 void NetworkController::sendMessage(std::string message)
 {
-	boost::asio::write(*socket, boost::asio::buffer(message), ignored_error);
+	boost::asio::write(*socket, boost::asio::buffer(message + std::string("\n")), ignored_error);
 }

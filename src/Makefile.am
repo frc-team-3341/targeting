@@ -17,7 +17,6 @@ bin_PROGRAMS = frc-team-3341-targeting
 frc_team_3341_targeting_SOURCES = \
 AppConfig.cpp \
 Application.cpp \
-CRIOLink.cpp \
 CmdLineInterface.cpp \
 Constants.cpp \
 GUIManager.cpp \
@@ -30,7 +29,6 @@ VideoDevice.cpp \
 main.cpp \
 AppConfig.hpp \
 Application.hpp \
-CRIOLink.hpp \
 CmdLineInterface.hpp \
 Constants.hpp \
 GUIManager.hpp \

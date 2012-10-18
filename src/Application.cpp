@@ -39,7 +39,6 @@
 #include "RectangleDetector.hpp"
 #include "RectangleProcessor.hpp"
 #include "GUIManager.hpp"
-#include "CRIOLink.hpp"
 #include "CmdLineInterface.hpp"
 #include "Application.hpp"
 
@@ -74,23 +73,26 @@ int Application::exec()
 
 void Application::initVideoDevice()
 {	
-	videoDevice = new VideoDevice(constList);
-	if (config.getIsDevice())
+	if (config.getIsDevice()) {
+		videoDevice = new VideoDevice(constList);
 		videoDevice->startCapture(config.getDeviceID());
+	}
 }
 
 void Application::initNetworking()
 {
-	networkController = new NetworkController(constList);
-	if (config.getIsNetworking())
+	if (config.getIsNetworking()) {
+		networkController = new NetworkController(constList);
 		networkController->startServer();
+	}
 }
 
 void Application::initGUI()
 {
-	guiManager = new GUIManager(constList);
-	if (! config.getIsHeadless())
+	if (! config.getIsHeadless()) {
+		guiManager = new GUIManager(constList);
 		guiManager->init();
+	}
 }
 
 void Application::targetingInit()
