@@ -53,9 +53,12 @@ Application::Application(int argc, char *argv[])
 
 Application::~Application()
 {
-	delete guiManager;
-	delete networkController;
-	delete videoDevice;
+	if (!config.getIsHeadless())
+		delete guiManager;
+	if (config.getIsNetworking())
+		delete networkController;
+	if (config.getIsDevice())
+		delete videoDevice;
 	delete constList;
 }
 
