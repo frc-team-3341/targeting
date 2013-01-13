@@ -40,6 +40,6 @@ RectangleProcessor.hpp \
 VideoDevice.hpp
 frc_team_3341_targeting_CXXFLAGS = $(AM_CXXFLAGS) $(BOOST_CPPFLAGS) -std=gnu++0x -Wall -Werror
 frc_team_3341_targeting_CPPFLAGS = $(AM_CPPFLAGS) $(OPENCV_CFLAGS)
-frc_team_3341_targeting_LDFLAGS = $(LDFLAGS) $(BOOST_LDFLAGS) $(BOOST_ASIO_LDFLAGS) -lboost_system
+frc_team_3341_targeting_LDFLAGS = $(LDFLAGS) $(BOOST_LDFLAGS) $(BOOST_ASIO_LDFLAGS) -pthread -lboost_system -lboost_thread
 frc_team_3341_targeting_LDADD = $(LDADD) $(OPENCV_LIBS)
 frc_team_3341_targeting_LIBS = $(BOOST_ASIO_LIBS)
