@@ -186,7 +186,7 @@ void RectangleDetector::findRectangles()
                                 // if cosines of all angles are small
                                 // (all angles are ~90 degrees) then write quandrange
                                 // vertices to resultant sequence
-                                if(maxCosine < 0.3)
+                                if(maxCosine < constList->detectionMaxCosine)
                                         allRectangles.push_back(approx);
                         }
                 }

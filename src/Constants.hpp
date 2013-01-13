@@ -57,6 +57,9 @@ public:
         int preprocessingValueLowerThreshold;
         int preprocessingValueUpperThreshold;
 
+	// Detection
+	float detectionMaxCosine;
+
 	// Server
 	int portNumber;
 };
