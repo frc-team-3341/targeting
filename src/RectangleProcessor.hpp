@@ -28,6 +28,7 @@ public:
         int getDistance();
         int getHorizontalDistance();
         float getVelocity();
+	float getElevation();
         int getHeight();
         float getTilt();
 	float getRPM();
@@ -39,6 +40,7 @@ private:
         int distance;
         int horizontalDistance;
         float velocity;
+	float elevation;
         int height;
         float tilt;
 	float rpm;
@@ -46,6 +48,7 @@ private:
         // Methods
         void computeDistance(); // Computes Distance to the Rectangle
         void computeHorizontalDistance(); // Computes Horizontal Distance to the Rectangle
+	void computeElevation(); // Computes Elevation of the Rectangle
         void computeHeight(); // Computes Height of the Rectangle
         void computeVelocity(); // Computes Velocity of Ball
         void computeAzimuth(); // Computes Azimuth to the Rectangle

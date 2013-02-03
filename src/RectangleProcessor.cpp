@@ -51,13 +51,14 @@ void RectangleProcessor::processRectangle(Rectangle input)
 
         // Process Rectangle
         computeDistance();
-        computeHorizontalDistance();
+	computeElevation();
         computeHeight();
+        computeHorizontalDistance();
         computeVelocity();
         computeAzimuth();
         computeTilt();
 	computeRPM();
-        fixHeight();
+        //fixHeight();
 }
 
 float RectangleProcessor::getAzimuth()
@@ -88,6 +89,11 @@ int RectangleProcessor::getHeight()
 float RectangleProcessor::getTilt()
 {
         return tilt;
+}
+
+float RectangleProcessor::getElevation()
+{
+	return elevation;
 }
 
 float RectangleProcessor::getRPM()
@@ -158,24 +164,27 @@ void RectangleProcessor::computeVelocity()
 void RectangleProcessor::computeAzimuth()
 {
         azimuth = ((float)inputRect.center.x - ((float)constList->imgCols / 2.0)) / (float)constList->cameraFocalLength;
-	azimuth *= 180.0 / constList->mathPi;
+}
+
+void RectangleProcessor::computeElevation()
+{
+        float tanElevation = (((float)constList->imgRows / 2.0) - (float)inputRect.center.y) / (float)constList->cameraFocalLength;
+	elevation = atan(tanElevation);
 }
 
 void RectangleProcessor::computeHeight()
 {
-        int tanTheta = (((float)constList->imgRows / 2.0) - (float)inputRect.center.y) / (float)constList->cameraFocalLength;
-        float theta = atan(tanTheta);
-        height = (float)distance * sin(theta);
-        int heightError = 1000000;
+        height = (float)distance * sin(elevation);
+        /*int heightError = 1000000;
         int heightIndex = 0;
         for (unsigned i = 0; i < constList->rectPossibleHeights.size(); ++i) {
                 if (abs(constList->rectPossibleHeights.at(i) - height) < heightError) {
                         heightIndex = i;
                         heightError = abs(constList->rectPossibleHeights.at(i) - height);
                 }
-        }
+		}
 
-        height = constList->rectPossibleHeights.at(heightIndex);
+		height = constList->rectPossibleHeights.at(heightIndex);*/
 }
 
 void RectangleProcessor::computeHorizontalDistance()
@@ -199,7 +208,6 @@ void RectangleProcessor::computeTilt()
 
         if (inputRect.lengthSquaredLeft < inputRect.lengthSquaredRight)
                 tilt *= -1;
-	tilt *= 180.0 / constList->mathPi;
 }
 
 void RectangleProcessor::computeRPM()

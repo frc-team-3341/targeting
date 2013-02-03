@@ -100,10 +100,10 @@ void Application::initGUI()
 
 void Application::targetingInit()
 {
-	if (! config.getIsHeadless()) {
+	/*if (! config.getIsHeadless()) {
 		cv::Mat image = loadImage();
 		std::cout << "Image resolution: " << image.cols << "x" << image.rows << std::endl;
-	}
+		}*/
 }
 
 void Application::targetingContinuous()
@@ -112,7 +112,8 @@ void Application::targetingContinuous()
 		networkController->waitForPing();
 
 	cv::Mat image = loadImage();
-	guiManager->setImage(image);
+	if (! config.getIsHeadless())
+		guiManager->setImage(image);
 
 	RectangleDetector rectDetector(constList);
 	Rectangle foundRectangle = rectDetector.processImage(image);
@@ -120,13 +121,23 @@ void Application::targetingContinuous()
 	if (rectDetector.rectangleWasFound()) {
 		rectProcessor.processRectangle(foundRectangle);
 
-		std::cout << "Distance: " << rectProcessor.getDistance() << "mm" << std::endl;
-		std::cout << "Horizontal Distance: " << rectProcessor.getHorizontalDistance() << " mm" << std::endl;
-		std::cout << "Height: " << rectProcessor.getHeight() << " mm" << std::endl;
-		std::cout << "Velocity: " << rectProcessor.getVelocity() << " m/s" << std::endl;
-		std::cout << "Azimuth: " << rectProcessor.getAzimuth() << " degrees" << std::endl;
-		std::cout << "Tilt: " << rectProcessor.getTilt() << " degrees" << std::endl;
-		std::cout << "RPM: " << rectProcessor.getRPM() << " RPM" << std::endl;
+		int distance = rectProcessor.getDistance();
+		int horizontalDistance = rectProcessor.getHorizontalDistance();
+		float azimuth = rectProcessor.getAzimuth() * 180.0 / constList->mathPi;
+		float velocity = rectProcessor.getVelocity();
+		float elevation = rectProcessor.getElevation() * 180.0 / constList->mathPi;
+		int height = rectProcessor.getHeight();
+		float tilt = rectProcessor.getTilt() * 180.0 / constList->mathPi;
+		float rpm = rectProcessor.getRPM();
+		
+		std::cout << "Distance: " << distance << "mm" << std::endl;
+		std::cout << "Horizontal Distance: " << horizontalDistance << " mm" << std::endl;
+		std::cout << "Height: " << height << " mm" << std::endl;
+		std::cout << "Velocity: " << velocity << " m/s" << std::endl;
+		std::cout << "Azimuth: " << azimuth << " degrees" << std::endl;
+		std::cout << "Tilt: " << tilt << " degrees" << std::endl;
+		std::cout << "Elevation: " << elevation << " degrees" << std::endl;
+		std::cout << "RPM: " << rpm << " RPM" << std::endl;
 
 		if (config.getIsNetworking())
 			networkController->sendMessage(boost::lexical_cast<std::string>(rectProcessor.getRPM()) + std::string(";") + boost::lexical_cast<std::string>(rectProcessor.getAzimuth()) + std::string(";") + boost::lexical_cast<std::string>(rectProcessor.getTilt()));
@@ -137,14 +148,13 @@ void Application::targetingContinuous()
 			networkController->sendMessage("No rectangle");
 	}
 
-	std::string message;
-	if (rectDetector.rectangleWasFound())
-		message = boost::lexical_cast<std::string>(rectProcessor.getDistance()) + " mm @ " + boost::lexical_cast<std::string>(rectProcessor.getAzimuth()) + " degrees";
-	else
-		message = "No rectangle";
-	guiManager->setImageText(message);
-
 	if (! config.getIsHeadless()) {
+		std::string message;
+		if (rectDetector.rectangleWasFound())
+			message = boost::lexical_cast<std::string>(rectProcessor.getDistance()) + " mm @ " + boost::lexical_cast<std::string>(rectProcessor.getAzimuth()) + " degrees";
+		else
+			message = "No rectangle";
+		guiManager->setImageText(message);
 		guiManager->show(rectDetector.getAllRectangles(), rectDetector.getFinalRectangles());
 		int keycode = cv::waitKey(10);
 		if (keycode == 57) {
@@ -157,6 +167,10 @@ void Application::targetingContinuous()
 			cv::waitKey();
 			exit(EXIT_SUCCESS);
 		}
+	} else {
+		char waitForKey;
+		std::cin >> waitForKey;
+		exit(EXIT_SUCCESS);
 	}
 }
 
@@ -170,6 +184,9 @@ cv::Mat Application::loadImage()
 		returnVal = videoDevice->getImage();
 	else
 		exit(1);
+
+	constList->imgCols = returnVal.cols;
+	constList->imgRows = returnVal.rows;
 
 	return returnVal;
 }
