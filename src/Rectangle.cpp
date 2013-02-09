@@ -64,8 +64,8 @@ void Rectangle::populate(std::vector<cv::Point> input)
                         indexBottomRight=i;
                 }
         }
-        for (unsigned i=0; i < input.size(); ++i) {
-                if (i == (unsigned)indexTopLeft || i == (unsigned)indexBottomRight) continue;
+        for (int i=0; i < (int)input.size(); ++i) {
+                if (i == indexTopLeft || i == indexBottomRight) continue;
 
                 if (indexTopRight < 0)
                         indexTopRight=i;
@@ -73,11 +73,11 @@ void Rectangle::populate(std::vector<cv::Point> input)
                         indexBottomLeft=i;
         }
 
+	std::cout << "Top right: " << input.at(indexTopRight) << "\t Bottom left: " << input.at(indexBottomLeft) << std::endl;
+	
         if (input.at(indexTopRight).x < input.at(indexBottomLeft).x) {
+		std::cout << "Swapping" << std::endl;
 		cv::Point swap = input.at(indexTopRight);
-                input.at(indexTopRight)=input.at(indexBottomLeft);
-                input.at(indexBottomLeft) = swap;
-                swap=input.at(indexTopRight);
                 input.at(indexTopRight)=input.at(indexBottomLeft);
                 input.at(indexBottomLeft) = swap;
         }
@@ -97,6 +97,9 @@ void Rectangle::populate(std::vector<cv::Point> input)
         // Compute Center
         center.x = (topLeft.x + topRight.x + bottomRight.x + bottomLeft.x) / 4;
         center.y = (topLeft.y + topRight.y + bottomRight.y + bottomLeft.y) / 4;
+
+	// Compute Area
+	area = fabs(cv::contourArea(cv::Mat(input)));
 }
 
 bool Rectangle::containsPoint(cv::Point input)

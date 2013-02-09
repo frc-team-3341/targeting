@@ -39,7 +39,7 @@
 #include "RectangleDetector.hpp"
 
 int thresh = 50;
-int N = 11;
+int N = 1; // Original value = 11
 
 // Public Functions
 RectangleDetector::RectangleDetector(Constants *inputConstList)
@@ -114,6 +114,7 @@ void RectangleDetector::preprocessImage()
         imageHSV.value = hsv_threshValueLower & hsv_threshValueUpper;
 
         image = imageHSV.hue & imageHSV.value;
+	cv::imshow("Preprocessed image", image);
 }
 
 void RectangleDetector::findRectangles()
@@ -129,8 +130,9 @@ void RectangleDetector::findRectangles()
 	cv::Mat gray;
 
         // down-scale and upscale the image to filter out the noise
-	cv::pyrDown(image, pyr, cv::Size(image.cols / 2, image.rows / 2));
-	cv::pyrUp(pyr, timg, image.size());
+	//cv::pyrDown(image, pyr, cv::Size(image.cols / 2, image.rows / 2));
+	//cv::pyrUp(pyr, timg, image.size());
+	image.copyTo(timg);
 
         // Variable Declarations
 	std::vector<std::vector<cv::Point> > contours;
@@ -230,21 +232,38 @@ void RectangleDetector::filterUniqueRectangles()
 
 bool RectangleDetector::rectangleIsContained(Rectangle rectContainer, Rectangle rectContained)
 {
+	std::cout << rectContained.center << std::endl;
+	std::cout << rectContained.lengthSquaredLeft << " " << rectContainer.lengthSquaredLeft << std::endl;
+	std::cout << rectContained.lengthSquaredRight << " " << rectContainer.lengthSquaredRight << std::endl;
+	std::cout << rectContained.lengthSquaredTop << " " << rectContainer.lengthSquaredTop << std::endl;
+	std::cout << rectContained.lengthSquaredBottom << " " << rectContainer.lengthSquaredBottom << std::endl;
         return (rectContainer.containsPoint(rectContained.center) &&
                 rectContained.lengthSquaredLeft < rectContainer.lengthSquaredLeft &&
                 rectContained.lengthSquaredRight < rectContainer.lengthSquaredRight &&
                 rectContained.lengthSquaredTop < rectContainer.lengthSquaredTop &&
-                rectContained.lengthSquaredBottom < rectContainer.lengthSquaredBottom);
+                rectContained.lengthSquaredBottom < rectContainer.lengthSquaredBottom /*&&
+		rectContained.area < (rectContainer.area * 0.9)*/);
 }
 
 void RectangleDetector::findContainedRectangles()
 {
+	for (unsigned i = 0; i < rectList.size(); ++i) {
+		std::cout << "Rectangle " << i << ":" << std::endl;
+		std::cout << "\t Top left: " << rectList.at(i).topLeft << std::endl;
+		std::cout << "\t Top right: " << rectList.at(i).topRight << std::endl;
+		std::cout << "\t Bottom right: " << rectList.at(i).bottomRight << std::endl;
+		std::cout << "\t Bottom left: " << rectList.at(i).bottomLeft << std::endl;
+		std::cout << "\t Area: " << rectList.at(i).area << std::endl;
+	}
+
         // Populate Contained Rectangles Vectors
         for (unsigned i = 0; i < rectList.size(); ++i) {
                 for (unsigned j = 0; j < rectList.size(); ++j) {
                         if (i == j) continue;
-                        if (rectangleIsContained(rectList.at(i), rectList.at(j)))
+                        if (rectangleIsContained(rectList.at(i), rectList.at(j))) {
                                 rectList.at(i).containedRectangles.push_back(j);
+				std::cout << "Rectangle " << i << " contains rectangle " << j << std::endl;
+			}
                 }
         }
 
@@ -253,7 +272,7 @@ void RectangleDetector::findContainedRectangles()
         for (unsigned i = 0; i < rectList.size(); ++i) {
                 for (unsigned j = 0; j < rectList.at(i).containedRectangles.size(); ++j)
                         rectIndiciesTmp.push_back(rectList.at(i).containedRectangles.at(j));
-                if (rectList.at(i).containedRectangles.size() > 0)
+                if (rectList.at(i).containedRectangles.size() > 0) 
                         rectIndiciesTmp.push_back(i);
         }
 	std::set<int> rectIndiciesSet(rectIndiciesTmp.begin(), rectIndiciesTmp.end());

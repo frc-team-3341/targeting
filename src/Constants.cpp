@@ -41,8 +41,10 @@ Constants::Constants()
         guiWindowName = "FRC Team 3341 Targeting";
 
         // Rectangle
-        rectBase = 62.0 * 25.4;
+	rectBase = 62.0 * 25.4;
 	rectHeight = 20.0 * 25.4;
+        //rectBase = 24.0 * 25.4;
+	//rectHeight = 18.0 * 25.4;
         rectPossibleHeights.push_back(-171);
         rectPossibleHeights.push_back(387);
         rectPossibleHeights.push_back(1607);

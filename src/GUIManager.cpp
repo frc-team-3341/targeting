@@ -63,13 +63,13 @@ void GUIManager::show(const std::vector<std::vector<cv::Point> > &allRectangles,
 	for (size_t i = 0; i < allRectangles.size(); i++) {
                 const cv::Point* p = &allRectangles.at(i).at(0);
                 int n = (int)allRectangles.at(i).size();
-		cv::polylines(image, &p, &n, 1, true, cv::Scalar(0, 255, 0), 3, CV_AA);
+		cv::polylines(image, &p, &n, 1, true, cv::Scalar(0, 255, 0), 1, CV_AA);
         }
 	
         for (size_t i = 0; i < finalRectangles.size(); ++i) {
                 const cv::Point* p = &finalRectangles.at(i).at(0);
                 int n = (int)finalRectangles.at(i).size();
-		cv::polylines(image, &p, &n, 1, true, cv::Scalar(255, 0, 0), 3, CV_AA);
+		cv::polylines(image, &p, &n, 1, true, cv::Scalar(255, 0, 0), 1, CV_AA);
         }
 	
 	cv::imshow(constList->guiWindowName.c_str(), image);

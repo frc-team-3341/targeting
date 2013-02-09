@@ -29,6 +29,7 @@ public:
         bool containsPoint(cv::Point); // Checks if Point is Inside Rectangle
 
         // Data
+	float area; // Area
         cv::Point topLeft; // Top Left Corner
         cv::Point topRight; // Top Right Corner
         cv::Point bottomRight; // Bottom Right Corner
