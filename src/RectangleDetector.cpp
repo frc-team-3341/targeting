@@ -38,9 +38,6 @@
 #include "Rectangle.hpp"
 #include "RectangleDetector.hpp"
 
-int thresh = 50;
-int N = 1; // Original value = 11
-
 // Public Functions
 RectangleDetector::RectangleDetector(Constants *inputConstList)
 {
@@ -61,7 +58,7 @@ Rectangle RectangleDetector::processImage(cv::Mat input)
         populateRectangles();
         if (! foundRectangle) return static_cast<Rectangle>(NULL);
         filterUniqueRectangles();
-        findContainedRectangles();
+        findContainerRectangles();
         if (! foundRectangle) return static_cast<Rectangle>(NULL);
         findCorrectRectangles();
         if (! foundRectangle) return static_cast<Rectangle>(NULL);
@@ -114,7 +111,6 @@ void RectangleDetector::preprocessImage()
         imageHSV.value = hsv_threshValueLower & hsv_threshValueUpper;
 
         image = imageHSV.hue & imageHSV.value;
-	cv::imshow("Preprocessed image", image);
 }
 
 void RectangleDetector::findRectangles()
@@ -124,76 +120,60 @@ void RectangleDetector::findRectangles()
         finalRectangles.clear();
 
         // Variable Declarations
-	cv::Mat pyr;
-	cv::Mat timg;
 	cv::Mat gray0(image.size(), CV_8U);
 	cv::Mat gray;
-
-        // down-scale and upscale the image to filter out the noise
-	//cv::pyrDown(image, pyr, cv::Size(image.cols / 2, image.rows / 2));
-	//cv::pyrUp(pyr, timg, image.size());
-	image.copyTo(timg);
 
         // Variable Declarations
 	std::vector<std::vector<cv::Point> > contours;
         int ch[] = {0, 0};
 
-	cv::mixChannels(&timg, 1, &gray0, 1, ch, 1); // Extract Channel
+	cv::mixChannels(&image, 1, &gray0, 1, ch, 1); // Extract Channel
 
-        // Try Several Threshold Levels
-        for(int l = 0; l < N; ++l) {
-                // hack: use Canny instead of zero threshold level.
-                // Canny helps to catch squares with gradient shading
-                if (l == 0) {
-                        // apply Canny. Take the upper threshold from slider
-                        // and set the lower to 0 (which forces edges merging)
-                        Canny(gray0, gray, 0, thresh, 5);
-                        // dilate canny output to remove potential
-                        // holes between edge segments
-                        dilate(gray, gray, cv::Mat(), cv::Point(-1,-1));
-                } else {
-                        // apply threshold if l!=0:
-                        //     tgray(x,y) = gray(x,y) < (l+1)*255/N ? 255 : 0
-                        gray = gray0 >= (l+1)*255/N;
-                }
+	// Canny helps to catch squares with gradient shading
+	// apply Canny. Take the upper threshold from slider
+	// and set the lower to 0 (which forces edges merging)
+	Canny(gray0, gray, 0, constList->detectionCannyThreshold, 5);
 
-                findContours(gray, contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE); // Find Contours
+	// dilate canny output to remove potential
+	// holes between edge segments
+	dilate(gray, gray, cv::Mat(), cv::Point(-1,-1));
 
-                // Variable Declarations
-		std::vector<cv::Point> approx;
+	findContours(gray, contours, CV_RETR_LIST, CV_CHAIN_APPROX_SIMPLE); // Find Contours
 
-                // Test Each Contour
-                for (size_t i = 0; i < contours.size(); ++i) {
-                        // approximate contour with accuracy proportional
-                        // to the contour perimeter
-			cv::approxPolyDP(cv::Mat(contours.at(i)), approx, cv::arcLength(cv::Mat(contours.at(i)), true) * 0.02, true);
-
-                        // rectangular contours should have 4 vertices after approximation
-                        // relatively large area (to filter out noisy contours)
-                        // and be convex.
-                        // Note: absolute value of an area is used because
-                        // area may be positive or negative - in accordance with the
-                        // contour orientation
-                        if (approx.size() == 4 &&
-                            fabs(cv::contourArea(cv::Mat(approx))) > 1000 &&
-                            cv::isContourConvex(cv::Mat(approx))) {
-                                double maxCosine = 0;
-
-                                for(int j = 2; j < 5; ++j) {
-                                        // find the maximum cosine of the angle between joint edges
-                                        double cosine = fabs(angle(approx.at(j%4), approx.at(j-2), approx.at(j-1)));
-                                        maxCosine = MAX(maxCosine, cosine);
-                                }
-
-                                // if cosines of all angles are small
-                                // (all angles are ~90 degrees) then write quandrange
-                                // vertices to resultant sequence
-                                if(maxCosine < constList->detectionMaxCosine)
-                                        allRectangles.push_back(approx);
-                        }
-                }
-        }
-
+	// Variable Declarations
+	std::vector<cv::Point> approx;
+	
+	// Test Each Contour
+	for (size_t i = 0; i < contours.size(); ++i) {
+		// approximate contour with accuracy proportional
+		// to the contour perimeter
+		cv::approxPolyDP(cv::Mat(contours.at(i)), approx, cv::arcLength(cv::Mat(contours.at(i)), true) * 0.02, true);
+		
+		// rectangular contours should have 4 vertices after approximation
+		// relatively large area (to filter out noisy contours)
+		// and be convex.
+		// Note: absolute value of an area is used because
+		// area may be positive or negative - in accordance with the
+		// contour orientation
+		if (approx.size() == 4 &&
+		    fabs(cv::contourArea(cv::Mat(approx))) > 1000 &&
+		    cv::isContourConvex(cv::Mat(approx))) {
+			double maxCosine = 0;
+			
+			for(int j = 2; j < 5; ++j) {
+				// find the maximum cosine of the angle between joint edges
+				double cosine = fabs(angle(approx.at(j%4), approx.at(j-2), approx.at(j-1)));
+				maxCosine = MAX(maxCosine, cosine);
+			}
+			
+			// if cosines of all angles are small
+			// (all angles are ~90 degrees) then write quandrange
+			// vertices to resultant sequence
+			if(maxCosine < constList->detectionMaxCosine)
+				allRectangles.push_back(approx);
+		}
+	}
+	
         if (allRectangles.size() == 0)
                 foundRectangle = false;
 }
@@ -232,11 +212,6 @@ void RectangleDetector::filterUniqueRectangles()
 
 bool RectangleDetector::rectangleIsContained(Rectangle rectContainer, Rectangle rectContained)
 {
-	std::cout << rectContained.center << std::endl;
-	std::cout << rectContained.lengthSquaredLeft << " " << rectContainer.lengthSquaredLeft << std::endl;
-	std::cout << rectContained.lengthSquaredRight << " " << rectContainer.lengthSquaredRight << std::endl;
-	std::cout << rectContained.lengthSquaredTop << " " << rectContainer.lengthSquaredTop << std::endl;
-	std::cout << rectContained.lengthSquaredBottom << " " << rectContainer.lengthSquaredBottom << std::endl;
         return (rectContainer.containsPoint(rectContained.center) &&
                 rectContained.lengthSquaredLeft < rectContainer.lengthSquaredLeft &&
                 rectContained.lengthSquaredRight < rectContainer.lengthSquaredRight &&
@@ -245,25 +220,14 @@ bool RectangleDetector::rectangleIsContained(Rectangle rectContainer, Rectangle 
 		rectContained.area < (rectContainer.area * 0.9)*/);
 }
 
-void RectangleDetector::findContainedRectangles()
+void RectangleDetector::findContainerRectangles()
 {
-	for (unsigned i = 0; i < rectList.size(); ++i) {
-		std::cout << "Rectangle " << i << ":" << std::endl;
-		std::cout << "\t Top left: " << rectList.at(i).topLeft << std::endl;
-		std::cout << "\t Top right: " << rectList.at(i).topRight << std::endl;
-		std::cout << "\t Bottom right: " << rectList.at(i).bottomRight << std::endl;
-		std::cout << "\t Bottom left: " << rectList.at(i).bottomLeft << std::endl;
-		std::cout << "\t Area: " << rectList.at(i).area << std::endl;
-	}
-
-        // Populate Contained Rectangles Vectors
+	// Populate Contained Rectangles Vectors
         for (unsigned i = 0; i < rectList.size(); ++i) {
                 for (unsigned j = 0; j < rectList.size(); ++j) {
                         if (i == j) continue;
-                        if (rectangleIsContained(rectList.at(i), rectList.at(j))) {
+                        if (rectangleIsContained(rectList.at(i), rectList.at(j)))
                                 rectList.at(i).containedRectangles.push_back(j);
-				std::cout << "Rectangle " << i << " contains rectangle " << j << std::endl;
-			}
                 }
         }
 
@@ -271,7 +235,7 @@ void RectangleDetector::findContainedRectangles()
 	std::vector<int> rectIndiciesTmp;
         for (unsigned i = 0; i < rectList.size(); ++i) {
                 for (unsigned j = 0; j < rectList.at(i).containedRectangles.size(); ++j)
-                        rectIndiciesTmp.push_back(rectList.at(i).containedRectangles.at(j));
+			rectIndiciesTmp.push_back(rectList.at(i).containedRectangles.at(j));
                 if (rectList.at(i).containedRectangles.size() > 0) 
                         rectIndiciesTmp.push_back(i);
         }
@@ -286,7 +250,7 @@ void RectangleDetector::findContainedRectangles()
         for (unsigned i = 0; i < rectListRevised.size(); ++i)
                 rectListRevised.at(i).containedRectangles.clear();
 
-        // Repopulate Contained Rectangles Vectors
+	// Repopulate Contained Rectangles Vectors
         for (unsigned i = 0; i < rectListRevised.size(); ++i) {
                 for (unsigned j = 0; j < rectListRevised.size(); ++j) {
                         if (i == j) continue;

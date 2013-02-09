@@ -73,10 +73,7 @@ void Rectangle::populate(std::vector<cv::Point> input)
                         indexBottomLeft=i;
         }
 
-	std::cout << "Top right: " << input.at(indexTopRight) << "\t Bottom left: " << input.at(indexBottomLeft) << std::endl;
-	
         if (input.at(indexTopRight).x < input.at(indexBottomLeft).x) {
-		std::cout << "Swapping" << std::endl;
 		cv::Point swap = input.at(indexTopRight);
                 input.at(indexTopRight)=input.at(indexBottomLeft);
                 input.at(indexBottomLeft) = swap;

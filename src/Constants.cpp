@@ -43,8 +43,6 @@ Constants::Constants()
         // Rectangle
 	rectBase = 62.0 * 25.4;
 	rectHeight = 20.0 * 25.4;
-        //rectBase = 24.0 * 25.4;
-	//rectHeight = 18.0 * 25.4;
         rectPossibleHeights.push_back(-171);
         rectPossibleHeights.push_back(387);
         rectPossibleHeights.push_back(1607);
@@ -59,6 +57,7 @@ Constants::Constants()
         preprocessingValueUpperThreshold = 255;
 
 	// Detection
+	detectionCannyThreshold = 50;
 	detectionMaxCosine = 0.3;
 
 	// Server

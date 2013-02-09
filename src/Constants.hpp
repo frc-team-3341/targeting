@@ -59,6 +59,7 @@ public:
 
 	// Detection
 	float detectionMaxCosine;
+	int detectionCannyThreshold;
 
 	// Server
 	int portNumber;

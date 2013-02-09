@@ -155,7 +155,6 @@ void Application::targetingContinuous()
 		else
 			message = "No rectangle";
 		guiManager->setImageText(message);
-		std::cout << "All rectangle count: " << rectDetector.getAllRectangles().size() << std::endl;
 		guiManager->show(rectDetector.getAllRectangles(), rectDetector.getFinalRectangles());
 		int keycode = cv::waitKey(10);
 		if (keycode == 57) {
