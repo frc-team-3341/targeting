@@ -59,6 +59,8 @@ Constants::Constants()
 	// Detection
 	detectionCannyThreshold = 50;
 	detectionMaxCosine = 0.3;
+	detectionContainedAreaLowerThreshold = 0.0;
+	detectionContainedAreaUpperThreshold = 0.9;
 
 	// Server
 	portNumber = 3341;

@@ -33,10 +33,14 @@
 
 Rectangle::Rectangle()
 {
+	// Defaults
+	markedForRemoval = false;
 }
 
 Rectangle::Rectangle(int *nullInput)
 {
+	// Defaults
+	markedForRemoval = false;
 }
 
 Rectangle::Rectangle(std::vector<cv::Point> input)
@@ -46,6 +50,12 @@ Rectangle::Rectangle(std::vector<cv::Point> input)
 
 void Rectangle::populate(std::vector<cv::Point> input)
 {
+	// Save inputs
+	rectPoints = input;
+
+	// Defaults
+	markedForRemoval = false;
+
         // Populate Points
         int minLengthSquared=6e6;
         int maxLengthSquared=0;

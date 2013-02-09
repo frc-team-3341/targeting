@@ -60,6 +60,8 @@ public:
 	// Detection
 	float detectionMaxCosine;
 	int detectionCannyThreshold;
+	float detectionContainedAreaLowerThreshold;
+	float detectionContainedAreaUpperThreshold;
 
 	// Server
 	int portNumber;

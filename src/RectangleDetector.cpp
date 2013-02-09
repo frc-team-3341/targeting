@@ -216,8 +216,7 @@ bool RectangleDetector::rectangleIsContained(Rectangle rectContainer, Rectangle 
                 rectContained.lengthSquaredLeft < rectContainer.lengthSquaredLeft &&
                 rectContained.lengthSquaredRight < rectContainer.lengthSquaredRight &&
                 rectContained.lengthSquaredTop < rectContainer.lengthSquaredTop &&
-                rectContained.lengthSquaredBottom < rectContainer.lengthSquaredBottom /*&&
-		rectContained.area < (rectContainer.area * 0.9)*/);
+                rectContained.lengthSquaredBottom < rectContainer.lengthSquaredBottom);
 }
 
 void RectangleDetector::findContainerRectangles()
@@ -254,15 +253,50 @@ void RectangleDetector::findContainerRectangles()
         for (unsigned i = 0; i < rectListRevised.size(); ++i) {
                 for (unsigned j = 0; j < rectListRevised.size(); ++j) {
                         if (i == j) continue;
-                        if (rectangleIsContained(rectListRevised.at(i), rectListRevised.at(j)))
+                        if (rectangleIsContained(rectListRevised.at(i), rectListRevised.at(j))) {
                                 rectListRevised.at(i).containedRectangles.push_back(j);
+			}
                 }
         }
+
+	for (int i = 0; i < (int)rectListRevised.size(); ++i) {
+		std::cout << "Rectangle " << i << std::endl;
+		std::cout << "\t Top left: " << rectListRevised.at(i).topLeft << std::endl;
+		std::cout << "\t Top right: " << rectListRevised.at(i).topRight << std::endl;
+		std::cout << "\t Bottom right: " << rectListRevised.at(i).bottomRight << std::endl;
+		std::cout << "\t Bottom left: " << rectListRevised.at(i).bottomLeft << std::endl;
+		std::cout << "\t Area: " << rectListRevised.at(i).area << std::endl;
+	}
+
+	// Remove Contained Rectangles and Containers Not Meeting Threshold
+	for (int i = 0; i < (int)rectListRevised.size(); ++i) {
+		if (rectListRevised.at(i).markedForRemoval) continue;
+		bool meetsThreshold = false;
+		for (int j = 0; j < (int)rectListRevised.at(i).containedRectangles.size(); ++j) {
+			rectListRevised.at(rectListRevised.at(i).containedRectangles.at(j)).markedForRemoval = true;
+			std::cout << "Rectangle " << rectListRevised.at(i).containedRectangles.at(j) << " marked for removal (contained)" << std::endl;
+			if (rectListRevised.at(rectListRevised.at(i).containedRectangles.at(j)).area < (rectListRevised.at(i).area * constList->detectionContainedAreaUpperThreshold) &&
+			    rectListRevised.at(rectListRevised.at(i).containedRectangles.at(j)).area >= (rectListRevised.at(i).area * constList->detectionContainedAreaLowerThreshold))
+				meetsThreshold = true;
+		}
+		if (!meetsThreshold) {
+			rectListRevised.at(i).markedForRemoval = true;
+			std::cout << "Rectangle " << i << " marked for removal (does not meet threshold)" << std::endl;
+		}
+	}
+	/*for (int i = (int)rectListRevised.size() - 1; i >= 0; --i) {
+		rectListRevised.at(i).containedRectangles.clear();
+		if (rectListRevised.at(i).markedForRemoval)
+			rectListRevised.erase(rectListRevised.begin() + i - 1);
+			}*/
+
+	std::cout << "Length: " << rectListRevised.size() << std::endl;
 }
 
 void RectangleDetector::findCorrectRectangles()
 {
-        // Find Correct Rectangle
+	rectIndex = 0;
+        /*// Find Correct Rectangle
 	std::vector<int> rectLengthSquareds;
         for (unsigned i = 0; i < rectListRevised.size(); ++i)
                 rectLengthSquareds.push_back(rectListRevised.at(i).lengthSquaredTop);
@@ -280,5 +314,14 @@ void RectangleDetector::findCorrectRectangles()
         // Put Correct Rectangle Into Vector
 	std::vector<cv::Point> correctRectTmp = finalRectangles.at(rectIndex);
         finalRectangles.clear();
-        finalRectangles.push_back(correctRectTmp);
+        finalRectangles.push_back(correctRectTmp);*/
+
+	allRectangles.clear();
+	finalRectangles.clear();
+	for (int i = 0; i < (int)rectListRevised.size(); ++i) {
+		if (rectListRevised.at(i).markedForRemoval)
+			allRectangles.push_back(rectListRevised.at(i).rectPoints);
+		else
+			finalRectangles.push_back(rectListRevised.at(i).rectPoints);
+	}
 }

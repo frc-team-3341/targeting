@@ -29,6 +29,8 @@ public:
         bool containsPoint(cv::Point); // Checks if Point is Inside Rectangle
 
         // Data
+	std::vector<cv::Point> rectPoints;
+	bool markedForRemoval; // Marked for removal
 	float area; // Area
         cv::Point topLeft; // Top Left Corner
         cv::Point topRight; // Top Right Corner
@@ -40,11 +42,6 @@ public:
         int lengthSquaredTop; // Square of Length of Top Side
         int lengthSquaredBottom; // Square of Length of Bottom Side
         std::vector<int> containedRectangles; // Indices of Contained Rectangles
-
-private:
-        // Methods
-
-        // Data
 };
 
 #endif /* Rectangle_hpp */
