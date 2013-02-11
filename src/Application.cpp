@@ -124,23 +124,19 @@ void Application::targetingContinuous()
 		int distance = rectProcessor.getDistance();
 		int horizontalDistance = rectProcessor.getHorizontalDistance();
 		float azimuth = rectProcessor.getAzimuth() * 180.0 / constList->mathPi;
-		float velocity = rectProcessor.getVelocity();
 		float elevation = rectProcessor.getElevation() * 180.0 / constList->mathPi;
 		int height = rectProcessor.getHeight();
 		float tilt = rectProcessor.getTilt() * 180.0 / constList->mathPi;
-		float rpm = rectProcessor.getRPM();
 		
 		std::cout << "Distance: " << distance << "mm" << std::endl;
 		std::cout << "Horizontal Distance: " << horizontalDistance << " mm" << std::endl;
 		std::cout << "Height: " << height << " mm" << std::endl;
-		std::cout << "Velocity: " << velocity << " m/s" << std::endl;
 		std::cout << "Azimuth: " << azimuth << " degrees" << std::endl;
 		std::cout << "Tilt: " << tilt << " degrees" << std::endl;
 		std::cout << "Elevation: " << elevation << " degrees" << std::endl;
-		std::cout << "RPM: " << rpm << " RPM" << std::endl;
 
 		if (config.getIsNetworking())
-			networkController->sendMessage(boost::lexical_cast<std::string>(rectProcessor.getRPM()) + std::string(";") + boost::lexical_cast<std::string>(rectProcessor.getAzimuth()) + std::string(";") + boost::lexical_cast<std::string>(rectProcessor.getTilt()));
+			networkController->sendMessage(boost::lexical_cast<std::string>(rectProcessor.getAzimuth()) + std::string(";") + boost::lexical_cast<std::string>(rectProcessor.getTilt()));
 	} else {
 		std::cout << "No rectangle" << std::endl;
 		

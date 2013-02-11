@@ -54,10 +54,8 @@ void RectangleProcessor::processRectangle(Rectangle input)
 	computeElevation();
         computeHeight();
         computeHorizontalDistance();
-        computeVelocity();
         computeAzimuth();
         computeTilt();
-	computeRPM();
         //fixHeight();
 }
 
@@ -76,11 +74,6 @@ int RectangleProcessor::getHorizontalDistance()
         return horizontalDistance;
 }
 
-float RectangleProcessor::getVelocity()
-{
-        return velocity;
-}
-
 int RectangleProcessor::getHeight()
 {
         return height;
@@ -96,11 +89,6 @@ float RectangleProcessor::getElevation()
 	return elevation;
 }
 
-float RectangleProcessor::getRPM()
-{
-	return rpm;
-}
-
 // Private Functions
 void RectangleProcessor::computeDistance()
 {
@@ -114,51 +102,6 @@ void RectangleProcessor::computeDistance()
                 distance = distanceHeight;
         else
                 distance = distanceBase;
-}
-
-void RectangleProcessor::computeVelocity()
-{
-        float launchDistance = (float)horizontalDistance / 1000;
-        float launchHeight = (float)height / 1000;
-        float mass = 0.29;
-        float cd = 0.5;
-        float gravity = 9.80665;
-        float air_density = 1.2;
-        float surface_area = (8 * 2.54 / 200) * (8 * 2.54 / 200) * 3.14159265358979;
-        float air_resistance_constant = 0.5 * cd * air_density * surface_area;
-        float a = sqrt(air_resistance_constant / (mass * gravity));
-        float b = air_resistance_constant / mass;
-        constList->launchAngleRadians = constList->launchAngleDegrees * 3.14159265358979 / 180;
-        float velocity1;
-        float velocity2;
-        float velocity3;
-        float f1 = 1;
-        float f3 = 3;
-        float psi = exp(b * launchHeight);
-        velocity1 = 1;
-        velocity2 = 25;
-        int i = 0;
-        while (fabs(f1) > 0.0001) {
-                ++i;
-                velocity3 = (velocity1 + velocity2) / 2;
-                float z1velocity1 = a * velocity1 * sin(constList->launchAngleRadians);
-                float z2velocity1 = a * velocity1 * cos(constList->launchAngleRadians);
-                float phi_velocity1 = (exp(b * launchDistance) -1) / z2velocity1;
-                f1 = psi - z1velocity1 * sin(phi_velocity1) - cos(phi_velocity1);
-                float z1velocity3 = a * velocity3 * sin(constList->launchAngleRadians);
-                float z2velocity3 = a * velocity3 * cos(constList->launchAngleRadians);
-                float phi_velocity3 = (exp(b * launchDistance) -1)/ z2velocity3;
-                f3 = psi - z1velocity3 * sin(phi_velocity3) - cos(phi_velocity3);
-                if(f1 * f3 < 0)
-                        velocity2 = velocity3;
-                else
-                        velocity1 = velocity3;
-                if (i > 30) {
-                        velocity1 = 0;
-                        f1 = 0;
-                }
-        }
-        velocity = velocity1;
 }
 
 void RectangleProcessor::computeAzimuth()
@@ -202,15 +145,10 @@ void RectangleProcessor::computeTilt()
 {
         float cosTilt = ((sqrt(inputRect.lengthSquaredTop) + sqrt(inputRect.lengthSquaredBottom)) / (sqrt(inputRect.lengthSquaredLeft) + sqrt(inputRect.lengthSquaredRight))) * (constList->rectHeight / constList->rectBase);
         if (cosTilt > 0.98)
-                tilt = 0;
+		tilt = 0;
         else
                 tilt = acos(cosTilt);
 
         if (inputRect.lengthSquaredLeft < inputRect.lengthSquaredRight)
                 tilt *= -1;
-}
-
-void RectangleProcessor::computeRPM()
-{	
-	rpm = (0.2269 * (float)distance) + 943.64;
 }

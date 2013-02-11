@@ -291,6 +291,8 @@ void RectangleDetector::findContainerRectangles()
 			}*/
 
 	std::cout << "Length: " << rectListRevised.size() << std::endl;
+	if (rectListRevised.size() == 0)
+		foundRectangle = false;
 }
 
 void RectangleDetector::findCorrectRectangles()
