@@ -30,10 +30,11 @@ public:
 
         // Camera
         int cameraFocalLength;
-        float cameraViewingAngle;
+        float cameraViewingAngleRadians;
         int cameraHDFocalLength;
-        float cameraHDViewingAngle;
+        float cameraHDViewingAngleRadians;
         int cameraHeight;
+	float cameraAngleDegrees;
 
         // Image
         int imgCols;
@@ -42,14 +43,14 @@ public:
         // GUI
         std::string guiWindowName;
 
-        // Rectangle
-        float rectBase;
-        float rectHeight;
-        std::vector<int> rectPossibleHeights;
-
-        // Shooter
-        float launchAngleDegrees;
-        float launchAngleRadians;
+	// Target
+        float targetHighRectBase;
+        float targetHighRectHeight;
+	float targetHighHeight;
+        float targetMiddleRectBase;
+        float targetMiddleRectHeight;
+	float targetMiddleHeight;
+        std::vector<int> targetPossibleHeights;
 
         // Preprocessing
         int preprocessingHueLowerThreshold;

@@ -55,8 +55,9 @@ void RectangleProcessor::processRectangle(Rectangle input)
         computeHeight();
         computeHorizontalDistance();
         computeAzimuth();
+	//fixHeight();
         computeTilt();
-        //fixHeight();
+	computeAspectRatio();
 }
 
 float RectangleProcessor::getAzimuth()
@@ -89,19 +90,40 @@ float RectangleProcessor::getElevation()
 	return elevation;
 }
 
+float RectangleProcessor::getAspectRatio()
+{
+	return aspectRatio;
+}
+
 // Private Functions
 void RectangleProcessor::computeDistance()
 {
-        int distanceTop = (constList->rectBase * constList->cameraFocalLength) / sqrt(inputRect.lengthSquaredTop);
-        int distanceBottom = (constList->rectBase * constList->cameraFocalLength) / sqrt(inputRect.lengthSquaredBottom);
-        int distanceLeft = (constList->rectHeight * constList->cameraFocalLength) / sqrt(inputRect.lengthSquaredLeft);
-        int distanceRight = (constList->rectHeight * constList->cameraFocalLength) / sqrt(inputRect.lengthSquaredRight);
+	// Compute distance from each side of rectangle
+        int distanceTop = (constList->targetHighRectBase * constList->cameraFocalLength) / sqrt(inputRect.lengthSquaredTop);
+        int distanceBottom = (constList->targetHighRectBase * constList->cameraFocalLength) / sqrt(inputRect.lengthSquaredBottom);
+        int distanceLeft = (constList->targetHighRectHeight * constList->cameraFocalLength) / sqrt(inputRect.lengthSquaredLeft);
+        int distanceRight = (constList->targetHighRectHeight * constList->cameraFocalLength) / sqrt(inputRect.lengthSquaredRight);
         int distanceBase = (distanceTop + distanceBottom) / 2;
         int distanceHeight = (distanceLeft + distanceRight) / 2;
-        if (distanceBase > distanceHeight)
+
+	// Account for camera angle
+	//int oldDistanceHeight = -1e6;
+	//std::cout << "distanceHeight = " << distanceHeight << std::endl;
+	//while ((float)abs(distanceHeight - oldDistanceHeight) / (float)distanceHeight > 0.01) {
+	//oldDistanceHeight = distanceHeight;
+	//	distanceHeight *= sqrt(1 - pow((constList->targetHighHeight - constList->cameraHeight) / distanceHeight, 2));
+	//	std::cout << "oldDistanceHeight = " << oldDistanceHeight << std::endl;
+	//	std::cout << "distanceHeight = " << distanceHeight << std::endl;
+	//}
+
+	// Take smaller distance
+        if (distanceBase > distanceHeight) {
                 distance = distanceHeight;
-        else
+		std::cout << "distanceHeight (" << distanceHeight << ") picked over distanceBase (" << distanceBase << ")" << std::endl;
+	} else {
                 distance = distanceBase;
+		std::cout << "distanceBase (" << distanceBase << ") picked over distanceHeight (" << distanceHeight << ")" << std::endl;
+	}
 }
 
 void RectangleProcessor::computeAzimuth()
@@ -137,18 +159,27 @@ void RectangleProcessor::computeHorizontalDistance()
 
 void RectangleProcessor::fixHeight()
 {
-        if (height == constList->rectPossibleHeights.at(0))
-                height = constList->rectPossibleHeights.at(2);
+        if (height == constList->targetPossibleHeights.at(0))
+                height = constList->targetPossibleHeights.at(2);
 }
 
 void RectangleProcessor::computeTilt()
 {
-        float cosTilt = ((sqrt(inputRect.lengthSquaredTop) + sqrt(inputRect.lengthSquaredBottom)) / (sqrt(inputRect.lengthSquaredLeft) + sqrt(inputRect.lengthSquaredRight))) * (constList->rectHeight / constList->rectBase);
+        float cosTilt = ((sqrt(inputRect.lengthSquaredTop) + sqrt(inputRect.lengthSquaredBottom)) / (sqrt(inputRect.lengthSquaredLeft) + sqrt(inputRect.lengthSquaredRight))) * (constList->targetHighRectHeight / constList->targetHighRectBase);
         if (cosTilt > 0.98)
-		tilt = 0;
+		tilt = sqrt(1 - pow(cosTilt, 2));
         else
                 tilt = acos(cosTilt);
 
         if (inputRect.lengthSquaredLeft < inputRect.lengthSquaredRight)
                 tilt *= -1;
+}
+
+void RectangleProcessor::computeAspectRatio()
+{
+	std::cout << "sqrt(inputRect.lengthSquaredTop) = " << sqrt(inputRect.lengthSquaredTop) << std::endl;
+	std::cout << "sqrt(inputRect.lengthSquaredBottom) = " << sqrt(inputRect.lengthSquaredBottom) << std::endl;
+	std::cout << "sqrt(inputRect.lengthSquaredLeft) = " << sqrt(inputRect.lengthSquaredLeft) << std::endl;
+	std::cout << "sqrt(inputRect.lengthSquaredRight) = " << sqrt(inputRect.lengthSquaredRight) << std::endl;
+	aspectRatio = (sqrt(inputRect.lengthSquaredTop) + sqrt(inputRect.lengthSquaredBottom)) / (sqrt(inputRect.lengthSquaredLeft) + sqrt(inputRect.lengthSquaredRight));
 }

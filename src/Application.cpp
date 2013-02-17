@@ -127,6 +127,7 @@ void Application::targetingContinuous()
 		float elevation = rectProcessor.getElevation() * 180.0 / constList->mathPi;
 		int height = rectProcessor.getHeight();
 		float tilt = rectProcessor.getTilt() * 180.0 / constList->mathPi;
+		float aspectRatio = rectProcessor.getAspectRatio();
 		
 		std::cout << "Distance: " << distance << "mm" << std::endl;
 		std::cout << "Horizontal Distance: " << horizontalDistance << " mm" << std::endl;
@@ -134,6 +135,7 @@ void Application::targetingContinuous()
 		std::cout << "Azimuth: " << azimuth << " degrees" << std::endl;
 		std::cout << "Tilt: " << tilt << " degrees" << std::endl;
 		std::cout << "Elevation: " << elevation << " degrees" << std::endl;
+		std::cout << "Aspect Ratio: " << aspectRatio << std::endl;
 
 		if (config.getIsNetworking())
 			networkController->sendMessage(boost::lexical_cast<std::string>(rectProcessor.getAzimuth()) + std::string(";") + boost::lexical_cast<std::string>(rectProcessor.getTilt()));

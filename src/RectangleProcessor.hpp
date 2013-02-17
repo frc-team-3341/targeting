@@ -30,6 +30,7 @@ public:
 	float getElevation();
         int getHeight();
         float getTilt();
+	float getAspectRatio();
 private:
         // Data
         Rectangle inputRect;
@@ -40,6 +41,7 @@ private:
 	float elevation;
         int height;
         float tilt;
+	float aspectRatio;
 
         // Methods
         void computeDistance(); // Computes Distance to the Rectangle
@@ -49,6 +51,7 @@ private:
         void computeAzimuth(); // Computes Azimuth to the Rectangle
         void fixHeight(); // Changes Lowest Hoop to Highest
         void computeTilt(); // Computes Tilt of the Rectangle
+	void computeAspectRatio(); // Computes aspect ratio to determine which goal
 };
 
 #endif /* RectangleProcessor_hpp */
