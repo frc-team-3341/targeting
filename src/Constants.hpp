@@ -34,7 +34,7 @@ public:
         int cameraHDFocalLength;
         float cameraHDViewingAngleRadians;
         int cameraHeight;
-	float cameraAngleDegrees;
+	float cameraAngleRadians;
 
         // Image
         int imgCols;
@@ -44,12 +44,11 @@ public:
         std::string guiWindowName;
 
 	// Target
-        float targetHighRectBase;
-        float targetHighRectHeight;
-	float targetHighHeight;
-        float targetMiddleRectBase;
-        float targetMiddleRectHeight;
-	float targetMiddleHeight;
+	int targetHighIndex;
+	int targetMiddleIndex;
+	std::vector<float> targetRectBase;
+	std::vector<float> targetRectHeight;
+	std::vector<float> targetHeight;
         std::vector<int> targetPossibleHeights;
 
         // Preprocessing

@@ -23,7 +23,7 @@ class RectangleDetector
 public:
         // Methods
         RectangleDetector(Constants* constList);
-        Rectangle processImage(cv::Mat inputImage);
+	std::vector<Rectangle> processImage(cv::Mat inputImage);
         bool rectangleWasFound();
         std::vector< std::vector<cv::Point> > getAllRectangles();
         std::vector< std::vector<cv::Point> > getFinalRectangles();
@@ -31,12 +31,12 @@ private:
         // Data
         Constants *constList;
         cv::Mat image;
-        std::vector< std::vector<cv::Point> > allRectangles;
-        std::vector< std::vector<cv::Point> > finalRectangles;
+        std::vector<std::vector<cv::Point> > allRectangles;
+        std::vector<std::vector<cv::Point> > finalRectangles;
+	std::vector<Rectangle> outputRectangles;
         std::vector<Rectangle> rectList;
         std::vector<Rectangle> rectListRevised;
         bool foundRectangle;
-        int rectIndex;
 
         // Methods
         double angle(cv::Point, cv::Point, cv::Point); // Find Cosine of Angle Between Vectors

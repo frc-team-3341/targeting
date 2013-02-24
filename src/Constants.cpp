@@ -36,18 +36,20 @@ Constants::Constants()
         cameraHDFocalLength = 655;
         cameraHDViewingAngleRadians = 1.1414453308043;
         cameraHeight = 600;
-	cameraAngleDegrees = 0.0;
+	cameraAngleRadians = 0.0;
 
         // GUI
         guiWindowName = "FRC Team 3341 Targeting";
 
         // Target
-	targetHighRectBase = 62.0 * 25.4;
-	targetHighRectHeight = 20.0 * 25.4;
-	targetHighHeight = 110.125 * 25.4;
-	targetMiddleRectBase = 62.0 * 25.4;
-	targetMiddleRectHeight = 29.0 * 25.4;
-	targetMiddleHeight = 99.125 * 25.4;
+	targetHighIndex = 0;
+	targetMiddleIndex = 1;
+	targetRectBase.push_back(62.0 * 25.4);
+	targetRectHeight.push_back(20.0 * 25.4);
+	targetHeight.push_back(110.125 * 25.4);
+	targetRectBase.push_back(62.0 * 25.4);
+	targetRectHeight.push_back(29.0 * 25.4);
+	targetHeight.push_back(99.125 * 25.4);
         targetPossibleHeights.push_back(-171);
         targetPossibleHeights.push_back(387);
         targetPossibleHeights.push_back(1607);

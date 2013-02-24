@@ -18,12 +18,15 @@
 #ifndef RectangleProcessor_hpp
 #define RectangleProcessor_hpp
 
+#include "Constants.hpp"
+#include "Rectangle.hpp"
+
 class RectangleProcessor
 {
 public:
         // Methods
-        RectangleProcessor(Constants *constList);
-        void processRectangle(Rectangle);
+	RectangleProcessor(Constants* constList);
+        void processRectangle(Rectangle inputRect, int target);
         float getAzimuth();
         int getDistance();
         int getHorizontalDistance();
@@ -35,6 +38,7 @@ private:
         // Data
         Rectangle inputRect;
         Constants *constList;
+	int target;
         float azimuth;
         int distance;
         int horizontalDistance;

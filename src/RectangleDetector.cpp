@@ -42,28 +42,27 @@
 RectangleDetector::RectangleDetector(Constants *inputConstList)
 {
         // Variable Initializations
-        foundRectangle=true;
-        rectIndex=-1;
+        foundRectangle = true;
         constList = inputConstList;
 }
 
-Rectangle RectangleDetector::processImage(cv::Mat input)
+std::vector<Rectangle> RectangleDetector::processImage(cv::Mat input)
 {
         // Variable Initializations
         input.copyTo(image);
 
         preprocessImage();
         findRectangles();
-        if (! foundRectangle) return static_cast<Rectangle>(NULL);
+        if (! foundRectangle) return std::vector<Rectangle>();
         populateRectangles();
-        if (! foundRectangle) return static_cast<Rectangle>(NULL);
+        if (! foundRectangle) return std::vector<Rectangle>();
         filterUniqueRectangles();
         findContainerRectangles();
-        if (! foundRectangle) return static_cast<Rectangle>(NULL);
+        if (! foundRectangle) return std::vector<Rectangle>();
         findCorrectRectangles();
-        if (! foundRectangle) return static_cast<Rectangle>(NULL);
+        if (! foundRectangle) return std::vector<Rectangle>();
 
-        return rectListRevised.at(rectIndex);
+        return outputRectangles;
 }
 
 bool RectangleDetector::rectangleWasFound()
@@ -297,7 +296,6 @@ void RectangleDetector::findContainerRectangles()
 
 void RectangleDetector::findCorrectRectangles()
 {
-	rectIndex = 0;
         /*// Find Correct Rectangle
 	std::vector<int> rectLengthSquareds;
         for (unsigned i = 0; i < rectListRevised.size(); ++i)
@@ -321,9 +319,11 @@ void RectangleDetector::findCorrectRectangles()
 	allRectangles.clear();
 	finalRectangles.clear();
 	for (int i = 0; i < (int)rectListRevised.size(); ++i) {
-		if (rectListRevised.at(i).markedForRemoval)
+		if (rectListRevised.at(i).markedForRemoval) {
 			allRectangles.push_back(rectListRevised.at(i).rectPoints);
-		else
+		} else {
 			finalRectangles.push_back(rectListRevised.at(i).rectPoints);
+			outputRectangles.push_back(rectListRevised.at(i));
+		}
 	}
 }

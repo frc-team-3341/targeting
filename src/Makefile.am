@@ -1,3 +1,4 @@
+
 #    This file is part of FRC Team 3341 Aimer.
 #
 #    FRC Team 3341 Aimer is free software: you can redistribute it and/or modify
@@ -21,6 +22,7 @@ CmdLineInterface.cpp \
 Constants.cpp \
 GUIManager.cpp \
 HSVImage.cpp \
+MultiRectangleProcessor.cpp \
 NetworkController.cpp \
 Rectangle.cpp \
 RectangleDetector.cpp \
@@ -33,6 +35,7 @@ CmdLineInterface.hpp \
 Constants.hpp \
 GUIManager.hpp \
 HSVImage.hpp \
+MultiRectangleProcessor.hpp \
 NetworkController.hpp \
 Rectangle.hpp \
 RectangleDetector.hpp \

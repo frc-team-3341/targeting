@@ -38,6 +38,7 @@
 #include "Rectangle.hpp"
 #include "RectangleDetector.hpp"
 #include "RectangleProcessor.hpp"
+#include "MultiRectangleProcessor.hpp"
 #include "GUIManager.hpp"
 #include "CmdLineInterface.hpp"
 #include "Application.hpp"
@@ -116,29 +117,42 @@ void Application::targetingContinuous()
 		guiManager->setImage(image);
 
 	RectangleDetector rectDetector(constList);
-	Rectangle foundRectangle = rectDetector.processImage(image);
-	RectangleProcessor rectProcessor(constList);
+	std::vector<Rectangle> foundRectangles = rectDetector.processImage(image);
+	MultiRectangleProcessor multiRectProcessor(constList);
+	std::vector<std::vector<RectangleProcessor> > rectProcessors;
 	if (rectDetector.rectangleWasFound()) {
-		rectProcessor.processRectangle(foundRectangle);
+		multiRectProcessor.processRectangles(foundRectangles);
+		rectProcessors = multiRectProcessor.getRectProcessors();
 
-		int distance = rectProcessor.getDistance();
-		int horizontalDistance = rectProcessor.getHorizontalDistance();
-		float azimuth = rectProcessor.getAzimuth() * 180.0 / constList->mathPi;
-		float elevation = rectProcessor.getElevation() * 180.0 / constList->mathPi;
-		int height = rectProcessor.getHeight();
-		float tilt = rectProcessor.getTilt() * 180.0 / constList->mathPi;
-		float aspectRatio = rectProcessor.getAspectRatio();
-		
-		std::cout << "Distance: " << distance << "mm" << std::endl;
-		std::cout << "Horizontal Distance: " << horizontalDistance << " mm" << std::endl;
-		std::cout << "Height: " << height << " mm" << std::endl;
-		std::cout << "Azimuth: " << azimuth << " degrees" << std::endl;
-		std::cout << "Tilt: " << tilt << " degrees" << std::endl;
-		std::cout << "Elevation: " << elevation << " degrees" << std::endl;
-		std::cout << "Aspect Ratio: " << aspectRatio << std::endl;
+		for (int i = 0; i < (int)rectProcessors.size(); i++) {
+			std::cout << "Rectangle " << i << " processed data:" << std::endl;
+			for (int j = 0; j < (int)rectProcessors.at(i).size(); j++) {
+				std::cout << "Assumption: ";
+				if (j == 0)
+					std::cout << "High target";
+				else
+					std::cout << "Middle target";
+				std::cout << std::endl;
+				int distance = rectProcessors.at(i).at(j).getDistance();
+				int horizontalDistance = rectProcessors.at(i).at(j).getHorizontalDistance();
+				float azimuth = rectProcessors.at(i).at(j).getAzimuth() * 180.0 / constList->mathPi;
+				float elevation = rectProcessors.at(i).at(j).getElevation() * 180.0 / constList->mathPi;
+				int height = rectProcessors.at(i).at(j).getHeight();
+				float tilt = rectProcessors.at(i).at(j).getTilt() * 180.0 / constList->mathPi;
+				float aspectRatio = rectProcessors.at(i).at(j).getAspectRatio();
+			
+				std::cout << "Distance: " << distance << "mm" << std::endl;
+				std::cout << "Horizontal Distance: " << horizontalDistance << " mm" << std::endl;
+				std::cout << "Height: " << height << " mm" << std::endl;
+				std::cout << "Azimuth: " << azimuth << " degrees" << std::endl;
+				std::cout << "Tilt: " << tilt << " degrees" << std::endl;
+				std::cout << "Elevation: " << elevation << " degrees" << std::endl;
+				std::cout << "Aspect Ratio: " << aspectRatio << std::endl;
+			}
+		}
 
 		if (config.getIsNetworking())
-			networkController->sendMessage(boost::lexical_cast<std::string>(rectProcessor.getAzimuth()) + std::string(";") + boost::lexical_cast<std::string>(rectProcessor.getTilt()));
+			networkController->sendMessage(boost::lexical_cast<std::string>(rectProcessors.at(0).at(0).getAzimuth()) + std::string(";") + boost::lexical_cast<std::string>(rectProcessors.at(0).at(0).getTilt()));
 	} else {
 		std::cout << "No rectangle" << std::endl;
 		
@@ -149,7 +163,7 @@ void Application::targetingContinuous()
 	if (! config.getIsHeadless()) {
 		std::string message;
 		if (rectDetector.rectangleWasFound())
-			message = boost::lexical_cast<std::string>(rectProcessor.getDistance()) + " mm @ " + boost::lexical_cast<std::string>(rectProcessor.getAzimuth()) + " degrees";
+			message = boost::lexical_cast<std::string>(rectProcessors.at(0).at(0).getDistance()) + " mm @ " + boost::lexical_cast<std::string>(rectProcessors.at(0).at(0).getAzimuth()) + " degrees";
 		else
 			message = "No rectangle";
 		guiManager->setImageText(message);

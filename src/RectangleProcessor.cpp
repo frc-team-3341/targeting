@@ -44,10 +44,11 @@ RectangleProcessor::RectangleProcessor(Constants *inputConstList)
         constList = inputConstList;
 }
 
-void RectangleProcessor::processRectangle(Rectangle input)
+void RectangleProcessor::processRectangle(Rectangle input, int inputTarget)
 {
         // Variable Initializations
         inputRect = input;
+	target = inputTarget;
 
         // Process Rectangle
         computeDistance();
@@ -99,10 +100,10 @@ float RectangleProcessor::getAspectRatio()
 void RectangleProcessor::computeDistance()
 {
 	// Compute distance from each side of rectangle
-        int distanceTop = (constList->targetHighRectBase * constList->cameraFocalLength) / sqrt(inputRect.lengthSquaredTop);
-        int distanceBottom = (constList->targetHighRectBase * constList->cameraFocalLength) / sqrt(inputRect.lengthSquaredBottom);
-        int distanceLeft = (constList->targetHighRectHeight * constList->cameraFocalLength) / sqrt(inputRect.lengthSquaredLeft);
-        int distanceRight = (constList->targetHighRectHeight * constList->cameraFocalLength) / sqrt(inputRect.lengthSquaredRight);
+        int distanceTop = (constList->targetRectBase.at(target) * constList->cameraFocalLength) / sqrt(inputRect.lengthSquaredTop);
+        int distanceBottom = (constList->targetRectBase.at(target) * constList->cameraFocalLength) / sqrt(inputRect.lengthSquaredBottom);
+        int distanceLeft = (constList->targetRectHeight.at(target) * constList->cameraFocalLength) / sqrt(inputRect.lengthSquaredLeft);
+        int distanceRight = (constList->targetRectHeight.at(target) * constList->cameraFocalLength) / sqrt(inputRect.lengthSquaredRight);
         int distanceBase = (distanceTop + distanceBottom) / 2;
         int distanceHeight = (distanceLeft + distanceRight) / 2;
 
@@ -111,7 +112,7 @@ void RectangleProcessor::computeDistance()
 	//std::cout << "distanceHeight = " << distanceHeight << std::endl;
 	//while ((float)abs(distanceHeight - oldDistanceHeight) / (float)distanceHeight > 0.01) {
 	//oldDistanceHeight = distanceHeight;
-	//	distanceHeight *= sqrt(1 - pow((constList->targetHighHeight - constList->cameraHeight) / distanceHeight, 2));
+	//	distanceHeight *= sqrt(1 - pow((constList->targetHeight.at(target) - constList->cameraHeight) / distanceHeight, 2));
 	//	std::cout << "oldDistanceHeight = " << oldDistanceHeight << std::endl;
 	//	std::cout << "distanceHeight = " << distanceHeight << std::endl;
 	//}
@@ -134,7 +135,7 @@ void RectangleProcessor::computeAzimuth()
 void RectangleProcessor::computeElevation()
 {
         float tanElevation = (((float)constList->imgRows / 2.0) - (float)inputRect.center.y) / (float)constList->cameraFocalLength;
-	elevation = atan(tanElevation);
+	elevation = atan(tanElevation) + constList->cameraAngleRadians;
 }
 
 void RectangleProcessor::computeHeight()
@@ -165,7 +166,7 @@ void RectangleProcessor::fixHeight()
 
 void RectangleProcessor::computeTilt()
 {
-        float cosTilt = ((sqrt(inputRect.lengthSquaredTop) + sqrt(inputRect.lengthSquaredBottom)) / (sqrt(inputRect.lengthSquaredLeft) + sqrt(inputRect.lengthSquaredRight))) * (constList->targetHighRectHeight / constList->targetHighRectBase);
+        float cosTilt = ((sqrt(inputRect.lengthSquaredTop) + sqrt(inputRect.lengthSquaredBottom)) / (sqrt(inputRect.lengthSquaredLeft) + sqrt(inputRect.lengthSquaredRight))) * (constList->targetRectHeight.at(target) / constList->targetRectBase.at(target));
         if (cosTilt > 0.98)
 		tilt = sqrt(1 - pow(cosTilt, 2));
         else
