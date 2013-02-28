@@ -51,8 +51,8 @@ void RectangleProcessor::processRectangle(Rectangle input, int inputTarget)
 	target = inputTarget;
 
         // Process Rectangle
-        computeDistance();
 	computeElevation();
+        computeDistance();
         computeHeight();
         computeHorizontalDistance();
         computeAzimuth();
@@ -102,8 +102,8 @@ void RectangleProcessor::computeDistance()
 	// Compute distance from each side of rectangle
         int distanceTop = (constList->targetRectBase.at(target) * constList->cameraFocalLength) / sqrt(inputRect.lengthSquaredTop);
         int distanceBottom = (constList->targetRectBase.at(target) * constList->cameraFocalLength) / sqrt(inputRect.lengthSquaredBottom);
-        int distanceLeft = (constList->targetRectHeight.at(target) * constList->cameraFocalLength) / sqrt(inputRect.lengthSquaredLeft);
-        int distanceRight = (constList->targetRectHeight.at(target) * constList->cameraFocalLength) / sqrt(inputRect.lengthSquaredRight);
+        int distanceLeft = (constList->targetRectHeight.at(target) * constList->cameraFocalLength) / (sqrt(inputRect.lengthSquaredLeft) * cos(elevation));
+        int distanceRight = (constList->targetRectHeight.at(target) * constList->cameraFocalLength) / sqrt(inputRect.lengthSquaredRight * cos(elevation));
         int distanceBase = (distanceTop + distanceBottom) / 2;
         int distanceHeight = (distanceLeft + distanceRight) / 2;
 
