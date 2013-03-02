@@ -74,3 +74,8 @@ void GUIManager::show(const std::vector<std::vector<cv::Point> > &allRectangles,
 	
 	cv::imshow(constList->guiWindowName.c_str(), image);
 }
+
+void GUIManager::show()
+{
+	cv::imshow(constList->guiWindowName.c_str(), image);
+}

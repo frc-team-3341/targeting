@@ -28,6 +28,7 @@ public:
 	void setImage(cv::Mat image);
 	void setImageText(std::string imageText);
         void show(const std::vector<std::vector<cv::Point> > &allRectangles, const std::vector<std::vector<cv::Point> >& finalRectangles); // Show Image
+	void show(); // Show Image
 
 private:
         Constants *constList;

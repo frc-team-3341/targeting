@@ -27,11 +27,13 @@ CmdLineInterface::CmdLineInterface(int argc, char *argv[])
 {
 	int isHeadless = 0;
 	int isNetworking = 1;
+	int isCaptureMode = 0;
 
 	while (true) {
 		static struct option long_options[] = {
 			{"headless", no_argument, &isHeadless, 1},
 			{"no-networking", no_argument, &isNetworking, 0},
+			{"capture-mode", no_argument, &isCaptureMode, 1},
 			{"device", required_argument, 0, 'd'},
 			{"file", required_argument, 0, 'f'},
 			{0, 0, 0, 0}
@@ -64,6 +66,7 @@ CmdLineInterface::CmdLineInterface(int argc, char *argv[])
 
 	config.setIsHeadless(isHeadless);
 	config.setIsNetworking(isNetworking);
+	config.setIsCaptureMode(isCaptureMode);
 
 	if (! config.getIsFile() && ! config.getIsDevice()) {
 		std::cerr << argv[0] << ": missing required options" << std::endl;

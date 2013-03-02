@@ -25,7 +25,8 @@ AppConfig::AppConfig() :
 	isFile(0),
 	isDevice(0),
 	isHeadless(0),
-	isNetworking(1)
+	isNetworking(1),
+	isCaptureMode(0)
 {
 }
 
@@ -87,4 +88,14 @@ int AppConfig::getIsNetworking()
 void AppConfig::setIsNetworking(int inputIsNetworking)
 {
 	isNetworking = inputIsNetworking;
+}
+
+int AppConfig::getIsCaptureMode()
+{
+	return isCaptureMode;
+}
+
+void AppConfig::setIsCaptureMode(int inputIsCaptureMode)
+{
+	isCaptureMode = inputIsCaptureMode;
 }

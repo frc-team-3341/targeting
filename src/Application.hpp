@@ -36,6 +36,8 @@ private:
 	void initGUI();
 	void targetingInit();
 	void targetingContinuous();
+	void captureInit();
+	void captureContinuous();
 	cv::Mat loadImage();
 	CmdLineInterface *cmdLineInterface;
 	VideoDevice *videoDevice;

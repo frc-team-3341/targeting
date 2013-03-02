@@ -66,12 +66,18 @@ Application::~Application()
 int Application::exec()
 {
 	initVideoDevice();
-	initNetworking();
 	initGUI();
-	targetingInit();
-	while (true)
-		targetingContinuous();
-
+	if (config.getIsCaptureMode()) {
+		captureInit();
+		while (true)
+			captureContinuous();
+	} else {
+		initNetworking();
+		targetingInit();
+		while (true)
+			targetingContinuous();
+	}
+	
 	return EXIT_SUCCESS;
 }
 
@@ -170,9 +176,6 @@ void Application::targetingContinuous()
 		guiManager->show(rectDetector.getAllRectangles(), rectDetector.getFinalRectangles());
 		int keycode = cv::waitKey(10);
 		if (keycode == 57) {
-			std::stringstream filename;
-			filename << time(NULL) << ".jpg";
-			cv::imwrite(filename.str().c_str(), image);
 		} else if (keycode == 27)
 			exit(EXIT_SUCCESS);
 		if (config.getIsFile()) {
@@ -182,6 +185,28 @@ void Application::targetingContinuous()
 	} else {
 		char waitForKey;
 		std::cin >> waitForKey;
+		exit(EXIT_SUCCESS);
+	}
+}
+
+void Application::captureInit()
+{
+	
+}
+
+void Application::captureContinuous()
+{
+	cv::Mat image = loadImage();
+	guiManager->setImage(image);
+	guiManager->show();
+
+	char keycode = cv::waitKey(10);
+	if (keycode == ' ') {
+		std::stringstream filename;
+		filename << time(NULL) << ".jpg";
+		std::cout << "Writing image to " << filename.str() << std::endl;
+		cv::imwrite(filename.str().c_str(), image);
+	} else if (keycode == 27) {
 		exit(EXIT_SUCCESS);
 	}
 }

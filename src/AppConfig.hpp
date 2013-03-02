@@ -36,6 +36,8 @@ public:
 	void setIsHeadless(int isHeadless);
 	int getIsNetworking();
 	void setIsNetworking(int isNetworking);
+	int getIsCaptureMode();
+	void setIsCaptureMode(int isCaptureMode);
 private:
 	std::string fileName;
 	int deviceID;
@@ -43,6 +45,7 @@ private:
 	int isDevice;
 	int isHeadless;
 	int isNetworking;
+	int isCaptureMode;
 };
 
 #endif /* AppConfig_hpp */
