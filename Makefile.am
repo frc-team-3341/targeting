@@ -16,4 +16,4 @@
 ACLOCAL_AMFLAGS = -I build-aux
 SUBDIRS = src/
 dist_noinst_DATA = images/
-dist_noinst_SCRIPTS = autogen.sh
+dist_noinst_SCRIPTS = autogen.sh rpi-compile.sh

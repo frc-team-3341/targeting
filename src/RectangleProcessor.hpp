@@ -28,7 +28,9 @@ public:
 	RectangleProcessor(Constants* constList);
         void processRectangle(Rectangle inputRect, int target);
         float getAzimuth();
-        int getDistance();
+        int getProportionalDistance();
+	int getConstantsDistance();
+	float getLogDistances();
         int getHorizontalDistance();
 	float getElevation();
         int getHeight();
@@ -40,7 +42,9 @@ private:
         Constants *constList;
 	int target;
         float azimuth;
-        int distance;
+        int proportionalDistance;
+	int constantsDistance;
+	float logDistances;
         int horizontalDistance;
 	float elevation;
         int height;
@@ -48,7 +52,9 @@ private:
 	float aspectRatio;
 
         // Methods
-        void computeDistance(); // Computes Distance to the Rectangle
+        void computeProportionalDistance(); // Computes distance with rectangle proportions
+	void computeConstantsDistance(); // Computes distance with constants values
+	void computeLogDistances(); // Computes ln(proportionalDistance / constantsDistance)
         void computeHorizontalDistance(); // Computes Horizontal Distance to the Rectangle
 	void computeElevation(); // Computes Elevation of the Rectangle
         void computeHeight(); // Computes Height of the Rectangle

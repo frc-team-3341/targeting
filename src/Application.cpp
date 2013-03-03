@@ -139,7 +139,9 @@ void Application::targetingContinuous()
 				else
 					std::cout << "Middle target";
 				std::cout << std::endl;
-				int distance = rectProcessors.at(i).at(j).getDistance();
+				int proportionalDistance = rectProcessors.at(i).at(j).getProportionalDistance();
+				int constantsDistance = rectProcessors.at(i).at(j).getConstantsDistance();
+				float logDistances = rectProcessors.at(i).at(j).getLogDistances();
 				int horizontalDistance = rectProcessors.at(i).at(j).getHorizontalDistance();
 				float azimuth = rectProcessors.at(i).at(j).getAzimuth() * 180.0 / constList->mathPi;
 				float elevation = rectProcessors.at(i).at(j).getElevation() * 180.0 / constList->mathPi;
@@ -147,8 +149,10 @@ void Application::targetingContinuous()
 				float tilt = rectProcessors.at(i).at(j).getTilt() * 180.0 / constList->mathPi;
 				float aspectRatio = rectProcessors.at(i).at(j).getAspectRatio();
 			
-				std::cout << "Distance: " << distance << "mm" << std::endl;
-				std::cout << "Horizontal Distance: " << horizontalDistance << " mm" << std::endl;
+				std::cout << "Proportional distance: " << proportionalDistance << " mm" << std::endl;
+				std::cout << "Constants distance: " << constantsDistance << " mm" << std::endl;
+				std::cout << "Log of distances: " << logDistances << std::endl;
+				std::cout << "Horizontal distance: " << horizontalDistance << " mm" << std::endl;
 				std::cout << "Height: " << height << " mm" << std::endl;
 				std::cout << "Azimuth: " << azimuth << " degrees" << std::endl;
 				std::cout << "Tilt: " << tilt << " degrees" << std::endl;
@@ -169,14 +173,13 @@ void Application::targetingContinuous()
 	if (! config.getIsHeadless()) {
 		std::string message;
 		if (rectDetector.rectangleWasFound())
-			message = boost::lexical_cast<std::string>(rectProcessors.at(0).at(0).getDistance()) + " mm @ " + boost::lexical_cast<std::string>(rectProcessors.at(0).at(0).getAzimuth()) + " degrees";
+			message = boost::lexical_cast<std::string>(rectProcessors.at(0).at(0).getProportionalDistance()) + " mm @ " + boost::lexical_cast<std::string>(rectProcessors.at(0).at(0).getAzimuth()) + " degrees";
 		else
 			message = "No rectangle";
 		guiManager->setImageText(message);
 		guiManager->show(rectDetector.getAllRectangles(), rectDetector.getFinalRectangles());
 		int keycode = cv::waitKey(10);
-		if (keycode == 57) {
-		} else if (keycode == 27)
+		if (keycode == 27)
 			exit(EXIT_SUCCESS);
 		if (config.getIsFile()) {
 			cv::waitKey();
