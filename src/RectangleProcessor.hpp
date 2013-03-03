@@ -30,7 +30,7 @@ public:
         float getAzimuth();
         int getProportionalDistance();
 	int getConstantsDistance();
-	float getLogDistances();
+	float getLogAspectRatios();
         int getHorizontalDistance();
 	float getElevation();
         int getHeight();
@@ -44,7 +44,7 @@ private:
         float azimuth;
         int proportionalDistance;
 	int constantsDistance;
-	float logDistances;
+	float logAspectRatios;
         int horizontalDistance;
 	float elevation;
         int height;
@@ -54,7 +54,7 @@ private:
         // Methods
         void computeProportionalDistance(); // Computes distance with rectangle proportions
 	void computeConstantsDistance(); // Computes distance with constants values
-	void computeLogDistances(); // Computes ln(proportionalDistance / constantsDistance)
+	void computeLogAspectRatios(); // Computes log of calculated aspect ratio to true aspect ratio
         void computeHorizontalDistance(); // Computes Horizontal Distance to the Rectangle
 	void computeElevation(); // Computes Elevation of the Rectangle
         void computeHeight(); // Computes Height of the Rectangle

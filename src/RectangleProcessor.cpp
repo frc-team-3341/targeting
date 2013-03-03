@@ -54,13 +54,13 @@ void RectangleProcessor::processRectangle(Rectangle input, int inputTarget)
 	computeElevation();
         computeProportionalDistance();
 	computeConstantsDistance();
-	computeLogDistances();
         computeHeight();
         computeHorizontalDistance();
         computeAzimuth();
 	//fixHeight();
         computeTilt();
 	computeAspectRatio();
+	computeLogAspectRatios();
 }
 
 float RectangleProcessor::getAzimuth()
@@ -78,9 +78,9 @@ int RectangleProcessor::getConstantsDistance()
 	return constantsDistance;
 }
 
-float RectangleProcessor::getLogDistances()
+float RectangleProcessor::getLogAspectRatios()
 {
-	return logDistances;
+	return logAspectRatios;
 }
 
 int RectangleProcessor::getHorizontalDistance()
@@ -148,9 +148,9 @@ void RectangleProcessor::computeConstantsDistance()
 
 }
 
-void RectangleProcessor::computeLogDistances()
+void RectangleProcessor::computeLogAspectRatios()
 {
-	logDistances = fabs(log((float)proportionalDistance / (float)constantsDistance));
+	logAspectRatios = fabs(log((float)aspectRatio * (float)constList->targetRectHeight.at(target) / (float)constList->targetRectBase.at(target)));
 }
 
 void RectangleProcessor::computeAzimuth()
@@ -181,7 +181,8 @@ void RectangleProcessor::computeHeight()
 
 void RectangleProcessor::computeHorizontalDistance()
 {
-        horizontalDistance = sqrt(pow(proportionalDistance, 2) - pow(height, 2));
+        //horizontalDistance = sqrt(pow(proportionalDistance, 2) - pow(height, 2));
+        horizontalDistance = sqrt(pow(proportionalDistance, 2) - pow(constList->targetHeight.at(target) - constList->cameraHeight, 2));
 }
 
 void RectangleProcessor::fixHeight()

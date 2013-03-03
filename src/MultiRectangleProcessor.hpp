@@ -29,12 +29,15 @@ class MultiRectangleProcessor
 public:
 	// Methods
 	MultiRectangleProcessor(Constants* constList);
+	~MultiRectangleProcessor();
 	void processRectangles(std::vector<Rectangle> foundRectangles);
 	std::vector<std::vector<RectangleProcessor> > getRectProcessors();
 private:
 	// Data
 	std::vector<Rectangle> rectangles;
 	std::vector<std::vector<RectangleProcessor> > rectProcessors;
+	RectangleProcessor* finalProcessor;
+	int finalTarget;
 	Constants* constList;
 };
 

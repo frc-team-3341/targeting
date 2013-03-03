@@ -141,7 +141,7 @@ void Application::targetingContinuous()
 				std::cout << std::endl;
 				int proportionalDistance = rectProcessors.at(i).at(j).getProportionalDistance();
 				int constantsDistance = rectProcessors.at(i).at(j).getConstantsDistance();
-				float logDistances = rectProcessors.at(i).at(j).getLogDistances();
+				float logAspectRatios = rectProcessors.at(i).at(j).getLogAspectRatios();
 				int horizontalDistance = rectProcessors.at(i).at(j).getHorizontalDistance();
 				float azimuth = rectProcessors.at(i).at(j).getAzimuth() * 180.0 / constList->mathPi;
 				float elevation = rectProcessors.at(i).at(j).getElevation() * 180.0 / constList->mathPi;
@@ -151,7 +151,7 @@ void Application::targetingContinuous()
 			
 				std::cout << "Proportional distance: " << proportionalDistance << " mm" << std::endl;
 				std::cout << "Constants distance: " << constantsDistance << " mm" << std::endl;
-				std::cout << "Log of distances: " << logDistances << std::endl;
+				std::cout << "Log of aspect ratios: " << logAspectRatios << std::endl;
 				std::cout << "Horizontal distance: " << horizontalDistance << " mm" << std::endl;
 				std::cout << "Height: " << height << " mm" << std::endl;
 				std::cout << "Azimuth: " << azimuth << " degrees" << std::endl;

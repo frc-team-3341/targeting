@@ -31,12 +31,14 @@ Constants::Constants()
         mathPi = 3.14159265358979;
 
         // Camera
-        cameraFocalLength = 655;
+        //cameraFocalLength = 655;
+	cameraFocalLength = 640;
         cameraViewingAngleRadians = 1.1414453308043;
-        cameraHDFocalLength = 655;
+        //cameraHDFocalLength = 655;
+	cameraHDFocalLength = 640;
         cameraHDViewingAngleRadians = 1.1414453308043;
-        cameraHeight = 600;
-	cameraAngleRadians = 0.0;
+        cameraHeight = 33.5 * 25.4;
+	cameraAngleRadians = 9.0 * mathPi / 180.0;
 
         // GUI
         guiWindowName = "FRC Team 3341 Targeting";

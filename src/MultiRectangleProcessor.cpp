@@ -35,6 +35,13 @@
 MultiRectangleProcessor::MultiRectangleProcessor(Constants* inputConstList)
 {
 	constList = inputConstList;
+	finalTarget = -1;
+}
+
+MultiRectangleProcessor::~MultiRectangleProcessor()
+{
+	if (finalProcessor)
+		delete finalProcessor;
 }
 
 void MultiRectangleProcessor::processRectangles(std::vector<Rectangle> inputRectangles)
@@ -46,6 +53,38 @@ void MultiRectangleProcessor::processRectangles(std::vector<Rectangle> inputRect
 		mRectProcessor.at(0).processRectangle(rectangles.at(i), constList->targetHighIndex);
 		mRectProcessor.at(1).processRectangle(rectangles.at(i), constList->targetMiddleIndex);
 		rectProcessors.push_back(mRectProcessor);
+	}
+
+	if (rectProcessors.size() == 1) {
+		if (rectProcessors.at(0).at(0).getLogAspectRatios() < rectProcessors.at(0).at(1).getLogAspectRatios()) {
+			finalProcessor = new RectangleProcessor(rectProcessors.at(0).at(0));
+			finalTarget = 0;
+		} else {
+			finalProcessor = new RectangleProcessor(rectProcessors.at(0).at(1));
+			finalTarget = 1;
+		}
+	}
+	else if (rectProcessors.size() > 1) {
+		int processIndex = 0;
+		for (int i = 0; i < (int)rectProcessors.size(); i++) {
+			if (rectProcessors.at(i).at(0).getElevation() > rectProcessors.at(processIndex).at(0).getElevation())
+				processIndex = i;
+		}
+		finalProcessor = new RectangleProcessor(rectProcessors.at(processIndex).at(0));
+		finalTarget = 0;
+	}
+
+	if (finalProcessor) {
+		std::cout << "Final Target Information" << std::endl;
+		std::cout << "========================" << std::endl;
+		std::cout << "Target: ";
+		if (finalTarget == 0)
+			std::cout << "High target" << std::endl;
+		else
+			std::cout << "Middle target" << std::endl;
+		std::cout << "Horizontal distance: " << finalProcessor->getHorizontalDistance() << " mm" << std::endl;
+		std::cout << "Elevation: " << finalProcessor->getElevation() * 180.0 / constList->mathPi << " degrees" << std::endl;
+		std::cout << std::endl;
 	}
 }
 
