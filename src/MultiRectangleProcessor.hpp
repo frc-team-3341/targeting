@@ -32,6 +32,7 @@ public:
 	~MultiRectangleProcessor();
 	void processRectangles(std::vector<Rectangle> foundRectangles);
 	std::vector<std::vector<RectangleProcessor> > getRectProcessors();
+	RectangleProcessor* getFinalProcessor();
 private:
 	// Data
 	std::vector<Rectangle> rectangles;

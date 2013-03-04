@@ -36,6 +36,7 @@ public:
         int getHeight();
         float getTilt();
 	float getAspectRatio();
+	int getTarget();
 private:
         // Data
         Rectangle inputRect;

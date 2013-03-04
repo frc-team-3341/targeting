@@ -82,8 +82,9 @@ void MultiRectangleProcessor::processRectangles(std::vector<Rectangle> inputRect
 			std::cout << "High target" << std::endl;
 		else
 			std::cout << "Middle target" << std::endl;
+		std::cout << "Distance: " << finalProcessor->getProportionalDistance() << " mm" << std::endl;
 		std::cout << "Horizontal distance: " << finalProcessor->getHorizontalDistance() << " mm" << std::endl;
-		std::cout << "Elevation: " << finalProcessor->getElevation() * 180.0 / constList->mathPi << " degrees" << std::endl;
+		std::cout << "Azimuth: " << finalProcessor->getAzimuth() << " radians" << std::endl;
 		std::cout << std::endl;
 	}
 }
@@ -91,4 +92,9 @@ void MultiRectangleProcessor::processRectangles(std::vector<Rectangle> inputRect
 std::vector<std::vector<RectangleProcessor> > MultiRectangleProcessor::getRectProcessors()
 {
 	return rectProcessors;
+}
+
+RectangleProcessor* MultiRectangleProcessor::getFinalProcessor()
+{
+	return finalProcessor;
 }

@@ -108,6 +108,11 @@ float RectangleProcessor::getAspectRatio()
 	return aspectRatio;
 }
 
+int RectangleProcessor::getTarget()
+{
+	return target;
+}
+
 // Private Functions
 void RectangleProcessor::computeProportionalDistance()
 {

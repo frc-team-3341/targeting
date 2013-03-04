@@ -162,7 +162,7 @@ void Application::targetingContinuous()
 		}
 
 		if (config.getIsNetworking())
-			networkController->sendMessage(boost::lexical_cast<std::string>(rectProcessors.at(0).at(0).getAzimuth()) + std::string(";") + boost::lexical_cast<std::string>(rectProcessors.at(0).at(0).getTilt()));
+			networkController->sendMessage(boost::lexical_cast<std::string>(multiRectProcessor.getFinalProcessor()->getTarget()) + std::string(";") + boost::lexical_cast<std::string>(multiRectProcessor.getFinalProcessor()->getProportionalDistance()) + std::string(";") + boost::lexical_cast<std::string>(multiRectProcessor.getFinalProcessor()->getHorizontalDistance()) + std::string(";") + boost::lexical_cast<std::string>(multiRectProcessor.getFinalProcessor()->getAzimuth()));
 	} else {
 		std::cout << "No rectangle" << std::endl;
 		
