@@ -100,3 +100,5 @@ RectangleProcessor* MultiRectangleProcessor::getFinalProcessor()
 {
 	return finalProcessor;
 }
+
+

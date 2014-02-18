@@ -13,25 +13,26 @@
  *
  *    You should have received a copy of the GNU General Public License
  *    along with FRC Team 3341 Targeting.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef Rectangle_hpp
 #define Rectangle_hpp
 
 class Rectangle
 {
-public:
+    public:
         // Methods
         Rectangle(); // Constructor
         Rectangle(int*); // Constructor
         Rectangle(std::vector<cv::Point> rectPoints); // Populate Rectangle
         void populate(std::vector<cv::Point> rectPoints); // Populate Rectangle
         bool containsPoint(cv::Point); // Checks if Point is Inside Rectangle
+        void to_string();
 
         // Data
-	std::vector<cv::Point> rectPoints;
-	bool markedForRemoval; // Marked for removal
-	float area; // Area
+        std::vector<cv::Point> rectPoints;
+        bool markedForRemoval; // Marked for removal
+        float area; // Area
         cv::Point topLeft; // Top Left Corner
         cv::Point topRight; // Top Right Corner
         cv::Point bottomRight; // Bottom Right Corner
@@ -41,7 +42,8 @@ public:
         int lengthSquaredRight; // Square of Length of Right Side
         int lengthSquaredTop; // Square of Length of Top Side
         int lengthSquaredBottom; // Square of Length of Bottom Side
-        
+        std::string rectName;
+
         int absoluteWidth;
         int absoluteHeight;
         std::vector<int> containedRectangles; // Indices of Contained Rectangles

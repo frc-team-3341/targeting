@@ -212,17 +212,17 @@ void RectangleDetector::filterUniqueRectangles()
             rectListUnique.push_back(rectList.at(i));
     }
     rectList = rectListUnique;
-/*
-    for (int i = 0; i < (int)rectListUnique.size(); ++i) {
-        if (rectListUnique.at(i).markedForRemoval) {
-            allRectangles.push_back(rectListUnique.at(i).rectPoints);
-        } else {
-            finalRectangles.push_back(rectListUnique.at(i).rectPoints);
-            outputRectangles.push_back(rectListUnique.at(i));
-            std::cout << "adding things to outputRects" << std::endl;
-        }
-    }
-    */
+    /*
+       for (int i = 0; i < (int)rectListUnique.size(); ++i) {
+       if (rectListUnique.at(i).markedForRemoval) {
+       allRectangles.push_back(rectListUnique.at(i).rectPoints);
+       } else {
+       finalRectangles.push_back(rectListUnique.at(i).rectPoints);
+       outputRectangles.push_back(rectListUnique.at(i));
+       std::cout << "adding things to outputRects" << std::endl;
+       }
+       }
+       */
 
 }
 
@@ -250,35 +250,26 @@ void RectangleDetector::findHorizontalRectangles(){
 }
 
 void RectangleDetector::findVHPair(){
+
     std::cout << verticalRectangleList.size() << std::endl;
     for (unsigned i = 0; i < verticalRectangleList.size(); ++i) {
-        std::cout << "break2" << std::endl;
         for (unsigned j = 0; j < horizontalRectangleList.size(); ++j) {
-            std::cout << "break3" << std::endl;
             if (rectanglePairMatches(verticalRectangleList.at(i), horizontalRectangleList.at(j))){
                 verticalRectangleList.at(i).pairedHorizontalRectangles.push_back(j);
                 outputRectangles.push_back(verticalRectangleList.at(i));
                 outputRectangles.push_back(horizontalRectangleList.at(j));
-                std::cout << "adding things to outputRects" << std::endl;
             }
         }
     }
 
     for (int i = 0; i < (int)verticalRectangleList.size(); ++i) {
         std::cout << "Vertical Rectangle " << i << std::endl;
-        std::cout << "\t Top left: " << verticalRectangleList.at(i).topLeft << std::endl;
-        std::cout << "\t Top right: " << verticalRectangleList.at(i).topRight << std::endl;
-        std::cout << "\t Bottom right: " << verticalRectangleList.at(i).bottomRight << std::endl;
-        std::cout << "\t Bottom left: " << verticalRectangleList.at(i).bottomLeft << std::endl;
-        std::cout << "\t Area: " << verticalRectangleList.at(i).area << std::endl;
+
+        verticalRectangleList.at(i).to_string();
 
         if ( verticalRectangleList.at(i).pairedHorizontalRectangles.size() > 0){
             std::cout << "Matching Horizontal Rectangle " << "fix index list later" << std::endl;
-            std::cout << "\t Top left: " << horizontalRectangleList.at(verticalRectangleList.at(i).pairedHorizontalRectangles.at(0)).topLeft << std::endl;
-            std::cout << "\t Top right: " << horizontalRectangleList.at(verticalRectangleList.at(i).pairedHorizontalRectangles.at(0)).topRight << std::endl;
-            std::cout << "\t Bottom right: " << horizontalRectangleList.at(verticalRectangleList.at(i).pairedHorizontalRectangles.at(0)).bottomRight << std::endl;
-            std::cout << "\t Bottom left: " << horizontalRectangleList.at(verticalRectangleList.at(i).pairedHorizontalRectangles.at(0)).bottomLeft << std::endl;
-            std::cout << "\t Area: " << horizontalRectangleList.at(verticalRectangleList.at(i).pairedHorizontalRectangles.at(0)).area << std::endl;
+            horizontalRectangleList.at(verticalRectangleList.at(i).pairedHorizontalRectangles.at(0)).to_string();
         }
         else{
             std::cout << "No Matching Horizontal Rectangle found" << std::endl;

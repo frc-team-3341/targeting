@@ -13,7 +13,7 @@
  *
  *    You should have received a copy of the GNU General Public License
  *    along with FRC Team 3341 Targeting.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #include <cstdlib>
 #include <iostream>
@@ -45,191 +45,175 @@
 
 Application::Application(int argc, char *argv[])
 {
-	constList = new Constants();
-	
-	cmdLineInterface = new CmdLineInterface(argc, argv);
-	config = cmdLineInterface->getConfig();
-	delete cmdLineInterface;
+    constList = new Constants();
+
+    cmdLineInterface = new CmdLineInterface(argc, argv);
+    config = cmdLineInterface->getConfig();
+    delete cmdLineInterface;
 }
 
 Application::~Application()
 {
-	if (!config.getIsHeadless())
-		delete guiManager;
-	if (config.getIsNetworking())
-		delete networkController;
-	if (config.getIsDevice())
-		delete videoDevice;
-	delete constList;
+    if (!config.getIsHeadless())
+        delete guiManager;
+    if (config.getIsNetworking())
+        delete networkController;
+    if (config.getIsDevice())
+        delete videoDevice;
+    delete constList;
 }
 
 int Application::exec()
 {
-	initVideoDevice();
-	initGUI();
-	if (config.getIsCaptureMode()) {
-		captureInit();
-		while (true)
-			captureContinuous();
-	} else {
-		initNetworking();
-		targetingInit();
-		while (true)
-			targetingContinuous();
-	}
-	
-	return EXIT_SUCCESS;
+    initVideoDevice();
+    initGUI();
+    if (config.getIsCaptureMode()) {
+        captureInit();
+        while (true)
+            captureContinuous();
+    } else {
+        initNetworking();
+        targetingInit();
+        while (true)
+            targetingContinuous();
+    }
+
+    return EXIT_SUCCESS;
 }
 
 void Application::initVideoDevice()
 {	
-	if (config.getIsDevice()) {
-		videoDevice = new VideoDevice(constList);
-		videoDevice->startCapture(config.getDeviceID());
-	}
+    if (config.getIsDevice()) {
+        videoDevice = new VideoDevice(constList);
+        videoDevice->startCapture(config.getDeviceID());
+    }
 }
 
 void Application::initNetworking()
 {
-	if (config.getIsNetworking()) {
-		networkController = new NetworkController(constList);
-		networkController->startServer();
-	}
+    if (config.getIsNetworking()) {
+        networkController = new NetworkController(constList);
+        networkController->startServer();
+    }
 }
 
 void Application::initGUI()
 {
-	if (! config.getIsHeadless()) {
-		guiManager = new GUIManager(constList);
-		guiManager->init();
-	}
+    if (! config.getIsHeadless()) {
+        guiManager = new GUIManager(constList);
+        guiManager->init();
+    }
 }
 
 void Application::targetingInit()
 {
-	/*if (! config.getIsHeadless()) {
-		cv::Mat image = loadImage();
-		std::cout << "Image resolution: " << image.cols << "x" << image.rows << std::endl;
-		}*/
+    /*if (! config.getIsHeadless()) {
+      cv::Mat image = loadImage();
+      std::cout << "Image resolution: " << image.cols << "x" << image.rows << std::endl;
+      }*/
 }
 
 void Application::targetingContinuous()
 {
-	if (config.getIsNetworking())
-		networkController->waitForPing();
+    if (config.getIsNetworking())
+        networkController->waitForPing();
 
-	cv::Mat image = loadImage();
-	if (! config.getIsHeadless())
-		guiManager->setImage(image);
+    cv::Mat image = loadImage();
+    if (! config.getIsHeadless())
+        guiManager->setImage(image);
 
-	RectangleDetector rectDetector(constList);
-	std::vector<Rectangle> foundRectangles = rectDetector.processImage(image);
-	MultiRectangleProcessor multiRectProcessor(constList);
-	std::vector<std::vector<RectangleProcessor> > rectProcessors;
-	if (rectDetector.rectangleWasFound()) {
-		multiRectProcessor.processRectangles(foundRectangles);
+    RectangleDetector rectDetector(constList);
+    std::vector<Rectangle> foundRectangles = rectDetector.processImage(image);
+    MultiRectangleProcessor multiRectProcessor(constList);
+    std::vector<std::vector<RectangleProcessor> > rectProcessors;
 
-		rectProcessors = multiRectProcessor.getRectProcessors();
+    if (rectDetector.rectangleWasFound()) {
 
-		for (int i = 0; i < (int)rectProcessors.size(); i++) {
-     std::cout << "PROCESS3" << std::endl;
+        multiRectProcessor.processRectangles(foundRectangles);
+        rectProcessors = multiRectProcessor.getRectProcessors();
 
-			std::cout << "Rectangle " << i << " processed data:" << std::endl;
-			for (int j = 0; j < (int)rectProcessors.at(i).size(); j++) {
-				std::cout << "Assumption: ";
-				if (j == 0)
-					std::cout << "High target";
-				else
-					std::cout << "Middle target";
-				std::cout << std::endl;
-				int proportionalDistance = rectProcessors.at(i).at(j).getProportionalDistance();
-				int constantsDistance = rectProcessors.at(i).at(j).getConstantsDistance();
-				float logAspectRatios = rectProcessors.at(i).at(j).getLogAspectRatios();
-				int horizontalDistance = rectProcessors.at(i).at(j).getHorizontalDistance();
-				float azimuth = rectProcessors.at(i).at(j).getAzimuth() * 180.0 / constList->mathPi;
-				float elevation = rectProcessors.at(i).at(j).getElevation() * 180.0 / constList->mathPi;
-				int height = rectProcessors.at(i).at(j).getHeight();
-				float tilt = rectProcessors.at(i).at(j).getTilt() * 180.0 / constList->mathPi;
-				float aspectRatio = rectProcessors.at(i).at(j).getAspectRatio();
-			
-				std::cout << "Proportional distance: " << proportionalDistance << " mm" << std::endl;
-				std::cout << "Constants distance: " << constantsDistance << " mm" << std::endl;
-				std::cout << "Log of aspect ratios: " << logAspectRatios << std::endl;
-				std::cout << "Horizontal distance: " << horizontalDistance << " mm" << std::endl;
-				std::cout << "Height: " << height << " mm" << std::endl;
-				std::cout << "Azimuth: " << azimuth << " degrees" << std::endl;
-				std::cout << "Tilt: " << tilt << " degrees" << std::endl;
-				std::cout << "Elevation: " << elevation << " degrees" << std::endl;
-				std::cout << "Aspect Ratio: " << aspectRatio << std::endl;
-			}
-		}
+        for (int i = 0; i < (int)rectProcessors.size(); i++) {
 
-		if (config.getIsNetworking())
-			networkController->sendMessage(boost::lexical_cast<std::string>(multiRectProcessor.getFinalProcessor()->getTarget()) + std::string(";") + boost::lexical_cast<std::string>(multiRectProcessor.getFinalProcessor()->getProportionalDistance()) + std::string(";") + boost::lexical_cast<std::string>(multiRectProcessor.getFinalProcessor()->getHorizontalDistance()) + std::string(";") + boost::lexical_cast<std::string>(multiRectProcessor.getFinalProcessor()->getAzimuth()));
-	} else {
-		std::cout << "No rectangle" << std::endl;
-		
-		if (config.getIsNetworking())
-			networkController->sendMessage("No rectangle");
-	}
+            std::cout << "Rectangle " << i << " processed data:" << std::endl;
+            for (int j = 0; j < (int)rectProcessors.at(i).size(); j++) {
+                std::cout << "Assumption: ";
+                if (j == 0)
+                    std::cout << "High target";
+                else
+                    std::cout << "Middle target";
+                std::cout << std::endl;
 
-	if (! config.getIsHeadless()) {
-		std::string message;
-		if (rectDetector.rectangleWasFound())
-			message = boost::lexical_cast<std::string>(rectProcessors.at(0).at(0).getProportionalDistance()) + " mm @ " + boost::lexical_cast<std::string>(rectProcessors.at(0).at(0).getAzimuth()) + " degrees";
-		else
-			message = "No rectangle";
-		guiManager->setImageText(message);
-		guiManager->show(rectDetector.getAllRectangles(), rectDetector.getFinalRectangles());
-		int keycode = cv::waitKey(10);
-		if (keycode == 27)
-			exit(EXIT_SUCCESS);
-		if (config.getIsFile()) {
-			cv::waitKey();
-			exit(EXIT_SUCCESS);
-		}
-	} else {
-		char waitForKey;
-		std::cin >> waitForKey;
-		exit(EXIT_SUCCESS);
-	}
+                rectProcessors.at(i).at(j).to_string();
+        }
+    }
+
+        if (config.getIsNetworking())
+            networkController->sendMessage(boost::lexical_cast<std::string>(multiRectProcessor.getFinalProcessor()->getTarget()) + std::string(";") + boost::lexical_cast<std::string>(multiRectProcessor.getFinalProcessor()->getProportionalDistance()) + std::string(";") + boost::lexical_cast<std::string>(multiRectProcessor.getFinalProcessor()->getHorizontalDistance()) + std::string(";") + boost::lexical_cast<std::string>(multiRectProcessor.getFinalProcessor()->getAzimuth()));
+    } else {
+        std::cout << "No rectangle" << std::endl;
+
+        if (config.getIsNetworking())
+            networkController->sendMessage("No rectangle");
+    }
+
+    if (! config.getIsHeadless()) {
+        std::string message;
+        if (rectDetector.rectangleWasFound())
+            message = boost::lexical_cast<std::string>(rectProcessors.at(0).at(0).getProportionalDistance()) + " mm @ " + boost::lexical_cast<std::string>(rectProcessors.at(0).at(0).getAzimuth()) + " degrees";
+        else
+            message = "No rectangle";
+        guiManager->setImageText(message);
+        guiManager->show(rectDetector.getAllRectangles(), rectDetector.getFinalRectangles());
+        int keycode = cv::waitKey(10);
+        if (keycode == 27)
+            exit(EXIT_SUCCESS);
+        if (config.getIsFile()) {
+            cv::waitKey();
+            exit(EXIT_SUCCESS);
+        }
+    } else {
+        char waitForKey;
+        std::cin >> waitForKey;
+        exit(EXIT_SUCCESS);
+    }
 }
 
 void Application::captureInit()
 {
-	
+
 }
+
 
 void Application::captureContinuous()
 {
-	cv::Mat image = loadImage();
-	guiManager->setImage(image);
-	guiManager->show();
+    cv::Mat image = loadImage();
+    guiManager->setImage(image);
+    guiManager->show();
 
-	char keycode = cv::waitKey(10);
-	if (keycode == ' ') {
-		std::stringstream filename;
-		filename << time(NULL) << ".jpg";
-		std::cout << "Writing image to " << filename.str() << std::endl;
-		cv::imwrite(filename.str().c_str(), image);
-	} else if (keycode == 27) {
-		exit(EXIT_SUCCESS);
-	}
+    char keycode = cv::waitKey(10);
+    if (keycode == ' ') {
+        std::stringstream filename;
+        filename << time(NULL) << ".jpg";
+        std::cout << "Writing image to " << filename.str() << std::endl;
+        cv::imwrite(filename.str().c_str(), image);
+    } else if (keycode == 27) {
+        exit(EXIT_SUCCESS);
+    }
 }
 
 cv::Mat Application::loadImage()
 {
-	cv::Mat returnVal;
+    cv::Mat returnVal;
 
-	if (config.getIsFile())
-		cv::imread(config.getFileName().c_str()).copyTo(returnVal);
-	else if (config.getIsDevice())
-		returnVal = videoDevice->getImage();
-	else
-		exit(1);
+    if (config.getIsFile())
+        cv::imread(config.getFileName().c_str()).copyTo(returnVal);
+    else if (config.getIsDevice())
+        returnVal = videoDevice->getImage();
+    else
+        exit(1);
 
-	constList->imgCols = returnVal.cols;
-	constList->imgRows = returnVal.rows;
+    constList->imgCols = returnVal.cols;
+    constList->imgRows = returnVal.rows;
 
-	return returnVal;
+    return returnVal;
 }
