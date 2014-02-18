@@ -128,9 +128,12 @@ void Application::targetingContinuous()
 	std::vector<std::vector<RectangleProcessor> > rectProcessors;
 	if (rectDetector.rectangleWasFound()) {
 		multiRectProcessor.processRectangles(foundRectangles);
+
 		rectProcessors = multiRectProcessor.getRectProcessors();
 
 		for (int i = 0; i < (int)rectProcessors.size(); i++) {
+     std::cout << "PROCESS3" << std::endl;
+
 			std::cout << "Rectangle " << i << " processed data:" << std::endl;
 			for (int j = 0; j < (int)rectProcessors.at(i).size(); j++) {
 				std::cout << "Assumption: ";

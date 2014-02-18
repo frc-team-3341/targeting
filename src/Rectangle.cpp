@@ -101,6 +101,11 @@ void Rectangle::populate(std::vector<cv::Point> input)
         lengthSquaredTop = pow((topLeft.x - topRight.x), 2) + pow((topLeft.y - topRight.y), 2);
         lengthSquaredBottom = pow((bottomLeft.x - bottomRight.x), 2) + pow((bottomLeft.y - bottomRight.y), 2);
 
+        // Compute Absolute Lengths/Widths
+        absoluteHeight = (std::abs(topLeft.x - bottomLeft.x) + std::abs(topRight.x - bottomRight.x))/2;
+        absoluteWidth = (std::abs(topLeft.x - topRight.x) + std::abs(bottomLeft.x - bottomRight.x))/2;
+
+
         // Compute Center
         center.x = (topLeft.x + topRight.x + bottomRight.x + bottomLeft.x) / 4;
         center.y = (topLeft.y + topRight.y + bottomRight.y + bottomLeft.y) / 4;

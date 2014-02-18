@@ -23,7 +23,7 @@ class RectangleDetector
 public:
         // Methods
         RectangleDetector(Constants* constList);
-	std::vector<Rectangle> processImage(cv::Mat inputImage);
+        std::vector<Rectangle> processImage(cv::Mat inputImage);
         bool rectangleWasFound();
         std::vector< std::vector<cv::Point> > getAllRectangles();
         std::vector< std::vector<cv::Point> > getFinalRectangles();
@@ -33,9 +33,11 @@ private:
         cv::Mat image;
         std::vector<std::vector<cv::Point> > allRectangles;
         std::vector<std::vector<cv::Point> > finalRectangles;
-	std::vector<Rectangle> outputRectangles;
+        std::vector<Rectangle> outputRectangles;
         std::vector<Rectangle> rectList;
         std::vector<Rectangle> rectListRevised;
+        std::vector<Rectangle> verticalRectangleList;
+        std::vector<Rectangle> horizontalRectangleList;
         bool foundRectangle;
 
         // Methods
@@ -45,6 +47,10 @@ private:
         void populateRectangles(); // Populates Vector of Rectangles
         void filterUniqueRectangles(); // Filter Unique Rectangles
         bool rectangleIsContained(Rectangle, Rectangle); // Check if Rectangle is Contained
+        void findVerticalRectangles(); // Finds vertical Rectangles;
+        void findHorizontalRectangles(); // Finds horizontal Rectangles;
+        void findVHPair(); // Finds horizontal Rectangles;
+        bool rectanglePairMatches(Rectangle, Rectangle);
         void findContainerRectangles(); // Finds Container Rectangles
         void findCorrectRectangles(); // Figures Out Which Rectangles Are Correct
         void computeTilt(); // Computes Tilt of the Rectangle

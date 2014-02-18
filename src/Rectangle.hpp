@@ -41,7 +41,11 @@ public:
         int lengthSquaredRight; // Square of Length of Right Side
         int lengthSquaredTop; // Square of Length of Top Side
         int lengthSquaredBottom; // Square of Length of Bottom Side
+        
+        int absoluteWidth;
+        int absoluteHeight;
         std::vector<int> containedRectangles; // Indices of Contained Rectangles
+        std::vector<int> pairedHorizontalRectangles; //Indicies of Matching Horizontal Rectangle to a Vertical in 2014 Game
 };
 
 #endif /* Rectangle_hpp */

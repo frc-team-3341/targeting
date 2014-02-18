@@ -53,8 +53,9 @@ void MultiRectangleProcessor::processRectangles(std::vector<Rectangle> inputRect
 		mRectProcessor.at(0).processRectangle(rectangles.at(i), constList->targetHighIndex);
 		mRectProcessor.at(1).processRectangle(rectangles.at(i), constList->targetMiddleIndex);
 		rectProcessors.push_back(mRectProcessor);
-	}
 
+	}
+  
 	if (rectProcessors.size() == 1) {
 		if (rectProcessors.at(0).at(0).getLogAspectRatios() < rectProcessors.at(0).at(1).getLogAspectRatios()) {
 			finalProcessor = new RectangleProcessor(rectProcessors.at(0).at(0));
@@ -63,6 +64,7 @@ void MultiRectangleProcessor::processRectangles(std::vector<Rectangle> inputRect
 			finalProcessor = new RectangleProcessor(rectProcessors.at(0).at(1));
 			finalTarget = 1;
 		}
+
 	}
 	else if (rectProcessors.size() > 1) {
 		int processIndex = 0;
@@ -86,10 +88,10 @@ void MultiRectangleProcessor::processRectangles(std::vector<Rectangle> inputRect
 		std::cout << "Horizontal distance: " << finalProcessor->getHorizontalDistance() << " mm" << std::endl;
 		std::cout << "Azimuth: " << finalProcessor->getAzimuth() << " radians" << std::endl;
 		std::cout << std::endl;
-	}
+    }	
 }
 
-std::vector<std::vector<RectangleProcessor> > MultiRectangleProcessor::getRectProcessors()
+std::vector<std::vector<RectangleProcessor>> MultiRectangleProcessor::getRectProcessors()
 {
 	return rectProcessors;
 }

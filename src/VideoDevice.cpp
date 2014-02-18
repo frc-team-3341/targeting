@@ -50,7 +50,7 @@ void VideoDevice::startCapture(int deviceID)
 cv::Mat VideoDevice::getImage()
 {
         while (! isReady)
-		std::cout << "Waiting for camera..." << std::endl;
+            std::cout << "Waiting for camera..." << std::endl;
         return image;
 }
 
