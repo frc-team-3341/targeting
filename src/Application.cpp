@@ -128,25 +128,20 @@ void Application::targetingContinuous()
     MultiRectangleProcessor multiRectProcessor(constList);
     std::vector<std::vector<RectangleProcessor>> rectProcessors;
 
-    if (rectDetector.rectangleWasFound()) {
+    
+   if (rectDetector.rectangleWasFound()) {
 
         multiRectProcessor.processRectangles(foundRectangles);
         rectProcessors = multiRectProcessor.getRectProcessors();
 
-        for (int i = 0; i < (int)rectProcessors.size(); i++) {
+        /*for (int i = 0; i < (int)rectProcessors.size(); i++) {
 
             std::cout << "Rectangle " << i << " processed data:" << std::endl;
             for (int j = 0; j < (int)rectProcessors.at(i).size(); j++) {
-                std::cout << "Assumption: ";
-                if (j == 0)
-                    std::cout << "High target";
-                else
-                    std::cout << "Middle target";
-                std::cout << std::endl;
-
                 rectProcessors.at(i).at(j).to_string();
-        }
+        }*/
     }
+    
 
         if (config.getIsNetworking())
             networkController->sendMessage(boost::lexical_cast<std::string>(multiRectProcessor.getFinalProcessor()->getTarget()) + std::string(";") + boost::lexical_cast<std::string>(multiRectProcessor.getFinalProcessor()->getProportionalDistance()) + std::string(";") + boost::lexical_cast<std::string>(multiRectProcessor.getFinalProcessor()->getHorizontalDistance()) + std::string(";") + boost::lexical_cast<std::string>(multiRectProcessor.getFinalProcessor()->getAzimuth()));

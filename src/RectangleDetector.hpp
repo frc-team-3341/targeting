@@ -36,13 +36,13 @@ class RectangleDetector
         std::vector<Rectangle> outputRectangles;
         std::vector<Rectangle> rectList;
         std::vector<Rectangle> rectListRevised;
-        std::vector<Rectangle> verticalRectangleList;
-        std::vector<Rectangle> horizontalRectangleList;
         bool foundRectangle;
 
         // Methods
         double angle(cv::Point, cv::Point, cv::Point); // Find Cosine of Angle Between Vectors
         void preprocessImage(); // Threshold and Grayscale
+        void removeSimilarRectangles();
+        bool similarRectangles(Rectangle, Rectangle);
         void findRectangles(); // Finds Rectangles
         void populateRectangles(); // Populates Vector of Rectangles
         void filterUniqueRectangles(); // Filter Unique Rectangles

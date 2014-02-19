@@ -28,6 +28,7 @@ class Rectangle
         void populate(std::vector<cv::Point> rectPoints); // Populate Rectangle
         bool containsPoint(cv::Point); // Checks if Point is Inside Rectangle
         void to_string();
+        void setRectType(int);
 
         // Data
         std::vector<cv::Point> rectPoints;
@@ -43,6 +44,7 @@ class Rectangle
         int lengthSquaredTop; // Square of Length of Top Side
         int lengthSquaredBottom; // Square of Length of Bottom Side
         std::string rectName;
+        int rectangleType;
 
         int absoluteWidth;
         int absoluteHeight;

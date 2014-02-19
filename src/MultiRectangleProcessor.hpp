@@ -33,17 +33,21 @@ class MultiRectangleProcessor
         void processRectangles(std::vector<Rectangle> foundRectangles);
         std::vector<std::vector<RectangleProcessor> > getRectProcessors();
         RectangleProcessor* getFinalProcessor();
+        void printFinalRectangleInformation();
 
     private:
         // Data
+        std::vector<Rectangle> rectList;
         std::vector<Rectangle> rectangles;
         std::vector<std::vector<RectangleProcessor> > rectProcessors;
+        std::vector<Rectangle> verticalRectangleList;
+        std::vector<Rectangle> horizontalRectangleList;
         RectangleProcessor* finalProcessor;
         int finalTarget;
         Constants* constList;
-        std::vector<Rectangle> findVerticalRectangles(std::vector<Rectangle>); // Finds vertical Rectangles;
-        std::vector<Rectangle> findHorizontalRectangles(std::vector<Rectangle>); // Finds horizontal Rectangles;
-        std::vector<Rectangle> findVHPairs(std::vector<Rectangle>); // Finds horizontal Rectangles pairs;
+        void findVerticalRectangles(); // Finds vertical Rectangles;
+        void findHorizontalRectangles(); // Finds horizontal Rectangles;
+        void findVHPairs(); // Finds horizontal Rectangles pairs;
         bool rectanglePairMatches(Rectangle, Rectangle); //Primary logic used by findVHPairs to detect whether rectangle pairs match.
 };
 

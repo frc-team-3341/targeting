@@ -47,6 +47,9 @@ Rectangle::Rectangle(std::vector<cv::Point> input)
 {
     populate(input);
 }
+void Rectangle::setRectType(int type){
+    rectangleType = type;
+}
 
 void Rectangle::populate(std::vector<cv::Point> input)
 {

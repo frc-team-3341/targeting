@@ -46,26 +46,29 @@ MultiRectangleProcessor::~MultiRectangleProcessor()
 
 void MultiRectangleProcessor::processRectangles(std::vector<Rectangle> inputRectangles)
 {
-	rectangles = inputRectangles;
+  std::cout << "Processing remaining rectangles..." << std::endl;
+  rectList = inputRectangles;
+  verticalRectangleList.clear();
+  horizontalRectangleList.clear();
+  findVerticalRectangles();
+  findHorizontalRectangles();
+  findVHPairs();
 
+  std::cout << "\tPicking out correct vertical Rectangle..." << std::endl;
+  if(verticalRectangleList.size() == 0){
+        std::cout << "No Vertical Rectangle Found";
+    }
+  else if (verticalRectangleList.size() == 1) {
+            std::cout << std::endl << std::endl;
+            std::cout << "Vertical Rectangle: ";
+            verticalRectangleList.at(0).to_string();
+            if(verticalRectangleList.at(0).pairedHorizontalRectangles.size() > 0){
+                std::cout << "Horizontal Rectangle: ";
+                horizontalRectangleList.at(verticalRectangleList.at(0).pairedHorizontalRectangles.at(0)).to_string();
+            }
+
+        }
 /*
-	for (int i = 0; i < (int)rectangles.size(); i++) {
-		std::vector<RectangleProcessor> mRectProcessor(2, RectangleProcessor(constList));
-		mRectProcessor.at(0).processRectangle(rectangles.at(i), constList->targetHighIndex);
-		mRectProcessor.at(1).processRectangle(rectangles.at(i), constList->targetMiddleIndex);
-		rectProcessors.push_back(mRectProcessor);
-
-	}
-  
-	if (rectProcessors.size() == 1) {
-		if (rectProcessors.at(0).at(0).getLogAspectRatios() < rectProcessors.at(0).at(1).getLogAspectRatios()) {
-			finalProcessor = new RectangleProcessor(rectProcessors.at(0).at(0));
-			finalTarget = 0;
-		} else {
-			finalProcessor = new RectangleProcessor(rectProcessors.at(0).at(1));
-			finalTarget = 1;
-		}
-
 	}
 	else if (rectProcessors.size() > 1) {
 		int processIndex = 0;
@@ -76,27 +79,32 @@ void MultiRectangleProcessor::processRectangles(std::vector<Rectangle> inputRect
 		finalProcessor = new RectangleProcessor(rectProcessors.at(processIndex).at(0));
 		finalTarget = 0;
 	}
-
-  */
+*/
 
 
 }
 
-std::vector<Rectangle> RectangleDetector::findVerticalRectangles(std::vector<Rectangle>){
+void MultiRectangleProcessor::findVerticalRectangles(){
     for (unsigned i = 0; i < rectList.size(); ++i) {
-        if (rectList.at(i).lengthSquaredLeft > rectList.at(i).lengthSquaredTop)
+        if (rectList.at(i).lengthSquaredLeft > rectList.at(i).lengthSquaredTop){
             verticalRectangleList.push_back(rectList.at(i));
+            rectList.at(i).setRectType(constList-> targetVertical);
+        }
     }
 }
 
-std::vector<Rectangle> RectangleDetector::findHorizontalRectangles(std::vector<Rectangle>){
+void MultiRectangleProcessor::findHorizontalRectangles(){
     for (unsigned i = 0; i < rectList.size(); ++i) {
-        if (rectList.at(i).lengthSquaredTop > rectList.at(i).lengthSquaredLeft)
+        if (rectList.at(i).lengthSquaredTop > rectList.at(i).lengthSquaredLeft){
             horizontalRectangleList.push_back(rectList.at(i));
+            rectList.at(i).setRectType(constList-> targetHorizontal);
+        }
     }
 }
 
-std::vector<Rectangle> RectangleDetector::findVHPairs(){
+void MultiRectangleProcessor::findVHPairs(){
+
+    std::vector<Rectangle> outputRectangles;
 
     std::cout << verticalRectangleList.size() << std::endl;
     for (unsigned i = 0; i < verticalRectangleList.size(); ++i) {
@@ -110,12 +118,10 @@ std::vector<Rectangle> RectangleDetector::findVHPairs(){
     }
 
     for (int i = 0; i < (int)verticalRectangleList.size(); ++i) {
-        std::cout << "Vertical Rectangle " << i << std::endl;
 
         verticalRectangleList.at(i).to_string();
 
         if ( verticalRectangleList.at(i).pairedHorizontalRectangles.size() > 0){
-            std::cout << "Matching Horizontal Rectangle " << "fix index list later" << std::endl;
             horizontalRectangleList.at(verticalRectangleList.at(i).pairedHorizontalRectangles.at(0)).to_string();
         }
         else{
@@ -123,10 +129,9 @@ std::vector<Rectangle> RectangleDetector::findVHPairs(){
         }
 
     }
-
 }
 
-bool RectangleDetector::rectanglePairMatches(Rectangle vertical, Rectangle horizontal)
+bool MultiRectangleProcessor::rectanglePairMatches(Rectangle vertical, Rectangle horizontal)
 {
     double toleranceDistance = 900;  
     if (horizontal.topLeft.x > vertical.topLeft.x - toleranceDistance &&
@@ -141,8 +146,6 @@ bool RectangleDetector::rectanglePairMatches(Rectangle vertical, Rectangle horiz
     return false;
 
 }
-
-
 
 std::vector<std::vector<RectangleProcessor>> MultiRectangleProcessor::getRectProcessors()
 {
@@ -159,7 +162,7 @@ void MultiRectangleProcessor::printFinalRectangleInformation()
     std::cout << "Final Rectangles Information" << std::endl;
 		std::cout << "========================" << std::endl;
 
-    getFinalProcessor.to_string();
+    getFinalProcessor()->to_string();
 }
 
 

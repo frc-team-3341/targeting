@@ -13,7 +13,7 @@
  *
  *    You should have received a copy of the GNU General Public License
  *    along with FRC Team 3341 Targeting.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef Constants_hpp
 #define Constants_hpp
@@ -22,7 +22,7 @@
 
 class Constants
 {
-public:
+    public:
         Constants();
 
         // Math
@@ -34,7 +34,7 @@ public:
         int cameraHDFocalLength;
         float cameraHDViewingAngleRadians;
         int cameraHeight;
-	float cameraAngleRadians;
+        float cameraAngleRadians;
 
         // Image
         int imgCols;
@@ -43,12 +43,12 @@ public:
         // GUI
         std::string guiWindowName;
 
-	// Target
-	int targetHighIndex;
-	int targetMiddleIndex;
-	std::vector<float> targetRectBase;
-	std::vector<float> targetRectHeight;
-	std::vector<float> targetHeight;
+        // Target
+        int targetVertical;
+        int targetHorizontal;
+        std::vector<float> targetRectBase;
+        std::vector<float> targetRectHeight;
+        std::vector<float> targetHeight;
         std::vector<int> targetPossibleHeights;
 
         // Preprocessing
@@ -57,13 +57,13 @@ public:
         int preprocessingValueLowerThreshold;
         int preprocessingValueUpperThreshold;
 
-	// Detection
-	float detectionMaxCosine;
-	int detectionCannyThreshold;
-	float detectionContainedAreaLowerThreshold;
-	float detectionContainedAreaUpperThreshold;
+        // Detection
+        float detectionMaxCosine;
+        int detectionCannyThreshold;
+        float detectionContainedAreaLowerThreshold;
+        float detectionContainedAreaUpperThreshold;
 
-	// Server
-	int portNumber;
+        // Server
+        int portNumber;
 };
 #endif /* Constants_hpp */
