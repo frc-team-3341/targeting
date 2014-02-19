@@ -13,21 +13,21 @@
  *
  *    You should have received a copy of the GNU General Public License
  *    along with FRC Team 3341 Targeting.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef RectangleDetector_hpp
 #define RectangleDetector_hpp
 
 class RectangleDetector
 {
-public:
+    public:
         // Methods
         RectangleDetector(Constants* constList);
         std::vector<Rectangle> processImage(cv::Mat inputImage);
         bool rectangleWasFound();
         std::vector< std::vector<cv::Point> > getAllRectangles();
         std::vector< std::vector<cv::Point> > getFinalRectangles();
-private:
+    private:
         // Data
         Constants *constList;
         cv::Mat image;
@@ -47,10 +47,6 @@ private:
         void populateRectangles(); // Populates Vector of Rectangles
         void filterUniqueRectangles(); // Filter Unique Rectangles
         bool rectangleIsContained(Rectangle, Rectangle); // Check if Rectangle is Contained
-        void findVerticalRectangles(); // Finds vertical Rectangles;
-        void findHorizontalRectangles(); // Finds horizontal Rectangles;
-        void findVHPair(); // Finds horizontal Rectangles;
-        bool rectanglePairMatches(Rectangle, Rectangle);
         void findContainerRectangles(); // Finds Container Rectangles
         void findCorrectRectangles(); // Figures Out Which Rectangles Are Correct
         void computeTilt(); // Computes Tilt of the Rectangle

@@ -53,19 +53,17 @@ std::vector<Rectangle> RectangleDetector::processImage(cv::Mat input)
 
     preprocessImage();
     findRectangles();
+    
+
     if (! foundRectangle) return std::vector<Rectangle>();
     populateRectangles();
+
     if (! foundRectangle) return std::vector<Rectangle>();
     filterUniqueRectangles();
-    findVerticalRectangles();
-    findHorizontalRectangles();
-    findVHPair();
-    /* findContainerRectangles();
-       if (! foundRectangle) return std::vector<Rectangle>();
-       findCorrectRectangles();
-       if (! foundRectangle) return std::vector<Rectangle>();
-       */
-
+    filterContainerRectangles();
+    if (! foundRectangle) return std::vector<Rectangle>();
+    filterCorrectRectangles();
+    if (! foundRectangle) return std::vector<Rectangle>();
 
     return outputRectangles;
 }
@@ -75,12 +73,12 @@ bool RectangleDetector::rectangleWasFound()
     return foundRectangle;
 }
 
-std::vector<std::vector<cv::Point> > RectangleDetector::getAllRectangles()
+std::vector<std::vector<cv::Point>> RectangleDetector::getAllRectangles()
 {
     return allRectangles;
 }
 
-std::vector<std::vector<cv::Point> > RectangleDetector::getFinalRectangles()
+std::vector<std::vector<cv::Point>> RectangleDetector::getFinalRectangles()
 {
     return finalRectangles;
 }
@@ -235,66 +233,6 @@ bool RectangleDetector::rectangleIsContained(Rectangle rectContainer, Rectangle 
             rectContained.lengthSquaredBottom < rectContainer.lengthSquaredBottom);
 }
 
-void RectangleDetector::findVerticalRectangles(){
-    for (unsigned i = 0; i < rectList.size(); ++i) {
-        if (rectList.at(i).lengthSquaredLeft > rectList.at(i).lengthSquaredTop)
-            verticalRectangleList.push_back(rectList.at(i));
-    }
-}
-
-void RectangleDetector::findHorizontalRectangles(){
-    for (unsigned i = 0; i < rectList.size(); ++i) {
-        if (rectList.at(i).lengthSquaredTop > rectList.at(i).lengthSquaredLeft)
-            horizontalRectangleList.push_back(rectList.at(i));
-    }
-}
-
-void RectangleDetector::findVHPair(){
-
-    std::cout << verticalRectangleList.size() << std::endl;
-    for (unsigned i = 0; i < verticalRectangleList.size(); ++i) {
-        for (unsigned j = 0; j < horizontalRectangleList.size(); ++j) {
-            if (rectanglePairMatches(verticalRectangleList.at(i), horizontalRectangleList.at(j))){
-                verticalRectangleList.at(i).pairedHorizontalRectangles.push_back(j);
-                outputRectangles.push_back(verticalRectangleList.at(i));
-                outputRectangles.push_back(horizontalRectangleList.at(j));
-            }
-        }
-    }
-
-    for (int i = 0; i < (int)verticalRectangleList.size(); ++i) {
-        std::cout << "Vertical Rectangle " << i << std::endl;
-
-        verticalRectangleList.at(i).to_string();
-
-        if ( verticalRectangleList.at(i).pairedHorizontalRectangles.size() > 0){
-            std::cout << "Matching Horizontal Rectangle " << "fix index list later" << std::endl;
-            horizontalRectangleList.at(verticalRectangleList.at(i).pairedHorizontalRectangles.at(0)).to_string();
-        }
-        else{
-            std::cout << "No Matching Horizontal Rectangle found" << std::endl;
-        }
-
-    }
-
-}
-
-bool RectangleDetector::rectanglePairMatches(Rectangle vertical, Rectangle horizontal)
-{
-    double toleranceDistance = 900;  
-    if (horizontal.topLeft.x > vertical.topLeft.x - toleranceDistance &&
-            horizontal.topLeft.x < vertical.topLeft.x){
-        return true;
-    }
-
-    if (horizontal.topRight.x < vertical.topRight.x + toleranceDistance &&
-            horizontal.topRight.x > vertical.topRight.x){ 
-        return true;
-    }
-    std::cout << "Returned True" << std::endl;
-    return false;
-
-}
 
 
 void RectangleDetector::findContainerRectangles()

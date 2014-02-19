@@ -123,9 +123,10 @@ void Application::targetingContinuous()
         guiManager->setImage(image);
 
     RectangleDetector rectDetector(constList);
+
     std::vector<Rectangle> foundRectangles = rectDetector.processImage(image);
     MultiRectangleProcessor multiRectProcessor(constList);
-    std::vector<std::vector<RectangleProcessor> > rectProcessors;
+    std::vector<std::vector<RectangleProcessor>> rectProcessors;
 
     if (rectDetector.rectangleWasFound()) {
 
