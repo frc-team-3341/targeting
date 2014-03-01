@@ -35,7 +35,6 @@
 MultiRectangleProcessor::MultiRectangleProcessor(Constants* inputConstList)
 {
 	constList = inputConstList;
-	finalTarget = -1;
 }
 
 MultiRectangleProcessor::~MultiRectangleProcessor()

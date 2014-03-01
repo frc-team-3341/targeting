@@ -38,7 +38,8 @@ class RectangleProcessor
         float getAspectRatio();
         int getTarget();
         void to_string();
-    private:
+
+    protected:
         // Data
         Rectangle inputRect;
         Constants *constList;

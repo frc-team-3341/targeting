@@ -123,43 +123,12 @@ void Application::targetingContinuous()
         guiManager->setImage(image);
 
     RectangleDetector rectDetector(constList);
-
     std::vector<Rectangle> foundRectangles = rectDetector.processImage(image);
-    MultiRectangleProcessor multiRectProcessor(constList);
-    std::vector<std::vector<RectangleProcessor>> rectProcessors;
 
-    
-   if (rectDetector.rectangleWasFound()) {
-
-        multiRectProcessor.processRectangles(foundRectangles);
-        rectProcessors = multiRectProcessor.getRectProcessors();
-
-        /*for (int i = 0; i < (int)rectProcessors.size(); i++) {
-
-            std::cout << "Rectangle " << i << " processed data:" << std::endl;
-            for (int j = 0; j < (int)rectProcessors.at(i).size(); j++) {
-                rectProcessors.at(i).at(j).to_string();
-        }*/
-    }
-    
-
-        if (config.getIsNetworking())
-            networkController->sendMessage(boost::lexical_cast<std::string>(multiRectProcessor.getFinalProcessor()->getTarget()) + std::string(";") + boost::lexical_cast<std::string>(multiRectProcessor.getFinalProcessor()->getProportionalDistance()) + std::string(";") + boost::lexical_cast<std::string>(multiRectProcessor.getFinalProcessor()->getHorizontalDistance()) + std::string(";") + boost::lexical_cast<std::string>(multiRectProcessor.getFinalProcessor()->getAzimuth()));
-    } else {
-        std::cout << "No rectangle" << std::endl;
-
-        if (config.getIsNetworking())
-            networkController->sendMessage("No rectangle");
-    }
 
     if (! config.getIsHeadless()) {
-        std::string message;
-        if (rectDetector.rectangleWasFound())
-            message = boost::lexical_cast<std::string>(rectProcessors.at(0).at(0).getProportionalDistance()) + " mm @ " + boost::lexical_cast<std::string>(rectProcessors.at(0).at(0).getAzimuth()) + " degrees";
-        else
-            message = "No rectangle";
-        guiManager->setImageText(message);
         guiManager->show(rectDetector.getAllRectangles(), rectDetector.getFinalRectangles());
+
         int keycode = cv::waitKey(10);
         if (keycode == 27)
             exit(EXIT_SUCCESS);
@@ -167,10 +136,26 @@ void Application::targetingContinuous()
             cv::waitKey();
             exit(EXIT_SUCCESS);
         }
-    } else {
+    }
+    else {
         char waitForKey;
         std::cin >> waitForKey;
         exit(EXIT_SUCCESS);
+    }
+}
+
+void Application::print(std::string a)
+{
+    if (config.getIsNetworking()){
+        networkController->sendMessage(a);
+    }
+    else {
+        std::cout << a << std::endl;
+        if (config.getIsNetworking())
+            networkController->sendMessage(a);
+    }
+    if (! config.getIsHeadless()) {
+        guiManager->setImageText(a);
     }
 }
 
@@ -192,7 +177,8 @@ void Application::captureContinuous()
         filename << time(NULL) << ".jpg";
         std::cout << "Writing image to " << filename.str() << std::endl;
         cv::imwrite(filename.str().c_str(), image);
-    } else if (keycode == 27) {
+    }
+    else if (keycode == 27) {
         exit(EXIT_SUCCESS);
     }
 }

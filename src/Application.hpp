@@ -38,6 +38,7 @@ class Application
         void targetingContinuous();
         void captureInit();
         void captureContinuous();
+        void print();
         cv::Mat loadImage();
         CmdLineInterface *cmdLineInterface;
         VideoDevice *videoDevice;
