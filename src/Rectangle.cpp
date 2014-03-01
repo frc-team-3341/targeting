@@ -126,7 +126,6 @@ bool Rectangle::containsPoint(cv::Point input)
 void Rectangle::to_string()
 {
     std::cout 
-        << "\t Rectangle Name: " << rectName << std::endl 
         << "\t Top left: " << topLeft << std::endl
         << "\t Top right: " << topRight << std::endl
         << "\t Bottom right: " << bottomRight << std::endl

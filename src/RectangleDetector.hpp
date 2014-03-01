@@ -46,10 +46,8 @@ class RectangleDetector
         void findRectangles(); // Finds Rectangles
         void populateRectangles(); // Populates Vector of Rectangles
         void filterUniqueRectangles(); // Filter Unique Rectangles
-        bool rectangleIsContained(Rectangle, Rectangle); // Check if Rectangle is Contained
-        void findContainerRectangles(); // Finds Container Rectangles
-        void findCorrectRectangles(); // Figures Out Which Rectangles Are Correct
         void computeTilt(); // Computes Tilt of the Rectangle
+        void removeMarkedRectangles();
 };
 
 #endif /* RectangleDetector_hpp */

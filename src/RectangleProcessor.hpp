@@ -26,7 +26,7 @@ class RectangleProcessor
     public:
         // Methods
         RectangleProcessor(Constants* constList);
-        void processRectangle(Rectangle inputRect, int target);
+        void processRectangle(Rectangle, float, float);
         float getAzimuth();
         int getProportionalDistance();
         int getConstantsDistance();
@@ -53,6 +53,8 @@ class RectangleProcessor
         int height;
         float tilt;
         float aspectRatio;
+        float targetHeight;
+        float targetBase;
 
         // Methods
         void computeProportionalDistance(); // Computes distance with rectangle proportions
