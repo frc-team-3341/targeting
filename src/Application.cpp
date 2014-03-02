@@ -131,7 +131,7 @@ void Application::targetingContinuous()
     processor->printFinalRectangleInformation();
 
     if (! config.getIsHeadless()) {
-        //guiManager->show(rectDetector.getAllRectangles(), rectDetector.getFinalRectangles());
+        guiManager->show(rectDetector.getAllRectangles(), rectDetector.getFinalRectangles());
 
         int keycode = cv::waitKey(10);
         if (keycode == 27)

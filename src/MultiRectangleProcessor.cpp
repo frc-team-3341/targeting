@@ -75,34 +75,42 @@ void MultiRectangleProcessor::processRectangles(std::vector<Rectangle> inputRect
         }
 
   else if (verticalRectangleList.size() == 2){
-        std::cout << "Two vertical rectangles found assuming seeing right and left sides of field. Returning one." << std::endl; 
+        std::cout << "Two vertical rectangles found assuming seeing right and left sides of field. Returning side with matching horizontal if any found." << std::endl; 
         std::cout << std::endl << std::endl;
             std::cout << "Vertical Rectangle: " << std::endl;
-            verticalRectangleList.at(0).to_string();
+            //verticalRectangleList.at(0).to_string();
             if(verticalRectangleList.at(0).pairedHorizontalRectangles.size() > 0){
                 std::cout << "Horizontal Rectangle: " << std::endl;
                 horizontalRectangleList.at(verticalRectangleList.at(0).pairedHorizontalRectangles.at(0)).to_string();
             }
-            else{
-                std::cout << "No Matching Horizontal Rectangle Found" << std::endl;
+            else if(verticalRectangleList.at(1).pairedHorizontalRectangles.size() > 0){
+                verticalRectangleList.at(1).to_string();
+
+                if(verticalRectangleList.at(1).pairedHorizontalRectangles.size() > 1){
+                    std::cout << "Horizontal Rectangle: " << std::endl;
+                    horizontalRectangleList.at(verticalRectangleList.at(0).pairedHorizontalRectangles.at(0)).to_string();
+                }
+                else{
+                    std::cout << "No Horizontal Rectangles Found" << std::endl;
+                }
             }
             finalProcessor = new RectangleProcessor(constList);
             finalProcessor->processRectangle(verticalRectangleList.at(0), 4.0 * 25.4, 32.0 * 25.4); 
   }
   else {
-        std::cout << "Multiple Vertical Rectangles Found" << std::endl;
-    }
-/*
-	else if (rectProcessors.size() > 1) {
-		int processIndex = 0;
-		for (int i = 0; i < (int)rectProcessors.size(); i++) {
-			if (rectProcessors.at(i).at(0).getElevation() > rectProcessors.at(processIndex).at(0).getElevation())
-				processIndex = i;
-		}
-		finalProcessor = new RectangleProcessor(rectProcessors.at(processIndex).at(0));
-		finalTarget = 0;
-	}
-*/
+      std::cout << "Multiple Vertical Rectangles Found" << std::endl;
+  }
+  /*
+     else if (rectProcessors.size() > 1) {
+     int processIndex = 0;
+     for (int i = 0; i < (int)rectProcessors.size(); i++) {
+     if (rectProcessors.at(i).at(0).getElevation() > rectProcessors.at(processIndex).at(0).getElevation())
+     processIndex = i;
+     }
+     finalProcessor = new RectangleProcessor(rectProcessors.at(processIndex).at(0));
+     finalTarget = 0;
+     }
+     */
 }
 
 void MultiRectangleProcessor::findVerticalRectangles(){
@@ -136,20 +144,20 @@ void MultiRectangleProcessor::findVHPairs(){
             }
         }
     }
-/*
-    for (int i = 0; i < (int)verticalRectangleList.size(); ++i) {
+    /*
+       for (int i = 0; i < (int)verticalRectangleList.size(); ++i) {
 
-        //verticalRectangleList.at(i).to_string();
+//verticalRectangleList.at(i).to_string();
 
-        if ( verticalRectangleList.at(i).pairedHorizontalRectangles.size() > 0){
-            //horizontalRectangleList.at(verticalRectangleList.at(i).pairedHorizontalRectangles.at(0)).to_string();
-        }
-        else{
-            std::cout << "No Matching Horizontal Rectangle found" << std::endl;
-        }
+if ( verticalRectangleList.at(i).pairedHorizontalRectangles.size() > 0){
+//horizontalRectangleList.at(verticalRectangleList.at(i).pairedHorizontalRectangles.at(0)).to_string();
+}
+else{
+std::cout << "No Matching Horizontal Rectangle found" << std::endl;
+}
 
-    }
-    */
+}
+*/
 }
 
 bool MultiRectangleProcessor::rectanglePairMatches(Rectangle vertical, Rectangle horizontal)
@@ -170,20 +178,23 @@ bool MultiRectangleProcessor::rectanglePairMatches(Rectangle vertical, Rectangle
 
 std::vector<std::vector<RectangleProcessor>> MultiRectangleProcessor::getRectProcessors()
 {
-	return rectProcessors;
+    return rectProcessors;
 }
 
 RectangleProcessor* MultiRectangleProcessor::getFinalProcessor()
 {
-	return finalProcessor;
+    return finalProcessor;
 }
 
 void MultiRectangleProcessor::printFinalRectangleInformation()
 {
     std::cout << "Final Rectangles Information" << std::endl;
-		std::cout << "========================" << std::endl;
+    std::cout << "========================" << std::endl;
 
-    getFinalProcessor()->to_string();
+    if(finalProcessor != NULL)
+        getFinalProcessor()->to_string();
+    else
+        std::cout << "No Rectangle Found" << std::endl;
 }
 
 

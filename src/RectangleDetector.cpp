@@ -220,9 +220,9 @@ void RectangleDetector::removeSimilarRectangles(){
     for (unsigned i = 0; i < rectList.size(); ++i) {
         for (unsigned j = 0; j < rectList.size(); ++j) {
             if (i == j) continue;
-            if (rectList.at(i).markedForRemoval) continue;
+            if (rectList.at(j).markedForRemoval) continue;
             if (similarRectangles(rectList.at(i), rectList.at(j))){
-                rectList.at(j).markedForRemoval = true;
+                rectList.at(i).markedForRemoval = true;
                 std::cout << "marked" << std::endl;
             }
         }
