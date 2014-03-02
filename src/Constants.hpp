@@ -44,8 +44,6 @@ class Constants
         std::string guiWindowName;
 
         // Target
-        int targetVertical;
-        int targetHorizontal;
         std::vector<float> targetRectBase;
         std::vector<float> targetRectHeight;
         std::vector<float> targetHeight;

@@ -43,9 +43,6 @@ Constants::Constants()
     // GUI
     guiWindowName = "FRC Team 3341 Targeting";
 
-    // Target
-    targetVertical = 0;
-    targetHorizontal = 1;
 
     //Vertical Strip
     targetRectBase.push_back(4.0 * 25.4);
