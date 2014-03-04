@@ -45,6 +45,7 @@ class Rectangle
         int lengthSquaredBottom; // Square of Length of Bottom Side
         std::string rectName;
         int rectangleType;
+        int rectangleSide;
 
         int absoluteWidth;
         int absoluteHeight;

@@ -53,6 +53,7 @@ void MultiRectangleProcessor::processRectangles(std::vector<Rectangle> inputRect
   findVerticalRectangles();
   findHorizontalRectangles();
   findVHPairs();
+  classifyVHPairs();
 
   std::cout << "Picking out correct vertical Rectangle..." << std::endl;
   if(verticalRectangleList.size() == 0){
@@ -98,7 +99,7 @@ void MultiRectangleProcessor::processRectangles(std::vector<Rectangle> inputRect
             finalProcessor->processRectangle(verticalRectangleList.at(0), 4.0 * 25.4, 32.0 * 25.4); 
   }
   else {
-      std::cout << "Multiple Vertical Rectangles Found" << std::endl;
+      std::cout << "Multiple(3+) Vertical Rectangles Found" << std::endl;
   }
   /*
      else if (rectProcessors.size() > 1) {
@@ -117,7 +118,7 @@ void MultiRectangleProcessor::findVerticalRectangles(){
     for (unsigned i = 0; i < rectList.size(); ++i) {
         if (rectList.at(i).lengthSquaredLeft > rectList.at(i).lengthSquaredTop){
             verticalRectangleList.push_back(rectList.at(i));
-            rectList.at(i).setRectType(constList-> targetVertical);
+            rectList.at(i).setRectType(constList -> targetVertical);
         }
     }
 }
@@ -126,7 +127,7 @@ void MultiRectangleProcessor::findHorizontalRectangles(){
     for (unsigned i = 0; i < rectList.size(); ++i) {
         if (rectList.at(i).lengthSquaredTop > rectList.at(i).lengthSquaredLeft){
             horizontalRectangleList.push_back(rectList.at(i));
-            rectList.at(i).setRectType(constList-> targetHorizontal);
+            rectList.at(i).setRectType(constList -> targetHorizontal);
         }
     }
 }
@@ -160,9 +161,39 @@ std::cout << "No Matching Horizontal Rectangle found" << std::endl;
 */
 }
 
+void MultiRectangleProcessor::classifyVHPairs(){
+    for( unsigned i=0; i < verticalRectangleList.size(); ++i){
+       if(verticalRectangleList.at(i).pairedHorizontalRectangles.size() > 0){
+            verticalRectangleList.at(i).rectangleSide = classifyVHPair(verticalRectangleList.at(i), horizontalRectangleList.at(verticalRectangleList.at(i).pairedHorizontalRectangles.at(0)));
+            horizontalRectangleList.at(verticalRectangleList.at(i).pairedHorizontalRectangles.at(0)).rectangleSide = classifyVHPair(verticalRectangleList.at(i), horizontalRectangleList.at(verticalRectangleList.at(i).pairedHorizontalRectangles.at(0)));
+        }
+    }
+
+}
+
+int MultiRectangleProcessor::classifyVHPair(Rectangle vertical, Rectangle horizontal){
+    if(vertical.topLeft.x < horizontal.topLeft.x){
+        return 1;
+        //Right goal
+    }
+
+    else if(vertical.topLeft.x > horizontal.topLeft.x){
+        return 2;
+        //Left goal
+    }
+    
+    else{
+        return 0;
+    }
+}
+
 bool MultiRectangleProcessor::rectanglePairMatches(Rectangle vertical, Rectangle horizontal)
 {
     double toleranceDistance = 900;  
+    if(horizontal.topLeft.y > vertical.topLeft.y){
+        return false;
+    }
+
     if (horizontal.topLeft.x > vertical.topLeft.x - toleranceDistance &&
             horizontal.topLeft.x < vertical.topLeft.x){
         return true;

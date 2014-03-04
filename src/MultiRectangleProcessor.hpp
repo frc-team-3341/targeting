@@ -49,6 +49,8 @@ class MultiRectangleProcessor
         void findHorizontalRectangles(); // Finds horizontal Rectangles;
         void findVHPairs(); // Finds horizontal Rectangles pairs;
         bool rectanglePairMatches(Rectangle, Rectangle); //Primary logic used by findVHPairs to detect whether rectangle pairs match.
+        void classifyVHPairs();
+        int classifyVHPair(Rectangle, Rectangle);
 };
 
 #endif /* MultiRectangleProcessor_hpp */

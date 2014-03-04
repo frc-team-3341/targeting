@@ -38,10 +38,10 @@ class RectangleProcessor
         float getAspectRatio();
         int getTarget();
         void to_string();
+        Rectangle inputRect;
 
     protected:
         // Data
-        Rectangle inputRect;
         Constants *constList;
         int target;
         float azimuth;
