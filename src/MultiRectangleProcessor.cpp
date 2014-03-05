@@ -28,7 +28,6 @@
 #include <iostream>
 #include <vector>
 
-#include "RectangleProcessor.hpp"
 #include "Constants.hpp"
 #include "MultiRectangleProcessor.hpp"
 
@@ -39,8 +38,8 @@ MultiRectangleProcessor::MultiRectangleProcessor(Constants* inputConstList)
 
 MultiRectangleProcessor::~MultiRectangleProcessor()
 {
-	if (finalProcessor)
-		delete finalProcessor;
+	if (finalRectangle)
+		delete finalRectangle;
 }
 
 void MultiRectangleProcessor::processRectangles(std::vector<Rectangle> inputRectangles)
@@ -49,7 +48,6 @@ void MultiRectangleProcessor::processRectangles(std::vector<Rectangle> inputRect
   rectList = inputRectangles;
   verticalRectangleList.clear();
   horizontalRectangleList.clear();
-  rectProcessors.clear();
   findVerticalRectangles();
   findHorizontalRectangles();
   findVHPairs();
@@ -57,7 +55,7 @@ void MultiRectangleProcessor::processRectangles(std::vector<Rectangle> inputRect
 
   std::cout << "Picking out correct vertical Rectangle..." << std::endl;
   if(verticalRectangleList.size() == 0){
-        std::cout << "No Vertical Rectangle Found";
+        std::cout << "No Vertical Rectangle Found" << std::endl;
     }
 
   else if (verticalRectangleList.size() == 1) {
@@ -71,8 +69,7 @@ void MultiRectangleProcessor::processRectangles(std::vector<Rectangle> inputRect
             else{
                 std::cout << "No Matching Horizontal Rectangle Found" << std::endl;
             }
-            finalProcessor = new RectangleProcessor(constList);
-            finalProcessor->processRectangle(verticalRectangleList.at(0), 4.0 * 25.4, 32.0 * 25.4); 
+            finalRectangle = &verticalRectangleList.at(0);
         }
 
   else if (verticalRectangleList.size() == 2){
@@ -95,8 +92,7 @@ void MultiRectangleProcessor::processRectangles(std::vector<Rectangle> inputRect
                     std::cout << "No Horizontal Rectangles Found" << std::endl;
                 }
             }
-            finalProcessor = new RectangleProcessor(constList);
-            finalProcessor->processRectangle(verticalRectangleList.at(0), 4.0 * 25.4, 32.0 * 25.4); 
+            finalRectangle = &verticalRectangleList.at(0);
   }
   else {
       std::cout << "Multiple(3+) Vertical Rectangles Found" << std::endl;
@@ -207,14 +203,9 @@ bool MultiRectangleProcessor::rectanglePairMatches(Rectangle vertical, Rectangle
 
 }
 
-std::vector<std::vector<RectangleProcessor>> MultiRectangleProcessor::getRectProcessors()
+Rectangle* MultiRectangleProcessor::getFinalRectangle()
 {
-    return rectProcessors;
-}
-
-RectangleProcessor* MultiRectangleProcessor::getFinalProcessor()
-{
-    return finalProcessor;
+    return finalRectangle;
 }
 
 void MultiRectangleProcessor::printFinalRectangleInformation()
@@ -222,8 +213,8 @@ void MultiRectangleProcessor::printFinalRectangleInformation()
     std::cout << "Final Rectangles Information" << std::endl;
     std::cout << "========================" << std::endl;
 
-    if(finalProcessor != NULL)
-        getFinalProcessor()->to_string();
+    if(finalRectangle)
+        getFinalRectangle()->to_string();
     else
         std::cout << "No Rectangle Found" << std::endl;
 }

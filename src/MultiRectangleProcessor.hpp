@@ -21,7 +21,6 @@
 #include <vector>
 
 #include "Rectangle.hpp"
-#include "RectangleProcessor.hpp"
 #include "Constants.hpp"
 
 class MultiRectangleProcessor
@@ -31,18 +30,17 @@ class MultiRectangleProcessor
         MultiRectangleProcessor(Constants* constList);
         ~MultiRectangleProcessor();
         void processRectangles(std::vector<Rectangle> foundRectangles);
-        std::vector<std::vector<RectangleProcessor> > getRectProcessors();
-        RectangleProcessor* getFinalProcessor();
+        Rectangle* getFinalRectangle();
         void printFinalRectangleInformation();
 
     private:
         // Data
         std::vector<Rectangle> rectList;
         std::vector<Rectangle> rectangles;
-        std::vector<std::vector<RectangleProcessor> > rectProcessors;
         std::vector<Rectangle> verticalRectangleList;
         std::vector<Rectangle> horizontalRectangleList;
-        RectangleProcessor* finalProcessor;
+
+        Rectangle* finalRectangle;
         int finalTarget;
         Constants* constList;
         void findVerticalRectangles(); // Finds vertical Rectangles;

@@ -37,7 +37,6 @@
 #include "VideoDevice.hpp"
 #include "Rectangle.hpp"
 #include "RectangleDetector.hpp"
-#include "RectangleProcessor.hpp"
 #include "MultiRectangleProcessor.hpp"
 #include "GUIManager.hpp"
 #include "CmdLineInterface.hpp"
