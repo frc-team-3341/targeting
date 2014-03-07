@@ -13,7 +13,7 @@
  *
  *    You should have received a copy of the GNU General Public License
  *    along with FRC Team 3341 Targeting.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifdef HAVE_CONFIG_H
 #include "config.h"
@@ -27,47 +27,51 @@
 
 Constants::Constants()
 {
-        // Math
-        mathPi = 3.14159265358979;
+    // Math
+    mathPi = 3.14159265358979;
 
-        // Camera
-        //cameraFocalLength = 655;
-	cameraFocalLength = 640;
-        cameraViewingAngleRadians = 1.1414453308043;
-        //cameraHDFocalLength = 655;
-	cameraHDFocalLength = 640;
-        cameraHDViewingAngleRadians = 1.1414453308043;
-        cameraHeight = 33.5 * 25.4;
-	cameraAngleRadians = 9.0 * mathPi / 180.0;
+    // Camera
+    //cameraFocalLength = 655;
+    cameraFocalLength = 640;
+    cameraViewingAngleRadians = 1.1414453308043;
+    //cameraHDFocalLength = 655;
+    cameraHDFocalLength = 640;
+    cameraHDViewingAngleRadians = 1.1414453308043;
+    cameraHeight = 33.5 * 25.4;
+    cameraAngleRadians = 9.0 * mathPi / 180.0;
 
-        // GUI
-        guiWindowName = "FRC Team 3341 Targeting";
+    // GUI
+    guiWindowName = "FRC Team 3341 Targeting";
 
-        // Target
-	targetHighIndex = 0;
-	targetMiddleIndex = 1;
-	targetRectBase.push_back(62.0 * 25.4);
-	targetRectHeight.push_back(20.0 * 25.4);
-	targetHeight.push_back(110.125 * 25.4);
-	targetRectBase.push_back(62.0 * 25.4);
-	targetRectHeight.push_back(29.0 * 25.4);
-	targetHeight.push_back(99.125 * 25.4);
-        targetPossibleHeights.push_back(-171);
-        targetPossibleHeights.push_back(387);
-        targetPossibleHeights.push_back(1607);
+    targetHorizontal = 0;
+    targetVertical = 1;
 
-        // Preprocessing
-        preprocessingHueLowerThreshold = 0;
-        preprocessingHueUpperThreshold = 80;
-        preprocessingValueLowerThreshold = 200;
-        preprocessingValueUpperThreshold = 255;
+    //Vertical Strip
+    targetRectBase.push_back(4.0 * 25.4);
+    targetRectHeight.push_back(32.0 * 25.4);
+    targetHeight.push_back(37.5 * 25.4);
 
-	// Detection
-	detectionCannyThreshold = 50;
-	detectionMaxCosine = 0.3;
-	detectionContainedAreaLowerThreshold = 0.0;
-	detectionContainedAreaUpperThreshold = 0.9;
+    //Horizontal Strip
+    targetRectBase.push_back(23.5 * 25.4);
+    targetRectHeight.push_back(4.0 * 25.4);
+    targetHeight.push_back(68.0 * 25.4);
 
-	// Server
-	portNumber = 3341;
+    targetPossibleHeights.push_back(-171);
+    targetPossibleHeights.push_back(387);
+    targetPossibleHeights.push_back(1607);
+
+    // Preprocessing
+    preprocessingHueLowerThreshold = 80;
+    preprocessingHueUpperThreshold = 255;
+    preprocessingValueLowerThreshold = 200;
+    preprocessingValueUpperThreshold = 255;
+
+    // Detection
+    detectionCannyThreshold = 50;
+    detectionMaxCosine = 0.3;
+    detectionContainedAreaLowerThreshold = 0.0;
+    detectionContainedAreaUpperThreshold = 0.9;
+
+    // Server
+    portNumber = 3341;
 }

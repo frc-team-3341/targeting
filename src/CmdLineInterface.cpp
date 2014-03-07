@@ -26,7 +26,7 @@
 CmdLineInterface::CmdLineInterface(int argc, char *argv[])
 {
 	int isHeadless = 0;
-	int isNetworking = 1;
+	int isNetworking = 0;
 	int isCaptureMode = 0;
 
 	while (true) {

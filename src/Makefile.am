@@ -26,7 +26,6 @@ MultiRectangleProcessor.cpp \
 NetworkController.cpp \
 Rectangle.cpp \
 RectangleDetector.cpp \
-RectangleProcessor.cpp \
 VideoDevice.cpp \
 main.cpp \
 AppConfig.hpp \
@@ -39,7 +38,6 @@ MultiRectangleProcessor.hpp \
 NetworkController.hpp \
 Rectangle.hpp \
 RectangleDetector.hpp \
-RectangleProcessor.hpp \
 VideoDevice.hpp
 frc_team_3341_targeting_CXXFLAGS = $(AM_CXXFLAGS) $(BOOST_CPPFLAGS) -std=gnu++0x -Wall -Werror
 frc_team_3341_targeting_CPPFLAGS = $(AM_CPPFLAGS) $(OPENCV_CFLAGS)

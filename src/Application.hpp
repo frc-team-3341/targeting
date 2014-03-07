@@ -13,7 +13,7 @@
  *
  *    You should have received a copy of the GNU General Public License
  *    along with FRC Team 3341 Targeting.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef Application_hpp
 #define Application_hpp
@@ -26,25 +26,26 @@
 
 class Application
 {
-public:
-	Application(int argc, char *argv[]);
-	~Application();
-	int exec();
-private:
-	void initVideoDevice();
-	void initNetworking();
-	void initGUI();
-	void targetingInit();
-	void targetingContinuous();
-	void captureInit();
-	void captureContinuous();
-	cv::Mat loadImage();
-	CmdLineInterface *cmdLineInterface;
-	VideoDevice *videoDevice;
-	NetworkController *networkController;
-	GUIManager *guiManager;
-	Constants *constList;
-	AppConfig config;
+    public:
+        Application(int argc, char *argv[]);
+        ~Application();
+        int exec();
+    private:
+        void initVideoDevice();
+        void initNetworking();
+        void initGUI();
+        void targetingInit();
+        void targetingContinuous();
+        void captureInit();
+        void captureContinuous();
+        void print(std::string);
+        cv::Mat loadImage();
+        CmdLineInterface *cmdLineInterface;
+        VideoDevice *videoDevice;
+        NetworkController *networkController;
+        GUIManager *guiManager;
+        Constants *constList;
+        AppConfig config;
 };
 
 #endif /* Application_hpp */

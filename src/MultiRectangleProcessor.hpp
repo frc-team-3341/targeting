@@ -13,7 +13,7 @@
  *
  *    You should have received a copy of the GNU General Public License
  *    along with FRC Team 3341 Targeting.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ */
 
 #ifndef MultiRectangleProcessor_hpp
 #define MultiRectangleProcessor_hpp
@@ -21,25 +21,35 @@
 #include <vector>
 
 #include "Rectangle.hpp"
-#include "RectangleProcessor.hpp"
 #include "Constants.hpp"
 
 class MultiRectangleProcessor
 {
-public:
-	// Methods
-	MultiRectangleProcessor(Constants* constList);
-	~MultiRectangleProcessor();
-	void processRectangles(std::vector<Rectangle> foundRectangles);
-	std::vector<std::vector<RectangleProcessor> > getRectProcessors();
-	RectangleProcessor* getFinalProcessor();
-private:
-	// Data
-	std::vector<Rectangle> rectangles;
-	std::vector<std::vector<RectangleProcessor> > rectProcessors;
-	RectangleProcessor* finalProcessor;
-	int finalTarget;
-	Constants* constList;
+    public:
+        // Methods
+        MultiRectangleProcessor(Constants* constList);
+        ~MultiRectangleProcessor();
+        void processRectangles(std::vector<Rectangle> foundRectangles);
+        Rectangle* getFinalRectangle();
+        void printFinalRectangleInformation();
+
+    private:
+        // Data
+        std::vector<Rectangle> rectList;
+        std::vector<Rectangle> rectangles;
+        std::vector<Rectangle> verticalRectangleList;
+        std::vector<Rectangle> horizontalRectangleList;
+
+        Rectangle* finalRectangle;
+        int finalTarget;
+        Constants* constList;
+        void findVerticalRectangles(); // Finds vertical Rectangles;
+        void findHorizontalRectangles(); // Finds horizontal Rectangles;
+        void findVHPairs(); // Finds horizontal Rectangles pairs;
+        bool rectanglePairMatches(Rectangle, Rectangle); //Primary logic used by findVHPairs to detect whether rectangle pairs match.
+        void classifyVHPairs();
+        int classifyVHPair(Rectangle, Rectangle);
+        bool foundFinal;
 };
 
 #endif /* MultiRectangleProcessor_hpp */
