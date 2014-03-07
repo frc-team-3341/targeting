@@ -127,7 +127,7 @@ void Application::targetingContinuous()
 
     MultiRectangleProcessor* processor = new MultiRectangleProcessor(constList);
     processor->processRectangles(foundRectangles);
-    processor->printFinalRectangleInformation();
+    //processor->printFinalRectangleInformation();
 
     if (! config.getIsHeadless()) {
         guiManager->show(rectDetector.getAllRectangles(), rectDetector.getFinalRectangles());

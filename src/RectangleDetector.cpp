@@ -38,6 +38,9 @@
 #include "Rectangle.hpp"
 #include "RectangleDetector.hpp"
 
+int thresh =50;
+int N = 11;
+
 // Public Functions
 RectangleDetector::RectangleDetector(Constants *inputConstList)
 {
@@ -106,13 +109,16 @@ void RectangleDetector::preprocessImage()
     threshold(imageHSV.hue, hsv_threshHueLower, constList->preprocessingHueLowerThreshold, 255, CV_THRESH_BINARY);
     threshold(imageHSV.hue, hsv_threshHueUpper, constList->preprocessingHueUpperThreshold, 255, CV_THRESH_BINARY_INV);
     imageHSV.hue = hsv_threshHueLower & hsv_threshHueUpper;
+    //cv::imshow("hue thresholded", imageHSV.hue);
 
     // Value Threshold
     threshold(imageHSV.value, hsv_threshValueLower, constList->preprocessingValueLowerThreshold, 255, CV_THRESH_BINARY);
     threshold(imageHSV.value, hsv_threshValueUpper, constList->preprocessingValueUpperThreshold, 255, CV_THRESH_BINARY_INV);
     imageHSV.value = hsv_threshValueLower & hsv_threshValueUpper;
+    //cv::imshow("value thresholded", imageHSV.value);
 
-    image = imageHSV.hue & imageHSV.value;
+    image = imageHSV.value;
+    cv::imshow("thresholded", image);
 }
 
 void RectangleDetector::findRectangles()
@@ -122,9 +128,15 @@ void RectangleDetector::findRectangles()
     allRectangles.clear();
     finalRectangles.clear();
 
+
     // Variable Declarations
+    cv::Mat pyr;
+    cv::Mat timg;
     cv::Mat gray0(image.size(), CV_8U);
     cv::Mat gray;
+
+    cv::pyrDown(image, pyr, cv::Size(image.cols / 2, image.rows / 2));
+    cv::pyrUp(pyr, timg, image.size());
 
     // Variable Declarations
     std::vector<std::vector<cv::Point> > contours;
@@ -132,9 +144,12 @@ void RectangleDetector::findRectangles()
 
     cv::mixChannels(&image, 1, &gray0, 1, ch, 1); // Extract Channel
 
+    
     // Canny helps to catch squares with gradient shading
     // apply Canny. Take the upper threshold from slider
     // and set the lower to 0 (which forces edges merging)
+
+
     Canny(gray0, gray, 0, constList->detectionCannyThreshold, 5);
 
     // dilate canny output to remove potential
@@ -148,37 +163,43 @@ void RectangleDetector::findRectangles()
 
     // Test Each Contour
     for (size_t i = 0; i < contours.size(); ++i) {
-        // approximate contour with accuracy proportional
-        // to the contour perimeter
-        cv::approxPolyDP(cv::Mat(contours.at(i)), approx, cv::arcLength(cv::Mat(contours.at(i)), true) * 0.02, true);
+    // approximate contour with accuracy proportional
+    // to the contour perimeter
+    cv::approxPolyDP(cv::Mat(contours.at(i)), approx, cv::arcLength(cv::Mat(contours.at(i)), true) * 0.02, true);
 
-        // rectangular contours should have 4 vertices after approximation
-        // relatively large area (to filter out noisy contours)
-        // and be convex.
-        // Note: absolute value of an area is used because
-        // area may be positive or negative - in accordance with the
-        // contour orientation
-        if (approx.size() == 4 &&
-                fabs(cv::contourArea(cv::Mat(approx))) > 1000 &&
-                cv::isContourConvex(cv::Mat(approx))) {
-            double maxCosine = 0;
+    // rectangular contours should have 4 vertices after approximation
+    // relatively large area (to filter out noisy contours)
+    // and be convex.
+    // Note: absolute value of an area is used because
+    // area may be positive or negative - in accordance with the
+    // contour orientation
+    if (approx.size() >= 4 &&
+    //approx.size() <= 6 &&
+    fabs(cv::contourArea(cv::Mat(approx))) > 200// &&
+    //cv::isContourConvex(cv::Mat(approx))
+    ) {
+    double maxCosine = 0;
 
-            for(int j = 2; j < 5; ++j) {
-                // find the maximum cosine of the angle between joint edges
-                double cosine = fabs(angle(approx.at(j%4), approx.at(j-2), approx.at(j-1)));
-                maxCosine = MAX(maxCosine, cosine);
-            }
-
-            // if cosines of all angles are small
-            // (all angles are ~90 degrees) then write quandrange
-            // vertices to resultant sequence
-            if(maxCosine < constList->detectionMaxCosine)
-                allRectangles.push_back(approx);
-        }
+    for(int j = 2; j < 5; ++j) {
+    // find the maximum cosine of the angle between joint edges
+    double cosine = fabs(angle(approx.at(j%4), approx.at(j-2), approx.at(j-1)));
+    maxCosine = MAX(maxCosine, cosine);
     }
 
+    // if cosines of all angles are small
+    // (all angles are ~90 degrees) then write quandrange
+    // vertices to resultant sequence
+    if(maxCosine < constList->detectionMaxCosine)
+    allRectangles.push_back(approx);
+    }
+    }
+    
+    
+    std::cout << allRectangles.size();
     if (allRectangles.size() == 0)
         foundRectangle = false;
+
+
 }
 
 void RectangleDetector::populateRectangles()
@@ -213,7 +234,7 @@ void RectangleDetector::filterUniqueRectangles()
             rectListUnique.push_back(rectList.at(i));
     }
     rectList = rectListUnique;
- }
+}
 
 void RectangleDetector::removeSimilarRectangles(){
     std::cout << "Removing very similar rectangles..." << std::endl;
@@ -267,7 +288,7 @@ void RectangleDetector::removeMarkedRectangles()
             outputRectangles.push_back(rectListRevised.at(i));
         }
     }
-    
+
     //std::cout << std::endl << "Remaining Rectangles Count: " << outputRectangles.size() << std::endl;
 
 }

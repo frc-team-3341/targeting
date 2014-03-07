@@ -61,8 +61,8 @@ Constants::Constants()
     targetPossibleHeights.push_back(1607);
 
     // Preprocessing
-    preprocessingHueLowerThreshold = 0;
-    preprocessingHueUpperThreshold = 80;
+    preprocessingHueLowerThreshold = 80;
+    preprocessingHueUpperThreshold = 255;
     preprocessingValueLowerThreshold = 200;
     preprocessingValueUpperThreshold = 255;
 

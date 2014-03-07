@@ -49,6 +49,7 @@ class MultiRectangleProcessor
         bool rectanglePairMatches(Rectangle, Rectangle); //Primary logic used by findVHPairs to detect whether rectangle pairs match.
         void classifyVHPairs();
         int classifyVHPair(Rectangle, Rectangle);
+        bool foundFinal;
 };
 
 #endif /* MultiRectangleProcessor_hpp */
