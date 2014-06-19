@@ -1,4 +1,6 @@
 /*
+ *    Copyright 2012, 2013, 2014 Tushar Pankaj
+ *
  *    This file is part of FRC Team 3341 Targeting.
  *
  *    FRC Team 3341 Targeting is free software: you can redistribute it and/or modify
